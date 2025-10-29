@@ -852,28 +852,75 @@
       "specifier": "XXXX",
       "genre": "Camera",
       "age": "old",
-      "constraints": []
+      "constraints": [{
+          "type": "range",
+          "value": "0000-9999"
+        }]
     },
     {
       "name": "IMGP",
       "specifier": "XXXX",
       "genre": "Camera",
       "age": "old",
-      "constraints": []
+      "constraints": [{
+          "type": "range",
+          "value": "0000-9999"
+        }]
     },
     {
       "name": "Video",
       "specifier": "XXXX",
       "genre": "Camera",
       "age": "old",
-      "constraints": []
+      "constraints": [{
+          "type": "range",
+          "value": "0000-9999"
+        }]
     },
     {
       "name": "MOV0",
       "specifier": "XXXX",
       "genre": "Camera",
       "age": "old",
+      "constraints": [{
+          "type": "range",
+          "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "GEDC",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [{
+          "type": "range",
+          "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "hni_",
+      "specifier": "XXXX",
+      "genre": "Nintendo DS",
+      "age": "old",
+      "constraints": [{
+          "type": "range",
+          "value": "0000-0100"
+        }]
+    },
+    {
+      "name": "bandicam ",
+      "specifier": "YYYY MM DD",
+      "genre": "Screen Recorder",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "trim ",
+      "specifier": "XXXX",
+      "genre": "Misc",
+      "age": "old",
       "constraints": []
     }
+
   ]
 }
