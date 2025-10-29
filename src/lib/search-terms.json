@@ -839,6 +839,13 @@
       "constraints": []
     },
     {
+      "name": "For ",
+      "specifier": "Month DD, YYYY",
+      "genre": "iPhone",
+      "age": "old",
+      "constraints": []
+    },
+    {
       "name": "MAH0",
       "specifier": "XXXX",
       "genre": "Camera",
@@ -917,10 +924,82 @@
     {
       "name": "trim ",
       "specifier": "XXXX",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "You have a new Picture Mail! (video)",
+      "specifier": "",
       "genre": "Misc",
       "age": "old",
       "constraints": []
+    },
+    {
+      "name": "Media1.3gp",
+      "specifier": "",
+      "genre": "Phone",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Media1.3g2",
+      "specifier": "",
+      "genre": "Phone",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Video.3g2",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "New Multimedia Message",
+      "specifier": "",
+      "genre": "Phone",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Multimedia Message",
+      "specifier": "",
+      "genre": "Phone",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Video From My Phone",
+      "specifier": "",
+      "genre": "Phone",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Video",
+      "specifier": "XXX",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-100"
+        }
+      ]
+    },
+    {
+      "name": "Vid",
+      "specifier": "XXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-100"
+        }
+      ]
     }
-
   ]
 }
