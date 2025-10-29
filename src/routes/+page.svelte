@@ -334,6 +334,10 @@
     }
 </script>
 
+<svelte:head>
+    <title>Youtube's Recycle Bin</title>
+</svelte:head>
+
 <style>
     @font-face {
         font-family: 'Arial';
