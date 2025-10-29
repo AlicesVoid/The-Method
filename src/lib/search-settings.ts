@@ -9,6 +9,7 @@
  */
 
 import { generateRandomSearchTerm, type FilterOptions } from './method-logic.js';
+import searchTermsData from './search-terms.json' with { type: "json" };
 
 // ============================================================================
 // SETTINGS MANAGER CLASS
@@ -227,6 +228,16 @@ export class SearchSettings {
    * @param overrideDate - Optional date to override all date generation
    */
   generateSearchTerm(overrideDate?: Date): string | null {
+    const result = this.generateSearchTermWithPattern(overrideDate);
+    return result ? result.searchTerm : null;
+  }
+
+  /**
+   * Generate a random search term with pattern info based on current settings
+   * Returns object with searchTerm and pattern age, or null if no patterns match
+   * @param overrideDate - Optional date to override all date generation
+   */
+  generateSearchTermWithPattern(overrideDate?: Date): { searchTerm: string; age: 'new' | 'old' | '' } | null {
     // Build filter options based on current settings
     const filters: FilterOptions = {};
 
@@ -266,9 +277,13 @@ export class SearchSettings {
         }
 
         if (!isExcluded) {
-          // Print search term to console
-          console.log(searchTerm);
-          return searchTerm;
+          // Get pattern info to retrieve age
+          const patternInfo = this.getPatternInfoForTerm(searchTerm);
+          const age = patternInfo?.age || '';
+
+          // Print search term and age to console for debugging
+          console.log(searchTerm, `(age: ${age})`);
+          return { searchTerm, age };
         }
 
         attempts++;
@@ -282,6 +297,29 @@ export class SearchSettings {
       console.error('Error generating search term:', error);
       return null;
     }
+  }
+
+  /**
+   * Helper method to get pattern info for a search term
+   */
+  private getPatternInfoForTerm(searchTerm: string) {
+    const data = searchTermsData as any;
+    const allPatterns = [...data['new-patterns'], ...data['old-patterns']];
+
+    // Find the longest matching pattern name
+    // This handles cases where multiple patterns could match (e.g., empty string)
+    let bestMatch = null;
+    let longestMatch = -1;
+
+    for (const pattern of allPatterns) {
+      const name = pattern.name;
+      if (searchTerm.startsWith(name) && name.length > longestMatch) {
+        bestMatch = pattern;
+        longestMatch = name.length;
+      }
+    }
+
+    return bestMatch;
   }
 
   /**

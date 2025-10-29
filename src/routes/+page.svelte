@@ -252,14 +252,19 @@
 
     /**
      * Open YouTube search in new tab with the given search term
+     * @param searchTerm - The search term to use
+     * @param patternAge - The age of the pattern ('new', 'old', or '')
      */
-    function openYouTubeSearch(searchTerm: string) {
+    function openYouTubeSearch(searchTerm: string, patternAge: 'new' | 'old' | '') {
+        // Debug: log the pattern age
+        console.log(`Opening YouTube search with pattern age: "${patternAge}"`);
+
         // Build the search query with optional "before:" date filter
         let searchQuery = searchTerm;
 
-        // For OLD videos: Add "before:" filter
-        // For NEW videos: Sort by upload date instead
-        if (currentAgeFilter === 'old') {
+        // For OLD patterns: Add "before:" filter
+        // For NEW patterns: Sort by upload date instead
+        if (patternAge === 'old') {
             // Determine the date to use for "before:" filter
             let dateToUse: Date;
 
@@ -284,8 +289,8 @@
         // YouTube search URL
         let youtubeSearchURL = `https://www.youtube.com/results?search_query=${encodedQuery}`;
 
-        // Add sort by upload date parameter ONLY for NEW videos
-        if (currentAgeFilter === 'new') {
+        // Add sort by upload date parameter ONLY for NEW patterns
+        if (patternAge === 'new') {
             youtubeSearchURL += '&sp=CAI%253D';
         }
 
@@ -340,10 +345,11 @@
             overrideDate = new Date(beforeDate);
         }
 
-        const searchTerm = settings.generateSearchTerm(overrideDate);
+        // Generate search term with pattern info
+        const result = settings.generateSearchTermWithPattern(overrideDate);
 
-        if (searchTerm) {
-            openYouTubeSearch(searchTerm);
+        if (result) {
+            openYouTubeSearch(result.searchTerm, result.age);
         } else {
             console.error('Failed to generate search term');
         }
