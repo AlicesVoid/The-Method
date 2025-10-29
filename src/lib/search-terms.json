@@ -423,7 +423,7 @@
       "constraints": [
         {
             "type": "range",
-            "value": "0000-9999"
+            "value": "0000-1999"
         }]
     },
     {
@@ -434,7 +434,7 @@
       "constraints": [
         {
             "type": "range",
-            "value": "0000-9999"
+            "value": "0000-1999"
         }]
     },
     {
@@ -445,7 +445,7 @@
       "constraints": [
         {
             "type": "range",
-            "value": "0000-9999"
+            "value": "0000-1999"
         }]
     },
     {
