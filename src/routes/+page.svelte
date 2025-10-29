@@ -390,10 +390,13 @@
     font-size: inherit;
     font-weight: inherit;
     font-family: inherit;
+    transition: transform 0.2s ease;
+    display: inline-block;
     }
 
     .header a:hover {
     text-decoration: none;
+    transform: scale(1.05);
     }
     
     .header-2 {
@@ -410,6 +413,13 @@
         display: flex;
         align-items: center;
         gap: 0.75rem;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        text-decoration: none;
+    }
+
+    .youtube-badge:hover {
+        transform: scale(1.05);
     }
         
     .youtube-badge img {
@@ -857,10 +867,10 @@
     <header class="header-base header">
         <h4><a href="https://x.com/MingKasterMK/status/1965144635388653811/photo/1">Mapped by KVN AUST & Mika_Virus</a></h4>
         <h1>Youtube's Recycle Bin | Randomizer</h1>
-        <div class="youtube-badge">
+        <a href="https://www.youtube.com/KVNAUST" target="_blank" class="youtube-badge">
             <img src="{base}/kvnaust.jpg" alt="KVN AUST"/>
             <h1>YouTube.com/KVNAUST</h1>
-        </div>
+        </a>
     </header>
 
     <!-- Second Header -->
