@@ -337,10 +337,6 @@
     }
 </script>
 
-<svelte:head>
-    <title>Youtube's Recycle Bin</title>
-</svelte:head>
-
 <style>
     @font-face {
         font-family: 'Arial';
@@ -849,7 +845,15 @@
 
 </style>
 
+<!-- Head Section -->
+<svelte:head>
+    <title>Youtube's Recycle Bin</title>
+</svelte:head>
+
+
 <div class="page-container">
+
+    <!-- First Header -->
     <header class="header-base header">
         <h4><a href="https://x.com/MingKasterMK/status/1965144635388653811/photo/1">Mapped by KVN AUST & Mika_Virus</a></h4>
         <h1>Youtube's Recycle Bin | Randomizer</h1>
@@ -858,53 +862,66 @@
             <h1>YouTube.com/KVNAUST</h1>
         </div>
     </header>
+
+    <!-- Second Header -->
     <header class="header-base header-2">
         <h1>Find New, Old, and Forgotten Youtube Videos with ~0 Views</h1>
     </header>
 
+    <!-- Main Content -->
     <main class="content-body">
-    <div class="grid-container">
-        <div class="grid-item">
-            <div class="top-buttons">
-                <button class="rand-button" on:click={handleFindVideos}><h2>Find Random Videos!</h2></button>
+
+        <!-- First Row (Random Video Button)-->
+        <div class="grid-container">
+
+            <div class="grid-item">
+                <div class="top-buttons">
+                    <button class="rand-button" on:click={handleFindVideos}><h2>Find Random Videos!</h2></button>
+                </div>
+
             </div>
 
         </div>
 
-    </div>
-    <div class="grid-container">
-        <div class="grid-item">
-            <div class="filter-container" style="align-items: center;">
-                <span><h2>Show me</h2></span>
-                <select class="filter-select" on:change={handleAgeChange}>
-                    <option value="any" selected>Any</option>
-                    <option value="old">Old</option>
-                    <option value="new">New</option>
-                </select>
-                <span><h2>Videos</h2></span>
-                {#if enableDateOverride}
-                    <span><h2>Before:</h2></span>
+        <!-- Second Row (Age Filter Options)-->
+        <div class="grid-container">
+            <div class="grid-item">
+                <div class="filter-container" style="align-items: center;">
+                    <span><h2>Show me</h2></span>
+                    <select class="filter-select" on:change={handleAgeChange}>
+                        <option value="any" selected>Any</option>
+                        <option value="old">Old</option>
+                        <option value="new">New</option>
+                    </select>
+                    <span><h2>Videos</h2></span>
+                    {#if enableDateOverride}
+                        <span><h2>Before:</h2></span>
+                        <input
+                            type="date"
+                            class="filter-select"
+                            bind:value={beforeDate}
+                        />
+                    {/if}
+                </div>
+            </div>
+        </div>
+
+        <!-- Third Row (Advanced Settings) -->
+        <div class="grid-container" style="align-items: center;">
+            
+            <!-- Advanced Settings Checkbox -->
+            <div class="grid-item">
+                <div class="advanced-settings-checkbox">
                     <input
-                        type="date"
-                        class="filter-select"
-                        bind:value={beforeDate}
+                        type="checkbox"
+                        id="advanced-settings"
+                        bind:checked={showAdvancedSettings}
                     />
-                {/if}
+                    <label for="advanced-settings"><h4>Advanced Settings</h4></label>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="grid-container" style="align-items: center;">
-        <div class="grid-item">
-            <div class="advanced-settings-checkbox">
-                <input
-                    type="checkbox"
-                    id="advanced-settings"
-                    bind:checked={showAdvancedSettings}
-                />
-                <label for="advanced-settings"><h4>Advanced Settings</h4></label>
-            </div>
-        </div>
 
+            <!-- Date Picker -->
             <div class="grid-item">
                 {#if showAdvancedSettings}
                 <div class="date-picker-container">
@@ -919,6 +936,8 @@
                 </div>
                 {/if}
             </div>
+
+            <!-- Genre Selector -->
             <div class="grid-item">
                 {#if showAdvancedSettings}
                 <div class="genre-selector">
@@ -960,6 +979,8 @@
                 </div>
                 {/if}
             </div>
+
+            <!-- Name/Search Term Selector -->
             <div class="grid-item">
                 {#if showAdvancedSettings}
                 <div class="genre-selector">
@@ -1009,7 +1030,7 @@
                 </div>
                 {/if}
             </div>
-    </div>
+        </div>
     </main>
 </div>
 
