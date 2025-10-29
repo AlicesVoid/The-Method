@@ -58,29 +58,58 @@ function getAllPatterns(data: SearchTermsData): SearchPattern[] {
 // FILTERING
 // ============================================================================
 
-function filterPatterns(patterns: SearchPattern[], filters?: FilterOptions): SearchPattern[] {
-  if (!filters) return patterns;
-
+function filterPatterns(patterns: SearchPattern[], filters?: FilterOptions, overrideDate?: Date): SearchPattern[] {
   let filtered = patterns;
 
-  // Filter by age ("" matches both new and old)
-  if (filters.age) {
-    filtered = filtered.filter(p => p.age === filters.age || p.age === '');
+  // Apply general filters if provided
+  if (filters) {
+    // Filter by age ("" matches both new and old)
+    if (filters.age) {
+      filtered = filtered.filter(p => p.age === filters.age || p.age === '');
+    }
+
+    // Filter by genre
+    if (filters.genre) {
+      filtered = filtered.filter(p => p.genre === filters.genre);
+    }
+
+    // Filter by whether it has constraints
+    if (filters.hasConstraints !== undefined) {
+      filtered = filtered.filter(p =>
+        filters.hasConstraints ? p.constraints.length > 0 : p.constraints.length === 0
+      );
+    }
   }
 
-  // Filter by genre
-  if (filters.genre) {
-    filtered = filtered.filter(p => p.genre === filters.genre);
-  }
-
-  // Filter by whether it has constraints
-  if (filters.hasConstraints !== undefined) {
-    filtered = filtered.filter(p =>
-      filters.hasConstraints ? p.constraints.length > 0 : p.constraints.length === 0
-    );
-  }
+  // Always check date constraints (using override date or current date)
+  filtered = filtered.filter(p => meetsDateConstraints(p, overrideDate));
 
   return filtered;
+}
+
+/**
+ * Check if a pattern meets date constraints based on the given date
+ * Returns true if the pattern should be included, false if it should be filtered out
+ */
+function meetsDateConstraints(pattern: SearchPattern, date?: Date): boolean {
+  const dateConstraint = pattern.constraints.find(c => c.type === 'date');
+
+  if (!dateConstraint) {
+    // No date constraint means the pattern is always valid
+    return true;
+  }
+
+  // If no date is provided, use current date
+  const checkDate = date || new Date();
+  const checkYear = checkDate.getFullYear();
+
+  // The constraint value should be a year (string or number)
+  const constraintYear = typeof dateConstraint.value === 'string'
+    ? parseInt(dateConstraint.value, 10)
+    : dateConstraint.value;
+
+  // Filter out if the check date's year is earlier than the constraint year
+  return checkYear >= constraintYear;
 }
 
 // ============================================================================
@@ -217,23 +246,6 @@ function generateSpecifierValue(
     result = result.replace('YYYY MM', `${year} ${month}`);
   }
 
-  // YYYY (just year)
-  else if (specifier.includes('YYYY')) {
-    let year: number;
-
-    if (overrideDate) {
-      year = overrideDate.getFullYear();
-    } else if (isNew) {
-      year = currentYear;
-    } else if (isOld) {
-      year = getRandomInt(2010, 2015);
-    } else {
-      year = getRandomInt(2010, currentYear);
-    }
-
-    result = result.replace('YYYY', String(year));
-  }
-
   // Month DD, YYYY (written format like "January 15, 2023")
   else if (specifier.includes('Month DD, YYYY')) {
     const months = ['January', 'February', 'March', 'April', 'May', 'June',
@@ -259,6 +271,23 @@ function generateSpecifierValue(
     }
 
     result = result.replace('Month DD, YYYY', `${month} ${day}, ${year}`);
+  }
+
+  // YYYY (just year)
+  else if (specifier.includes('YYYY')) {
+    let year: number;
+
+    if (overrideDate) {
+      year = overrideDate.getFullYear();
+    } else if (isNew) {
+      year = currentYear;
+    } else if (isOld) {
+      year = getRandomInt(2010, 2015);
+    } else {
+      year = getRandomInt(2010, currentYear);
+    }
+
+    result = result.replace('YYYY', String(year));
   }
 
   // HHMMSS (time format)
@@ -351,8 +380,8 @@ export function generateRandomSearchTerm(options?: GenerateOptions): string {
   const data = loadSearchTerms();
   const allPatterns = getAllPatterns(data);
 
-  // Filter patterns based on options
-  const filtered = filterPatterns(allPatterns, options?.filters);
+  // Filter patterns based on options (including date constraints)
+  const filtered = filterPatterns(allPatterns, options?.filters, options?.overrideDate);
 
   if (filtered.length === 0) {
     throw new Error('No patterns match the specified filters');
