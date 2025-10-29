@@ -257,24 +257,37 @@
         // Build the search query with optional "before:" date filter
         let searchQuery = searchTerm;
 
-        // Add "before:" filter if advanced settings is enabled, date override is enabled, and date is selected
-        if (showAdvancedSettings && enableDateOverride && beforeDate) {
-            const date = new Date(beforeDate);
+        // For OLD videos: Add "before:" filter
+        // For NEW videos: Sort by upload date instead
+        if (currentAgeFilter === 'old') {
+            // Determine the date to use for "before:" filter
+            let dateToUse: Date;
+
+            if (showAdvancedSettings && enableDateOverride && beforeDate) {
+                // Use the custom date if advanced settings enabled
+                dateToUse = new Date(beforeDate);
+            } else {
+                // Default to January 1, 2016 for old videos
+                dateToUse = new Date('2016-01-01');
+            }
+
             // Format as YYYY/MM/DD for YouTube search
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
+            const year = dateToUse.getFullYear();
+            const month = String(dateToUse.getMonth() + 1).padStart(2, '0');
+            const day = String(dateToUse.getDate()).padStart(2, '0');
             searchQuery += ` before:${year}/${month}/${day}`;
         }
 
         // Encode the complete search query for URL
         const encodedQuery = encodeURIComponent(searchQuery);
 
-        // YouTube search URL - always sort by upload date
+        // YouTube search URL
         let youtubeSearchURL = `https://www.youtube.com/results?search_query=${encodedQuery}`;
 
-        // Always add sort by upload date parameter
-        youtubeSearchURL += '&sp=CAI%253D';
+        // Add sort by upload date parameter ONLY for NEW videos
+        if (currentAgeFilter === 'new') {
+            youtubeSearchURL += '&sp=CAI%253D';
+        }
 
         // Open in new tab
         window.open(youtubeSearchURL, '_blank');
