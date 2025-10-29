@@ -618,6 +618,186 @@
         margin: 0.25rem 0;
     }
 
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+        /* Scale down header */
+        .header-base {
+            height: auto;
+            min-height: 3rem;
+            border-width: 0.25rem;
+            padding: 0.5rem;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .header h4 {
+            font-size: 0.7rem;
+            margin: 0;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1rem;
+            margin: 0;
+            text-align: center;
+        }
+
+        .youtube-badge {
+            padding: 0.25rem 0.5rem;
+            gap: 0.5rem;
+        }
+
+        .youtube-badge img {
+            height: 1.5rem;
+            width: 1.5rem;
+        }
+
+        .youtube-badge h1 {
+            font-size: 0.8rem;
+        }
+
+        .header-2 h1 {
+            font-size: 0.9rem;
+            margin: 0.5rem;
+            text-align: center;
+        }
+
+        /* Scale down content */
+        .content-body {
+            border-width: 0.25rem;
+            min-height: auto;
+        }
+
+        .grid-container {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            padding: 0.5rem;
+        }
+
+        .grid-item {
+            padding: 0.75rem;
+            gap: 0.75rem;
+        }
+
+        /* Scale down buttons */
+        .top-buttons {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .rand-button {
+            width: 100%;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .rand-button h2 {
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        /* Scale down filter container */
+        .filter-container {
+            flex-direction: column;
+            padding: 0 0.5rem;
+            gap: 0.5rem;
+        }
+
+        .filter-container h2 {
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .filter-select {
+            padding: 0.5rem;
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        /* Scale down checkboxes and labels */
+        .advanced-settings-checkbox {
+            gap: 0.5rem;
+        }
+
+        .advanced-settings-checkbox input[type="checkbox"] {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+
+        .advanced-settings-checkbox label h4 {
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        .date-checkbox input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .date-checkbox label h4 {
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Scale down dropdowns */
+        .genre-selector {
+            max-width: 100%;
+        }
+
+        .genre-dropdown-button {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .genre-dropdown-menu {
+            max-height: 200px;
+        }
+
+        .genre-checkbox-item {
+            padding: 0.5rem 0.75rem;
+            gap: 0.5rem;
+        }
+
+        .genre-checkbox-item input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .genre-checkbox-item span {
+            font-size: 0.9rem;
+        }
+    }
+
+    /* Extra small mobile devices */
+    @media (max-width: 480px) {
+        .header h4 {
+            font-size: 0.6rem;
+        }
+
+        .header h1 {
+            font-size: 0.85rem;
+        }
+
+        .youtube-badge h1 {
+            font-size: 0.7rem;
+        }
+
+        .header-2 h1 {
+            font-size: 0.8rem;
+        }
+
+        .filter-container h2,
+        .rand-button h2 {
+            font-size: 0.9rem;
+        }
+
+        .advanced-settings-checkbox label h4,
+        .date-checkbox label h4 {
+            font-size: 0.85rem;
+        }
+    }
+
 </style>
 
 <header class="header-base header">
