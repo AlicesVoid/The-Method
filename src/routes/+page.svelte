@@ -189,6 +189,9 @@
 
     /**
      * Toggle individual name selection
+     * Note: Duplicates are handled automatically since we use a Set
+     * Multiple patterns can have the same name, but the Set ensures
+     * toggling one name affects all patterns with that name
      */
     function toggleName(name: string) {
         if (selectedNames.has(name)) {
@@ -983,7 +986,15 @@
                             <div class="genre-divider"></div>
 
                             <!-- Individual name checkboxes -->
-                            {#each availableNames as name}
+                            {#each (() => {
+                                const seen = new Set();
+                                return availableNames.filter(name => {
+                                    const trimmed = name.trim();
+                                    if (seen.has(trimmed)) return false;
+                                    seen.add(trimmed);
+                                    return true;
+                                });
+                            })() as name}
                                 <label class="genre-checkbox-item">
                                     <input
                                         type="checkbox"
