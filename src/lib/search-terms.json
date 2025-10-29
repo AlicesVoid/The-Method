@@ -1,0 +1,453 @@
+{
+  "patterns": [
+    {
+      "name": "IMG",
+      "specifier": "",
+      "genre": "Smartphone",
+      "age": "new",
+      "constraints": [
+        { 
+            "type": "range", 
+            "value": "0000-9999" 
+        }
+      ]
+    },
+    {
+      "name": "MVI",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "",
+      "constraints": [
+        { 
+            "type": "range", 
+            "value": "0000-9999" 
+        }
+      ]
+    },
+    {
+      "name": "",
+      "specifier": "YYYYMMDD",
+      "genre": "Misc",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "WIN",
+      "specifier": "YYYYMMDD",
+      "genre": "Webcam",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "Capture",
+      "specifier": "YYYYMMDD",
+      "genre": "Webcam",
+      "age": "",
+      "constraints": []
+    },
+    {
+        "name": "VID",
+        "specifier": "YYYYMMDD",
+        "genre": "Misc",
+        "age": "",
+        "constraints": [
+            {
+                "type": "year",
+                "value": 2012
+            }
+        ]
+    },
+    {
+        "name": "My Movie",
+        "specifier": "X",
+        "genre": "Misc",
+        "age": "old",
+        "constraints": [
+            {
+                "type": "range",
+                "value": "0-9"
+            }
+        ]
+    },
+    {
+        "name": "My Edited Video",
+        "specifier": "",
+        "genre": "Video Editor",
+        "age": "new",
+        "constraints": []
+    },
+    {
+        "name": "/Storage/Emulated/",
+        "specifier": "",
+        "genre": "Video Editor",
+        "age": "new",
+        "constraints": []
+    },
+    {
+        "name": "PXL",
+        "specifier": "",
+        "genre": "Smartphone",
+        "age": "new",
+        "constraints": []
+    },
+    {
+        "name": "InShot",
+        "specifier": "YYYYMMDD",
+        "genre": "App",
+        "age": "new",
+        "constraints": []
+    },
+    {
+        "name": "WhatsApp Video Y [WhatsApp Video 2025]",
+        "specifier": "",
+        "genre": "App",
+        "age": "new",
+        "constraints": []
+    },
+    {
+        "name": "FullSizeRender",
+        "specifier": "",
+        "genre": "Smartphone",
+        "age": "",
+        "constraints": []
+    },
+    {
+        "name": "RFReplay",
+        "specifier": "",
+        "genre": "Screen Recorder",
+        "age": "",
+        "constraints": []
+    },
+    {
+        "name": "VTS 01",
+        "specifier": "",
+        "genre": "VHS",
+        "age": "",
+        "constraints": []
+    },
+    {
+        "name": "DVR",
+        "specifier": "",
+        "genre": "Game Capture",
+        "age": "",
+        "constraints": []
+    },
+    {
+        "name": "VLC Record",
+        "specifier": "",
+        "genre": "Game Capture / Misc",
+        "age": "",
+        "constraints": []
+    },
+    {
+        "name": "Minoxapp",
+        "specifier": "",
+        "genre": "Game Capture",
+        "age": "",
+        "constraints": []
+    },
+    {
+        "name": ".MP4",
+        "specifier": "",
+        "genre": "Format",
+        "age": "",
+        "constraints": []
+    },
+    {
+        "name": ".3gp",
+        "specifier": "",
+        "genre": "Format",
+        "age": "",
+        "constraints": []
+    },
+    {
+        "name": ".MOV",
+        "specifier": "",
+        "genre": "Format",
+        "age": "",
+        "constraints": []
+    },
+    {
+        "name": ".AVI",
+        "specifier": "",
+        "genre": "Format",
+        "age": "",
+        "constraints": []
+    },
+    {
+        "name": ".WMV",
+        "specifier": "",
+        "genre": "Format",
+        "age": "",
+        "constraints": []
+    },
+    {
+        "name": ".FLAC",
+        "specifier": "",
+        "genre": "Format",
+        "age": "new",
+        "constraints": []
+    },
+    {
+        "name": ".WAV",
+        "specifier": "",
+        "genre": "Format",
+        "age": "",
+        "constraints": []
+    },
+
+    {
+      "name": "YMD [20250102]",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "WIN YMD [WIN 20250102]",
+      "specifier": "",
+      "genre": "Webcam",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Capture YMD",
+      "specifier": "",
+      "genre": "Webcam",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "VID YMD",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "My Movie X",
+      "specifier": "X",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "My Movie 1",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "My Edited Video",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "iStorage/Emulated/",
+      "specifier": "",
+      "genre": "Video editor",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "PXL",
+      "specifier": "",
+      "genre": "Smartphone",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "InShot YMD",
+      "specifier": "",
+      "genre": "App",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "WhatsApp Video Y [WhatsApp Video 2025]",
+      "specifier": "",
+      "genre": "App",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "FullSizeRender",
+      "specifier": "",
+      "genre": "Smartphone",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "RFReplay",
+      "specifier": "",
+      "genre": "Screen Recorder",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "VTS 01",
+      "specifier": "",
+      "genre": "VHS",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "DVR",
+      "specifier": "",
+      "genre": "Game Capture",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "VLC Record",
+      "specifier": "",
+      "genre": "Game Capture / Misc",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "Minoxapp",
+      "specifier": "",
+      "genre": "Game Capture",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": ".MP4",
+      "specifier": "",
+      "genre": "Format",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": ".3gp",
+      "specifier": "",
+      "genre": "Format",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": ".MOV",
+      "specifier": "",
+      "genre": "Format",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": ".AVI",
+      "specifier": "",
+      "genre": "Format",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": ".WMV",
+      "specifier": "",
+      "genre": "Format",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": ".FLAC",
+      "specifier": "",
+      "genre": "Format",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": ".WAV",
+      "specifier": "",
+      "genre": "Format",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "Recording gvo",
+      "specifier": "",
+      "genre": "Zoom",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "Lv 0",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "bmdl4AA4",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "YouCut YMD",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "Video YMD",
+      "specifier": "",
+      "genre": "Camera",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "Copy of Copy of",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "Untitled video",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "YTPMY",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "Klasky Csupo",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "Com Oculus Vrshell",
+      "specifier": "",
+      "genre": "VR Headset",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "Com Oculus Metacam",
+      "specifier": "",
+      "genre": "VR Headset",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "Desktop YYYY MM DD",
+      "specifier": "",
+      "genre": "Game Capture",
+      "age": "",
+      "constraints": []
+    }
+    
+  ]
+}
