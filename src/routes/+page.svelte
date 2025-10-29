@@ -56,12 +56,6 @@
     let showAdvancedSettings: boolean = false;
 
     // ============================================================================
-    // STATE: AGE FILTER
-    // ============================================================================
-
-    let currentAgeFilter: string = 'any';
-
-    // ============================================================================
     // STATE: DATE FILTER
     // ============================================================================
 
@@ -231,9 +225,6 @@
         const target = event.target as HTMLSelectElement;
         const value = target.value;
 
-        // Track the current filter for YouTube sorting
-        currentAgeFilter = value;
-
         // Reset age filters
         settings.enableNew();
         settings.enableOld();
@@ -265,22 +256,18 @@
         // For OLD patterns: Add "before:" filter
         // For NEW patterns: Sort by upload date instead
         if (patternAge === 'old') {
-            // Determine the date to use for "before:" filter
-            let dateToUse: Date;
-
             if (showAdvancedSettings && enableDateOverride && beforeDate) {
                 // Use the custom date if advanced settings enabled
-                dateToUse = new Date(beforeDate);
+                const dateToUse = new Date(beforeDate);
+                // Format as YYYY/MM/DD for YouTube search
+                const year = dateToUse.getFullYear();
+                const month = String(dateToUse.getMonth() + 1).padStart(2, '0');
+                const day = String(dateToUse.getDate()).padStart(2, '0');
+                searchQuery += ` before:${year}/${month}/${day}`;
             } else {
-                // Default to January 1, 2016 for old videos
-                dateToUse = new Date('2016-01-01');
+                // Default to just 2016 for old videos
+                searchQuery += ` before:2016`;
             }
-
-            // Format as YYYY/MM/DD for YouTube search
-            const year = dateToUse.getFullYear();
-            const month = String(dateToUse.getMonth() + 1).padStart(2, '0');
-            const day = String(dateToUse.getDate()).padStart(2, '0');
-            searchQuery += ` before:${year}/${month}/${day}`;
         }
 
         // Encode the complete search query for URL
