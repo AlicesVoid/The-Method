@@ -415,7 +415,8 @@
         gap: 0.75rem;
         cursor: pointer;
         transition: transform 0.2s ease;
-        text-decoration: none;
+        border: none;
+        flex-shrink: 0;
     }
 
     .youtube-badge:hover {
@@ -867,10 +868,10 @@
     <header class="header-base header">
         <h4><a href="https://x.com/MingKasterMK/status/1965144635388653811/photo/1">Mapped by KVN AUST & Mika_Virus</a></h4>
         <h1>Youtube's Recycle Bin | Randomizer</h1>
-        <a href="https://www.youtube.com/KVNAUST" target="_blank" class="youtube-badge">
+        <button class="youtube-badge" on:click={() => window.open('https://www.youtube.com/KVNAUST', '_blank')}>
             <img src="{base}/kvnaust.jpg" alt="KVN AUST"/>
             <h1>YouTube.com/KVNAUST</h1>
-        </a>
+        </button>
     </header>
 
     <!-- Second Header -->
