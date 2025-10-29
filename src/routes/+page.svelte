@@ -4,6 +4,7 @@
     // ============================================================================
     import { SearchSettings } from '$lib/search-settings.js';
     import searchTermsData from '$lib/search-terms.json' with { type: "json" };
+    import { base } from '$app/paths';
 
     // ============================================================================
     // CONSTANTS & DERIVED DATA (Computed Once)
@@ -623,7 +624,7 @@
     <h4><a href="https://x.com/MingKasterMK/status/1965144635388653811/photo/1">Mapped by KVN AUST & Mika_Virus</a></h4>
     <h1>Youtube's Recycle Bin | Maps</h1>
     <div class="youtube-badge">
-        <img src="/kvnaust.jpg" alt="KVN AUST"/>
+        <img src="{base}/kvnaust.jpg" alt="KVN AUST"/>
         <h1>YouTube.com/KVNAUST</h1>
     </div>
 </header>
