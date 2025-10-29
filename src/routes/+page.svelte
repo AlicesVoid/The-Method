@@ -423,8 +423,8 @@
         background-color: #f5f5f5;
         border: 0.5rem solid black;
         border-top: 0rem;
-        /* height: fit-content; */
-        min-height: calc(100vh - 10.5rem);  /* Full height minus headers */
+        height: fit-content;
+        min-height: 0;
     }
     
     .grid-container {
@@ -627,43 +627,44 @@
         /* Scale down header */
         .header-base {
             height: auto;
-            min-height: 3rem;
+            min-height: auto;
             border-width: 0.25rem;
             padding: 0.5rem;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.25rem;
         }
 
         .header h4 {
-            font-size: 0.7rem;
+            font-size: 0.5rem;
             margin: 0;
             text-align: center;
         }
 
         .header h1 {
-            font-size: 1rem;
+            font-size: 0.7rem;
             margin: 0;
             text-align: center;
         }
 
         .youtube-badge {
-            padding: 0.25rem 0.5rem;
-            gap: 0.5rem;
+            padding: 0.2rem 0.4rem;
+            gap: 0.3rem;
         }
 
         .youtube-badge img {
-            height: 1.5rem;
-            width: 1.5rem;
+            height: 1.2rem;
+            width: 1.2rem;
         }
 
         .youtube-badge h1 {
-            font-size: 0.8rem;
+            font-size: 0.6rem;
         }
 
         .header-2 h1 {
-            font-size: 0.9rem;
-            margin: 0.5rem;
+            font-size: 0.65rem;
+            margin: 0.3rem;
             text-align: center;
+            line-height: 1.2;
         }
 
         /* Scale down content */
@@ -686,17 +687,17 @@
         /* Scale down buttons */
         .top-buttons {
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
 
         .rand-button {
             width: 100%;
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.7rem;
         }
 
         .rand-button h2 {
-            font-size: 1rem;
+            font-size: 0.8rem;
             margin: 0;
         }
 
@@ -704,43 +705,54 @@
         .filter-container {
             flex-direction: column;
             padding: 0 0.5rem;
-            gap: 0.5rem;
+            gap: 0.4rem;
+        }
+
+        /* Wrap the date filter on a new line */
+        .filter-container {
+            flex-wrap: wrap;
         }
 
         .filter-container h2 {
-            font-size: 1rem;
+            font-size: 0.75rem;
             margin: 0;
         }
 
         .filter-select {
-            padding: 0.5rem;
-            font-size: 0.9rem;
+            padding: 0.4rem;
+            font-size: 0.7rem;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        /* Make date input appear on its own line on mobile */
+        .filter-container input[type="date"] {
             width: 100%;
             max-width: 200px;
         }
 
         /* Scale down checkboxes and labels */
         .advanced-settings-checkbox {
-            gap: 0.5rem;
+            gap: 0.4rem;
         }
 
         .advanced-settings-checkbox input[type="checkbox"] {
-            width: 1.25rem;
-            height: 1.25rem;
-        }
-
-        .advanced-settings-checkbox label h4 {
-            font-size: 1rem;
-            margin: 0;
-        }
-
-        .date-checkbox input[type="checkbox"] {
             width: 1rem;
             height: 1rem;
         }
 
+        .advanced-settings-checkbox label h4 {
+            font-size: 0.75rem;
+            margin: 0;
+        }
+
+        .date-checkbox input[type="checkbox"] {
+            width: 0.9rem;
+            height: 0.9rem;
+        }
+
         .date-checkbox label h4 {
-            font-size: 0.9rem;
+            font-size: 0.7rem;
             margin: 0;
         }
 
@@ -750,8 +762,8 @@
         }
 
         .genre-dropdown-button {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.9rem;
+            padding: 0.4rem 0.6rem;
+            font-size: 0.7rem;
         }
 
         .genre-dropdown-menu {
@@ -759,46 +771,61 @@
         }
 
         .genre-checkbox-item {
-            padding: 0.5rem 0.75rem;
-            gap: 0.5rem;
+            padding: 0.4rem 0.6rem;
+            gap: 0.4rem;
         }
 
         .genre-checkbox-item input[type="checkbox"] {
-            width: 1rem;
-            height: 1rem;
+            width: 0.85rem;
+            height: 0.85rem;
         }
 
         .genre-checkbox-item span {
-            font-size: 0.9rem;
+            font-size: 0.7rem;
         }
     }
 
     /* Extra small mobile devices */
     @media (max-width: 480px) {
         .header h4 {
-            font-size: 0.6rem;
+            font-size: 0.45rem;
         }
 
         .header h1 {
-            font-size: 0.85rem;
+            font-size: 0.6rem;
+        }
+
+        .youtube-badge {
+            padding: 0.15rem 0.3rem;
+        }
+
+        .youtube-badge img {
+            height: 1rem;
+            width: 1rem;
         }
 
         .youtube-badge h1 {
-            font-size: 0.7rem;
+            font-size: 0.5rem;
         }
 
         .header-2 h1 {
-            font-size: 0.8rem;
+            font-size: 0.55rem;
+            line-height: 1.2;
         }
 
         .filter-container h2,
         .rand-button h2 {
-            font-size: 0.9rem;
+            font-size: 0.7rem;
         }
 
         .advanced-settings-checkbox label h4,
         .date-checkbox label h4 {
-            font-size: 0.85rem;
+            font-size: 0.65rem;
+        }
+
+        .genre-dropdown-button,
+        .genre-checkbox-item span {
+            font-size: 0.65rem;
         }
     }
 
