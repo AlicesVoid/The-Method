@@ -355,19 +355,28 @@
         font-style: normal;
     }
 
+    :global(html) {
+        height: 100%;
+        overflow: hidden;
+    }
+
     :global(body) {
         background-color: white;
         margin: 0;
         padding: 0;
         font-family: 'Arial', sans-serif;
+        height: 100%;
+        overflow: hidden;
     }
     
     .header-base {
         height: 5rem;
         border: 0.5rem solid black;
+        border-bottom: 0;
         align-items: center;
         display: flex;
         padding: 0 1rem;
+        flex-shrink: 0;
     }
     
     .header {
@@ -390,7 +399,6 @@
     
     .header-2 {
         background-color: lightblue;
-        border-top: 0rem;
         justify-content: center;
     }
 
@@ -422,9 +430,16 @@
     .content-body {
         background-color: #f5f5f5;
         border: 0.5rem solid black;
-        border-top: 0rem;
-        height: fit-content;
-        min-height: 0;
+        flex: 1;
+        overflow-y: auto;
+        box-sizing: border-box;
+    }
+
+    .page-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        box-sizing: border-box;
     }
     
     .grid-container {
@@ -831,19 +846,20 @@
 
 </style>
 
-<header class="header-base header">
-    <h4><a href="https://x.com/MingKasterMK/status/1965144635388653811/photo/1">Mapped by KVN AUST & Mika_Virus</a></h4>
-    <h1>Youtube's Recycle Bin | Maps</h1>
-    <div class="youtube-badge">
-        <img src="{base}/kvnaust.jpg" alt="KVN AUST"/>
-        <h1>YouTube.com/KVNAUST</h1>
-    </div>
-</header>
-<header class="header-base header-2">
-    <h1>Find New, Old, and Forgotten Youtube Videos with ~0 Views</h1>
-</header>
+<div class="page-container">
+    <header class="header-base header">
+        <h4><a href="https://x.com/MingKasterMK/status/1965144635388653811/photo/1">Mapped by KVN AUST & Mika_Virus</a></h4>
+        <h1>Youtube's Recycle Bin | Maps</h1>
+        <div class="youtube-badge">
+            <img src="{base}/kvnaust.jpg" alt="KVN AUST"/>
+            <h1>YouTube.com/KVNAUST</h1>
+        </div>
+    </header>
+    <header class="header-base header-2">
+        <h1>Find New, Old, and Forgotten Youtube Videos with ~0 Views</h1>
+    </header>
 
-<main class="content-body">
+    <main class="content-body">
     <div class="grid-container">
         <div class="grid-item">
             <div class="top-buttons">
@@ -983,5 +999,6 @@
                 {/if}
             </div>
     </div>
-</main>
+    </main>
+</div>
 

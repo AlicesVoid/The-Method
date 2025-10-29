@@ -1,1 +1,0 @@
-import{p,q as c,r as f,v as _,w as d,x as l,E as u,B as h,y as m,z as v}from"./CMFEGxSB.js";function y(r,n,...t){var a=new h(r);p(()=>{const e=n()??null;a.ensure(e,e&&(s=>e(s,...t)))},u)}function w(r){return(n,...t)=>{var a=r(...t),e;if(c)e=m,f();else{var s=a.render().trim(),o=_(s);e=v(o),n.before(e)}const i=a.setup?.(e);d(e,e),typeof i=="function"&&l(i)}}export{w as c,y as s};
