@@ -98,8 +98,8 @@
         "constraints": []
     },
     {
-        "name": "WhatsApp Video Y [WhatsApp Video 2025]",
-        "specifier": "",
+        "name": "WhatsApp Video",
+        "specifier": "YYYY",
         "genre": "App",
         "age": "new",
         "constraints": []
@@ -108,77 +108,77 @@
         "name": "FullSizeRender",
         "specifier": "",
         "genre": "Smartphone",
-        "age": "",
+        "age": "new",
         "constraints": []
     },
     {
         "name": "RFReplay",
         "specifier": "",
         "genre": "Screen Recorder",
-        "age": "",
+        "age": "new",
         "constraints": []
     },
     {
         "name": "VTS 01",
         "specifier": "",
         "genre": "VHS",
-        "age": "",
+        "age": "new",
         "constraints": []
     },
     {
         "name": "DVR",
         "specifier": "",
         "genre": "Game Capture",
-        "age": "",
+        "age": "new",
         "constraints": []
     },
     {
         "name": "VLC Record",
         "specifier": "",
-        "genre": "Game Capture / Misc",
-        "age": "",
+        "genre": "Misc",
+        "age": "new",
         "constraints": []
     },
     {
-        "name": "Minoxapp",
+        "name": "Robloxapp",
         "specifier": "",
         "genre": "Game Capture",
-        "age": "",
+        "age": "new",
         "constraints": []
     },
     {
         "name": ".MP4",
         "specifier": "",
         "genre": "Format",
-        "age": "",
+        "age": "new",
         "constraints": []
     },
     {
         "name": ".3gp",
         "specifier": "",
         "genre": "Format",
-        "age": "",
+        "age": "new",
         "constraints": []
     },
     {
         "name": ".MOV",
         "specifier": "",
         "genre": "Format",
-        "age": "",
+        "age": "new",
         "constraints": []
     },
     {
         "name": ".AVI",
         "specifier": "",
         "genre": "Format",
-        "age": "",
+        "age": "new",
         "constraints": []
     },
     {
         "name": ".WMV",
         "specifier": "",
         "genre": "Format",
-        "age": "",
+        "age": "new",
         "constraints": []
     },
     {
@@ -192,183 +192,14 @@
         "name": ".WAV",
         "specifier": "",
         "genre": "Format",
-        "age": "",
+        "age": "new",
         "constraints": []
-    },
-
-    {
-      "name": "YMD [20250102]",
-      "specifier": "",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "WIN YMD [WIN 20250102]",
-      "specifier": "",
-      "genre": "Webcam",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "Capture YMD",
-      "specifier": "",
-      "genre": "Webcam",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": "VID YMD",
-      "specifier": "",
-      "genre": "Misc",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": "My Movie X",
-      "specifier": "X",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "My Movie 1",
-      "specifier": "",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "My Edited Video",
-      "specifier": "",
-      "genre": "Video Editor",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": "iStorage/Emulated/",
-      "specifier": "",
-      "genre": "Video editor",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": "PXL",
-      "specifier": "",
-      "genre": "Smartphone",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": "InShot YMD",
-      "specifier": "",
-      "genre": "App",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": "WhatsApp Video Y [WhatsApp Video 2025]",
-      "specifier": "",
-      "genre": "App",
-      "age": "new",
-      "constraints": []
-    },
-    {
-      "name": "FullSizeRender",
-      "specifier": "",
-      "genre": "Smartphone",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": "RFReplay",
-      "specifier": "",
-      "genre": "Screen Recorder",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": "VTS 01",
-      "specifier": "",
-      "genre": "VHS",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": "DVR",
-      "specifier": "",
-      "genre": "Game Capture",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": "VLC Record",
-      "specifier": "",
-      "genre": "Game Capture / Misc",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": "Minoxapp",
-      "specifier": "",
-      "genre": "Game Capture",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": ".MP4",
-      "specifier": "",
-      "genre": "Format",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": ".3gp",
-      "specifier": "",
-      "genre": "Format",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": ".MOV",
-      "specifier": "",
-      "genre": "Format",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": ".AVI",
-      "specifier": "",
-      "genre": "Format",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": ".WMV",
-      "specifier": "",
-      "genre": "Format",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": ".FLAC",
-      "specifier": "",
-      "genre": "Format",
-      "age": "new",
-      "constraints": []
-    },
-    {
-      "name": ".WAV",
-      "specifier": "",
-      "genre": "Format",
-      "age": "",
-      "constraints": []
     },
     {
       "name": "Recording gvo",
       "specifier": "",
       "genre": "Zoom",
-      "age": "",
+      "age": "new",
       "constraints": []
     },
     {
@@ -379,22 +210,22 @@
       "constraints": []
     },
     {
-      "name": "bmdl4AA4",
+      "name": "bmdjAAAF",
       "specifier": "",
+      "genre": "Misc",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "YouCut",
+      "specifier": "YYYYMMDD",
       "genre": "Misc",
       "age": "",
       "constraints": []
     },
     {
-      "name": "YouCut YMD",
-      "specifier": "",
-      "genre": "Misc",
-      "age": "",
-      "constraints": []
-    },
-    {
-      "name": "Video YMD",
-      "specifier": "",
+      "name": "Video",
+      "specifier": "YYYYMMDD",
       "genre": "Camera",
       "age": "",
       "constraints": []
@@ -403,47 +234,47 @@
       "name": "Copy of Copy of",
       "specifier": "",
       "genre": "Misc",
-      "age": "",
+      "age": "new",
       "constraints": []
     },
     {
       "name": "Untitled video",
       "specifier": "",
       "genre": "Misc",
-      "age": "",
+      "age": "new",
       "constraints": []
     },
     {
       "name": "YTPMY",
       "specifier": "",
       "genre": "Video Editor",
-      "age": "",
+      "age": "new",
       "constraints": []
     },
     {
       "name": "Klasky Csupo",
       "specifier": "",
       "genre": "Video Editor",
-      "age": "",
+      "age": "new",
       "constraints": []
     },
     {
       "name": "Com Oculus Vrshell",
       "specifier": "",
       "genre": "VR Headset",
-      "age": "",
+      "age": "new",
       "constraints": []
     },
     {
       "name": "Com Oculus Metacam",
       "specifier": "",
       "genre": "VR Headset",
-      "age": "",
+      "age": "new",
       "constraints": []
     },
     {
-      "name": "Desktop YYYY MM DD",
-      "specifier": "",
+      "name": "Desktop",
+      "specifier": "YYYY MM DD",
       "genre": "Game Capture",
       "age": "",
       "constraints": []
