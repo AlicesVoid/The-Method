@@ -39,6 +39,7 @@ interface GenerateOptions {
   filters?: FilterOptions;
   overrideName?: string;
   overrideSpecifierValue?: string;
+  overrideDate?: Date;
 }
 
 // ============================================================================
@@ -127,14 +128,15 @@ function parseRangeConstraint(value: string): { min: number; max: number } | nul
 function generateSpecifierValue(
   specifier: string,
   pattern: SearchPattern,
-  overrideValue?: string
+  overrideValue?: string,
+  overrideDate?: Date
 ): string {
   if (overrideValue) return overrideValue;
   if (!specifier) return '';
 
   let result = specifier;
 
-  // Get current date info
+  // Get date values - either from override or based on pattern age
   const now = new Date();
   const currentYear = now.getFullYear();
   const currentMonth = now.getMonth() + 1;
@@ -148,7 +150,11 @@ function generateSpecifierValue(
   if (specifier.includes('YYYY MM DD')) {
     let year: number, month: string, day: string;
 
-    if (isNew) {
+    if (overrideDate) {
+      year = overrideDate.getFullYear();
+      month = String(overrideDate.getMonth() + 1).padStart(2, '0');
+      day = String(overrideDate.getDate()).padStart(2, '0');
+    } else if (isNew) {
       year = currentYear;
       month = String(currentMonth).padStart(2, '0');
       day = String(currentDay).padStart(2, '0');
@@ -169,7 +175,11 @@ function generateSpecifierValue(
   else if (specifier.includes('YYYYMMDD')) {
     let year: number, month: string, day: string;
 
-    if (isNew) {
+    if (overrideDate) {
+      year = overrideDate.getFullYear();
+      month = String(overrideDate.getMonth() + 1).padStart(2, '0');
+      day = String(overrideDate.getDate()).padStart(2, '0');
+    } else if (isNew) {
       year = currentYear;
       month = String(currentMonth).padStart(2, '0');
       day = String(currentDay).padStart(2, '0');
@@ -190,7 +200,10 @@ function generateSpecifierValue(
   else if (specifier.includes('YYYY MM')) {
     let year: number, month: string;
 
-    if (isNew) {
+    if (overrideDate) {
+      year = overrideDate.getFullYear();
+      month = String(overrideDate.getMonth() + 1).padStart(2, '0');
+    } else if (isNew) {
       year = currentYear;
       month = String(currentMonth).padStart(2, '0');
     } else if (isOld) {
@@ -208,7 +221,9 @@ function generateSpecifierValue(
   else if (specifier.includes('YYYY')) {
     let year: number;
 
-    if (isNew) {
+    if (overrideDate) {
+      year = overrideDate.getFullYear();
+    } else if (isNew) {
       year = currentYear;
     } else if (isOld) {
       year = getRandomInt(2010, 2015);
@@ -225,7 +240,11 @@ function generateSpecifierValue(
                     'July', 'August', 'September', 'October', 'November', 'December'];
     let year: number, month: string, day: number;
 
-    if (isNew) {
+    if (overrideDate) {
+      year = overrideDate.getFullYear();
+      month = months[overrideDate.getMonth()];
+      day = overrideDate.getDate();
+    } else if (isNew) {
       year = currentYear;
       month = months[currentMonth - 1];
       day = currentDay;
@@ -244,26 +263,34 @@ function generateSpecifierValue(
 
   // HHMMSS (time format)
   else if (specifier.includes('HHMMSS')) {
-    // Check for time-range constraint
-    const timeConstraint = pattern.constraints.find(c => c.type === 'range' || c.type === 'time-range');
     let hour: number, minute: number, second: number;
 
-    if (timeConstraint) {
-      const range = parseRangeConstraint(String(timeConstraint.value));
-      if (range) {
-        const randomTime = getRandomInt(range.min, range.max);
-        hour = Math.floor(randomTime / 10000);
-        minute = Math.floor((randomTime % 10000) / 100);
-        second = randomTime % 100;
+    if (overrideDate) {
+      // Use override date's time
+      hour = overrideDate.getHours();
+      minute = overrideDate.getMinutes();
+      second = overrideDate.getSeconds();
+    } else {
+      // Check for time-range constraint
+      const timeConstraint = pattern.constraints.find((c: Constraint) => c.type === 'range' || c.type === 'time-range');
+
+      if (timeConstraint) {
+        const range = parseRangeConstraint(String(timeConstraint.value));
+        if (range) {
+          const randomTime = getRandomInt(range.min, range.max);
+          hour = Math.floor(randomTime / 10000);
+          minute = Math.floor((randomTime % 10000) / 100);
+          second = randomTime % 100;
+        } else {
+          hour = getRandomInt(0, 23);
+          minute = getRandomInt(0, 59);
+          second = getRandomInt(0, 59);
+        }
       } else {
         hour = getRandomInt(0, 23);
         minute = getRandomInt(0, 59);
         second = getRandomInt(0, 59);
       }
-    } else {
-      hour = getRandomInt(0, 23);
-      minute = getRandomInt(0, 59);
-      second = getRandomInt(0, 59);
     }
 
     const hourStr = String(hour).padStart(2, '0');
@@ -341,7 +368,8 @@ export function generateRandomSearchTerm(options?: GenerateOptions): string {
   const specifierValue = generateSpecifierValue(
     pattern.specifier,
     pattern,
-    options?.overrideSpecifierValue
+    options?.overrideSpecifierValue,
+    options?.overrideDate
   );
 
   // Combine name and specifier to create final search term

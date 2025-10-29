@@ -224,8 +224,9 @@ export class SearchSettings {
    * Generate a random search term based on current settings
    * Returns the search term or null if no patterns match the filters
    * Automatically prints the search term to console
+   * @param overrideDate - Optional date to override all date generation
    */
-  generateSearchTerm(): string | null {
+  generateSearchTerm(overrideDate?: Date): string | null {
     // Build filter options based on current settings
     const filters: FilterOptions = {};
 
@@ -250,7 +251,10 @@ export class SearchSettings {
       const maxAttempts = 50;
 
       while (attempts < maxAttempts) {
-        const searchTerm = generateRandomSearchTerm({ filters });
+        const searchTerm = generateRandomSearchTerm({
+          filters,
+          overrideDate
+        });
 
         // Check if this pattern is excluded
         let isExcluded = false;

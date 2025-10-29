@@ -1,16 +1,70 @@
 <script lang="ts">
+    // ============================================================================
+    // IMPORTS
+    // ============================================================================
     import { SearchSettings } from '$lib/search-settings.js';
+    import searchTermsData from '$lib/search-terms.json' with { type: "json" };
 
-    // Create settings instance
+    // ============================================================================
+    // CONSTANTS & DERIVED DATA (Computed Once)
+    // ============================================================================
+
+    // Settings instance
     const settings = new SearchSettings();
 
-    // Track current age filter
-    let currentAgeFilter: string = 'any';
+    // Extract all unique genres from search-terms.json
+    const allGenres = (() => {
+        const data = searchTermsData as any;
+        const allPatterns = [...data['new-patterns'], ...data['old-patterns']];
+        const genres = new Set<string>();
 
-    // Track advanced settings visibility
+        for (const pattern of allPatterns) {
+            genres.add(pattern.genre);
+        }
+
+        // Sort alphabetically, but put NSFW at the top
+        return Array.from(genres).sort((a, b) => {
+            if (a === 'NSFW') return -1; // NSFW always first
+            if (b === 'NSFW') return 1;
+            return a.localeCompare(b); // Others alphabetically
+        });
+    })();
+
+    // Extract all unique names from search-terms.json
+    const allNames = (() => {
+        const data = searchTermsData as any;
+        const allPatterns = [...data['new-patterns'], ...data['old-patterns']];
+        const names = new Set<string>();
+
+        for (const pattern of allPatterns) {
+            names.add(pattern.name);
+        }
+
+        // Sort with empty string first, then alphabetically
+        return Array.from(names).sort((a, b) => {
+            if (a === '') return -1;
+            if (b === '') return 1;
+            return a.localeCompare(b);
+        });
+    })();
+
+    // ============================================================================
+    // STATE: ADVANCED SETTINGS
+    // ============================================================================
+
     let showAdvancedSettings: boolean = false;
 
-    // Track "before date" filter - default to today's date
+    // ============================================================================
+    // STATE: AGE FILTER
+    // ============================================================================
+
+    let currentAgeFilter: string = 'any';
+
+    // ============================================================================
+    // STATE: DATE FILTER
+    // ============================================================================
+
+    // Default to today's date
     let beforeDate: string = (() => {
         const today = new Date();
         const year = today.getFullYear();
@@ -19,41 +73,84 @@
         return `${year}-${month}-${day}`;
     })();
 
-    // All unique genres from both new-patterns and old-patterns
-    const allGenres = [
-        'App',
-        'Body Cam',
-        'Camera',
-        'Dashcam',
-        'Drone',
-        'Drone / Dashcam',
-        'Filter: Playlist',
-        'Format',
-        'Game Capture',
-        'Game Capture / Misc',
-        'GoPro',
-        'iPhone',
-        'Misc',
-        'MOLOES',
-        'Nintendo DS',
-        'NSFW',
-        'Screen Recorder',
-        'Smartphone',
-        'VHS',
-        'Video Editor',
-        'VR Headset',
-        'Webcam',
-        'Zoom'
-    ].sort();
+    let enableDateOverride: boolean = false;
 
-    // Track selected genres (all selected by default)
-    let selectedGenres: Set<string> = new Set(allGenres);
+    // ============================================================================
+    // STATE: GENRE SELECTION
+    // ============================================================================
 
-    // Track if "Select All" is checked
-    let selectAllGenres: boolean = true;
-
-    // Track if genre dropdown is open
+    // All genres selected by default EXCEPT NSFW
+    let selectedGenres: Set<string> = new Set(allGenres.filter(genre => genre !== 'NSFW'));
+    let selectAllGenres: boolean = false;
     let genreDropdownOpen: boolean = false;
+
+    // ============================================================================
+    // STATE: NAME/SEARCH TERM SELECTION
+    // ============================================================================
+
+    // All names selected by default
+    let selectedNames: Set<string> = new Set(allNames);
+    let selectAllNames: boolean = true;
+    let nameDropdownOpen: boolean = false;
+
+    // ============================================================================
+    // REACTIVE: NAME FILTERING
+    // ============================================================================
+
+    /**
+     * Get names that match the selected genres
+     * Reactive - updates when selectedGenres or showAdvancedSettings changes
+     */
+    $: availableNames = (() => {
+        // If all genres are selected or advanced settings is off, show all names
+        if (!showAdvancedSettings || selectedGenres.size === 0 || selectedGenres.size === allGenres.length) {
+            return allNames;
+        }
+
+        const data = searchTermsData as any;
+        const allPatterns = [...data['new-patterns'], ...data['old-patterns']];
+        const matchingNames = new Set<string>();
+
+        // Find all names that have at least one pattern with a selected genre
+        for (const pattern of allPatterns) {
+            if (selectedGenres.has(pattern.genre)) {
+                matchingNames.add(pattern.name);
+            }
+        }
+
+        // Return filtered list, sorted with empty string first
+        return Array.from(matchingNames).sort((a, b) => {
+            if (a === '') return -1;
+            if (b === '') return 1;
+            return a.localeCompare(b);
+        });
+    })();
+
+    /**
+     * Sync selectedNames when availableNames changes
+     * Remove any selected names that are no longer available
+     */
+    $: {
+        const availableSet = new Set(availableNames);
+        const newSelectedNames = new Set<string>();
+
+        for (const name of selectedNames) {
+            if (availableSet.has(name)) {
+                newSelectedNames.add(name);
+            }
+        }
+
+        // Only update if something changed to avoid infinite loop
+        if (newSelectedNames.size !== selectedNames.size) {
+            selectedNames = newSelectedNames;
+            // Update selectAllNames checkbox state
+            selectAllNames = selectedNames.size === availableNames.length && availableNames.length > 0;
+        }
+    }
+
+    // ============================================================================
+    // FUNCTIONS: GENRE SELECTION
+    // ============================================================================
 
     /**
      * Toggle individual genre selection
@@ -85,50 +182,43 @@
         }
     }
 
-    /**
-     * Open YouTube search in new tab with the given search term
-     */
-    function openYouTubeSearch(searchTerm: string) {
-        // Build the search query with optional "before:" date filter
-        let searchQuery = searchTerm;
-
-        // Add "before:" filter if advanced settings is enabled and date is selected
-        if (showAdvancedSettings && beforeDate) {
-            const date = new Date(beforeDate);
-            // Format as YYYY/MM/DD for YouTube search
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            searchQuery += ` before:${year}/${month}/${day}`;
-        }
-
-        // Encode the complete search query for URL
-        const encodedQuery = encodeURIComponent(searchQuery);
-
-        // YouTube search URL - add sort by upload date if "new" is selected
-        let youtubeSearchURL = `https://www.youtube.com/results?search_query=${encodedQuery}`;
-
-        if (currentAgeFilter === 'new') {
-            // Add sort by upload date parameter
-            youtubeSearchURL += '&sp=CAI%253D';
-        }
-
-        // Open in new tab
-        window.open(youtubeSearchURL, '_blank');
-    }
+    // ============================================================================
+    // FUNCTIONS: NAME SELECTION
+    // ============================================================================
 
     /**
-     * Handle button click - generate search term and open YouTube
+     * Toggle individual name selection
      */
-    function handleFindVideos() {
-        const searchTerm = settings.generateSearchTerm();
-
-        if (searchTerm) {
-            openYouTubeSearch(searchTerm);
+    function toggleName(name: string) {
+        if (selectedNames.has(name)) {
+            selectedNames.delete(name);
+            selectedNames = selectedNames; // Trigger reactivity
+            selectAllNames = false;
         } else {
-            console.error('Failed to generate search term');
+            selectedNames.add(name);
+            selectedNames = selectedNames; // Trigger reactivity
+            // Check if all available names are selected
+            if (selectedNames.size === availableNames.length) {
+                selectAllNames = true;
+            }
         }
     }
+
+    /**
+     * Toggle "Select All" for names
+     */
+    function toggleSelectAllNames() {
+        selectAllNames = !selectAllNames;
+        if (selectAllNames) {
+            selectedNames = new Set(availableNames);
+        } else {
+            selectedNames = new Set();
+        }
+    }
+
+    // ============================================================================
+    // FUNCTIONS: AGE FILTER
+    // ============================================================================
 
     /**
      * Handle age filter change
@@ -149,6 +239,96 @@
             settings.disableNew();
         } else if (value === 'new') {
             settings.disableOld();
+        }
+    }
+
+    // ============================================================================
+    // FUNCTIONS: YOUTUBE SEARCH
+    // ============================================================================
+
+    /**
+     * Open YouTube search in new tab with the given search term
+     */
+    function openYouTubeSearch(searchTerm: string) {
+        // Build the search query with optional "before:" date filter
+        let searchQuery = searchTerm;
+
+        // Add "before:" filter if advanced settings is enabled, date override is enabled, and date is selected
+        if (showAdvancedSettings && enableDateOverride && beforeDate) {
+            const date = new Date(beforeDate);
+            // Format as YYYY/MM/DD for YouTube search
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            searchQuery += ` before:${year}/${month}/${day}`;
+        }
+
+        // Encode the complete search query for URL
+        const encodedQuery = encodeURIComponent(searchQuery);
+
+        // YouTube search URL - always sort by upload date
+        let youtubeSearchURL = `https://www.youtube.com/results?search_query=${encodedQuery}`;
+
+        // Always add sort by upload date parameter
+        youtubeSearchURL += '&sp=CAI%253D';
+
+        // Open in new tab
+        window.open(youtubeSearchURL, '_blank');
+    }
+
+    /**
+     * Handle button click - generate search term and open YouTube
+     */
+    function handleFindVideos() {
+        // Clear all exclusions first
+        settings.clearExclusions();
+
+        // Apply genre filters from advanced settings if enabled
+        if (showAdvancedSettings && selectedGenres.size > 0 && selectedGenres.size < allGenres.length) {
+            // Clear all genres first
+            settings.enableAllGenres();
+
+            // Disable all genres, then enable only selected ones
+            for (const genre of allGenres) {
+                if (!selectedGenres.has(genre)) {
+                    settings.disableGenre(genre);
+                }
+            }
+
+            // Enable selected genres
+            for (const genre of selectedGenres) {
+                settings.enableGenre(genre);
+            }
+        } else {
+            // If all selected or advanced settings off, enable all genres
+            settings.enableAllGenres();
+        }
+
+        // Apply name filters from advanced settings if enabled
+        // Only skip if ALL names are selected OR advanced settings is off
+        if (showAdvancedSettings && selectedNames.size < availableNames.length) {
+            // If no names selected, exclude everything (will fail gracefully)
+            // Otherwise, exclude only the AVAILABLE names that are NOT selected
+            // This prevents excluding names from other genres
+            for (const name of availableNames) {
+                if (!selectedNames.has(name)) {
+                    settings.excludePattern(name);
+                }
+            }
+        }
+
+        // Prepare override date if enabled
+        let overrideDate: Date | undefined = undefined;
+        if (showAdvancedSettings && enableDateOverride && beforeDate) {
+            overrideDate = new Date(beforeDate);
+        }
+
+        const searchTerm = settings.generateSearchTerm(overrideDate);
+
+        if (searchTerm) {
+            openYouTubeSearch(searchTerm);
+        } else {
+            console.error('Failed to generate search term');
         }
     }
 </script>
@@ -190,6 +370,18 @@
         justify-content: space-between;
 
     }
+
+    .header a {
+    color: inherit;
+    text-decoration: none;
+    font-size: inherit;
+    font-weight: inherit;
+    font-family: inherit;
+    }
+
+    .header a:hover {
+    text-decoration: none;
+    }
     
     .header-2 {
         background-color: lightblue;
@@ -223,11 +415,11 @@
     }
     
     .content-body {
-        background-color: white;
+        background-color: #f5f5f5;
         border: 0.5rem solid black;
         border-top: 0rem;
-        height: fit-content;
-        /* min-height: calc(100vh - 10.5rem); /* Full height minus headers */
+        /* height: fit-content; */
+        min-height: calc(100vh - 10.5rem);  /* Full height minus headers */
     }
     
     .grid-container {
@@ -255,7 +447,7 @@
     .rand-button {
         padding: 0.75rem 2rem;
         font-size: 1rem;
-        background-color: lightsalmon;
+        background-color: lightgoldenrodyellow;
         color: black;
         border: 2px solid black;
         border-radius: 0.5rem;
@@ -286,7 +478,7 @@
     .filter-select {
         padding: 0.5rem 1rem;
         font-size: 1rem;
-        background-color: white;
+        background-color: #f5f5f5;
         color: black;
         border: 2px solid black;
         border-radius: 0.5rem;
@@ -313,6 +505,37 @@
         cursor: pointer;
     }
 
+    .date-picker-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    .date-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .date-checkbox input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        cursor: pointer;
+    }
+
+    .date-checkbox label {
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .filter-select:disabled {
+        background-color: #e0e0e0;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
     .genre-selector {
         position: relative;
         width: 100%;
@@ -324,7 +547,7 @@
         width: 100%;
         padding: 0.75rem 1rem;
         font-size: 1rem;
-        background-color: lightsalmon;
+        background-color: lightseagreen;
         color: black;
         border: 2px solid black;
         border-radius: 0.5rem;
@@ -397,7 +620,7 @@
 </style>
 
 <header class="header-base header">
-    <h4>Mapped by KVN AUST & Mika_Virus</h4>
+    <h4><a href="https://x.com/MingKasterMK/status/1965144635388653811/photo/1">Mapped by KVN AUST & Mika_Virus</a></h4>
     <h1>Youtube's Recycle Bin | Maps</h1>
     <div class="youtube-badge">
         <img src="/kvnaust.jpg" alt="KVN AUST"/>
@@ -420,7 +643,7 @@
     </div>
     <div class="grid-container">
         <div class="grid-item">
-            <div class="filter-container">
+            <div class="filter-container" style="align-items: center;">
                 <span><h2>Show me</h2></span>
                 <select class="filter-select" on:change={handleAgeChange}>
                     <option value="any" selected>Any</option>
@@ -428,10 +651,18 @@
                     <option value="new">New</option>
                 </select>
                 <span><h2>Videos</h2></span>
+                {#if enableDateOverride}
+                    <span><h2>Before:</h2></span>
+                    <input
+                        type="date"
+                        class="filter-select"
+                        bind:value={beforeDate}
+                    />
+                {/if}
             </div>
         </div>
     </div>
-    <div class="grid-container">
+    <div class="grid-container" style="align-items: center;">
         <div class="grid-item">
             <div class="advanced-settings-checkbox">
                 <input
@@ -442,16 +673,18 @@
                 <label for="advanced-settings"><h4>Advanced Settings</h4></label>
             </div>
         </div>
-        
+
             <div class="grid-item">
                 {#if showAdvancedSettings}
-                <div class="filter-container">
-                    <span><h4>Before:</h4></span>
-                    <input
-                        type="date"
-                        class="filter-select"
-                        bind:value={beforeDate}
-                    />
+                <div class="date-picker-container">
+                    <div class="date-checkbox">
+                        <input
+                            type="checkbox"
+                            id="enable-date-override"
+                            bind:checked={enableDateOverride}
+                        />
+                        <label for="enable-date-override"><h4>Use custom date</h4></label>
+                    </div>
                 </div>
                 {/if}
             </div>
@@ -462,7 +695,7 @@
                         class="genre-dropdown-button"
                         on:click={() => genreDropdownOpen = !genreDropdownOpen}
                     >
-                        Select Genres ({selectedGenres.size}/{allGenres.length})
+                        Genres: ({selectedGenres.size}/{allGenres.length})
                         <span class="dropdown-arrow">{genreDropdownOpen ? '▲' : '▼'}</span>
                     </button>
 
@@ -489,6 +722,47 @@
                                         on:change={() => toggleGenre(genre)}
                                     />
                                     <span>{genre}</span>
+                                </label>
+                            {/each}
+                        </div>
+                    {/if}
+                </div>
+                {/if}
+            </div>
+            <div class="grid-item">
+                {#if showAdvancedSettings}
+                <div class="genre-selector">
+                    <button
+                        class="genre-dropdown-button"
+                        on:click={() => nameDropdownOpen = !nameDropdownOpen}
+                    >
+                        Search Terms: ({selectedNames.size}/{availableNames.length})
+                        <span class="dropdown-arrow">{nameDropdownOpen ? '▲' : '▼'}</span>
+                    </button>
+
+                    {#if nameDropdownOpen}
+                        <div class="genre-dropdown-menu">
+                            <!-- Select All checkbox -->
+                            <label class="genre-checkbox-item select-all">
+                                <input
+                                    type="checkbox"
+                                    checked={selectAllNames}
+                                    on:change={toggleSelectAllNames}
+                                />
+                                <span>Select All</span>
+                            </label>
+
+                            <div class="genre-divider"></div>
+
+                            <!-- Individual name checkboxes -->
+                            {#each availableNames as name}
+                                <label class="genre-checkbox-item">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedNames.has(name)}
+                                        on:change={() => toggleName(name)}
+                                    />
+                                    <span>{name === '' ? '(empty string)' : name}</span>
                                 </label>
                             {/each}
                         </div>
