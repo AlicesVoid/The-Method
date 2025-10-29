@@ -1,3 +1,70 @@
+<script lang="ts">
+    import { SearchSettings } from '$lib/search-settings.js';
+
+    // Create settings instance
+    const settings = new SearchSettings();
+
+    // Track current age filter
+    let currentAgeFilter: string = 'any';
+
+    // Track advanced settings visibility
+    let showAdvancedSettings: boolean = false;
+
+    /**
+     * Open YouTube search in new tab with the given search term
+     */
+    function openYouTubeSearch(searchTerm: string) {
+        // Encode the search term for URL
+        const encodedTerm = encodeURIComponent(searchTerm);
+
+        // YouTube search URL - add sort by upload date if "new" is selected
+        let youtubeSearchURL = `https://www.youtube.com/results?search_query=${encodedTerm}`;
+
+        if (currentAgeFilter === 'new') {
+            // Add sort by upload date parameter
+            youtubeSearchURL += '&sp=CAI%253D';
+        }
+
+        // Open in new tab
+        window.open(youtubeSearchURL, '_blank');
+    }
+
+    /**
+     * Handle button click - generate search term and open YouTube
+     */
+    function handleFindVideos() {
+        const searchTerm = settings.generateSearchTerm();
+
+        if (searchTerm) {
+            openYouTubeSearch(searchTerm);
+        } else {
+            console.error('Failed to generate search term');
+        }
+    }
+
+    /**
+     * Handle age filter change
+     */
+    function handleAgeChange(event: Event) {
+        const target = event.target as HTMLSelectElement;
+        const value = target.value;
+
+        // Track the current filter for YouTube sorting
+        currentAgeFilter = value;
+
+        // Reset age filters
+        settings.enableNew();
+        settings.enableOld();
+
+        // Apply selected filter
+        if (value === 'old') {
+            settings.disableNew();
+        } else if (value === 'new') {
+            settings.disableOld();
+        }
+    }
+</script>
+
 <style>
     @font-face {
         font-family: 'Arial';
@@ -139,6 +206,25 @@
         font-weight: bold;
     }
 
+    .advanced-settings-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        justify-content: center;
+    }
+
+    .advanced-settings-checkbox input[type="checkbox"] {
+        width: 1.5rem;
+        height: 1.5rem;
+        cursor: pointer;
+    }
+
+    .advanced-settings-checkbox label {
+        font-size: 1.25rem;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
 </style>
 
 <header class="header-base header">
@@ -157,20 +243,32 @@
     <div class="grid-container">
         <div class="grid-item">
             <div class="top-buttons">
-                <button class="rand-button"><h2>Find Random Videos!</h2></button>
+                <button class="rand-button" on:click={handleFindVideos}><h2>Find Random Videos!</h2></button>
             </div>
-            
+
         </div>
-        
+
     </div>
     <div class="grid-container">
         <div class="grid-item">
             <div class="filter-container">
-                <span><h2>Show me videos that are</h2></span>
-                <select class="filter-select">
+                <span><h2>Show me</h2></span>
+                <select class="filter-select" on:change={handleAgeChange}>
+                    <option value="any" selected>Any</option>
                     <option value="old">Old</option>
                     <option value="new">New</option>
                 </select>
+                <span><h2>Videos</h2></span>
+            </div>
+        </div>
+        <div class="grid-item">
+            <div class="advanced-settings-checkbox">
+                <input
+                    type="checkbox"
+                    id="advanced-settings"
+                    bind:checked={showAdvancedSettings}
+                />
+                <label for="advanced-settings">Advanced Settings</label>
             </div>
         </div>
     </div>

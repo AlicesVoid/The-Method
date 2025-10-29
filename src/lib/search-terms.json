@@ -1,5 +1,5 @@
 {
-  "patterns": [
+  "new-patterns": [
     {
       "name": "IMG",
       "specifier": "",
@@ -13,10 +13,10 @@
       ]
     },
     {
-      "name": "MVI",
+      "name": "MVI ",
       "specifier": "XXXX",
       "genre": "Camera",
-      "age": "",
+      "age": "new",
       "constraints": [
         { 
             "type": "range", 
@@ -28,28 +28,28 @@
       "name": "",
       "specifier": "YYYYMMDD",
       "genre": "Misc",
-      "age": "",
+      "age": "new",
       "constraints": []
     },
     {
-      "name": "WIN",
+      "name": "WIN ",
       "specifier": "YYYYMMDD",
       "genre": "Webcam",
-      "age": "",
+      "age": "new",
       "constraints": []
     },
     {
-      "name": "Capture",
+      "name": "Capture ",
       "specifier": "YYYYMMDD",
       "genre": "Webcam",
-      "age": "",
+      "age": "new",
       "constraints": []
     },
     {
-        "name": "VID",
+        "name": "VID ",
         "specifier": "YYYYMMDD",
         "genre": "Misc",
-        "age": "",
+        "age": "new",
         "constraints": [
             {
                 "type": "year",
@@ -58,7 +58,7 @@
         ]
     },
     {
-        "name": "My Movie",
+        "name": "My Movie ",
         "specifier": "X",
         "genre": "Misc",
         "age": "old",
@@ -91,14 +91,14 @@
         "constraints": []
     },
     {
-        "name": "InShot",
+        "name": "InShot ",
         "specifier": "YYYYMMDD",
         "genre": "App",
         "age": "new",
         "constraints": []
     },
     {
-        "name": "WhatsApp Video",
+        "name": "WhatsApp Video ",
         "specifier": "YYYY",
         "genre": "App",
         "age": "new",
@@ -206,7 +206,7 @@
       "name": "Lv 0",
       "specifier": "",
       "genre": "Misc",
-      "age": "",
+      "age": "new",
       "constraints": []
     },
     {
@@ -220,14 +220,14 @@
       "name": "YouCut",
       "specifier": "YYYYMMDD",
       "genre": "Misc",
-      "age": "",
+      "age": "new",
       "constraints": []
     },
     {
-      "name": "Video",
+      "name": "Video ",
       "specifier": "YYYYMMDD",
       "genre": "Camera",
-      "age": "",
+      "age": "new",
       "constraints": []
     },
     {
@@ -273,12 +273,607 @@
       "constraints": []
     },
     {
-      "name": "Desktop",
+      "name": "Desktop ",
       "specifier": "YYYY MM DD",
       "genre": "Game Capture",
-      "age": "",
+      "age": "new",
       "constraints": []
     }
-    
+  ],
+
+  "old-patterns": [
+    {
+      "name": "IMG ",
+      "specifier": "XXXX",
+      "genre": "Smartphone",
+      "age": "old",
+      "constraints": [
+        { 
+            "type": "range", 
+            "value": "0000-9999" 
+        }
+      ]
+    },
+    {
+      "name": "MVI ",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+            "type": "range",
+            "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "MOV ",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+            "type": "range",
+            "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "100 ",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+            "type": "range",
+            "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "SAM ",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+            "type": "range",
+            "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "DSC ",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+            "type": "range",
+            "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "SDV ",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+            "type": "range",
+            "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "DSCF",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+            "type": "range",
+            "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "DSCN",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+            "type": "range",
+            "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "PICT",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+            "type": "range",
+            "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "MAQ0",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+            "type": "range",
+            "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "FILE",
+      "specifier": "XXXX",
+      "genre": "Dashcam",
+      "age": "old",
+      "constraints": [
+        {
+            "type": "range",
+            "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "GOPR",
+      "specifier": "XXXX",
+      "genre": "GoPro",
+      "age": "old",
+      "constraints": [
+        {
+            "type": "range",
+            "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "GP01",
+      "specifier": "XXXX",
+      "genre": "GoPro",
+      "age": "old",
+      "constraints": [
+        {
+            "type": "range",
+            "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "GX01",
+      "specifier": "XXXX",
+      "genre": "GoPro",
+      "age": "old",
+      "constraints": [
+        {
+            "type": "range",
+            "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "DJI ",
+      "specifier": "XXXX",
+      "genre": "Drone",
+      "age": "old",
+      "constraints": [
+        {
+            "type": "range",
+            "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "HNI ",
+      "specifier": "XXXX",
+      "genre": "Nintendo DS",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "000-100" }
+      ]
+    },
+    {
+      "name": "WA0",
+      "specifier": "XXX",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "000-999" }
+      ]
+    },
+    {
+      "name": "MOL0",
+      "specifier": "XX",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "00-F9" }
+      ]
+    },
+    {
+      "name": "MOL0",
+      "specifier": "XX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "00-99" }
+      ]
+    },
+    {
+      "name": "",
+      "specifier": "HHMMSS",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "000000-235959" }
+      ]
+    },
+    {
+      "name": "P100",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "0000-1999" }
+      ]
+    },
+    {
+      "name": "VTS ",
+      "specifier": "XX X",
+      "genre": "VHS",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "00-99" },
+        { "type": "range", "value": "0-9" }
+      ]
+    },
+    {
+        "name": "VTS ",
+        "specifier": "XXX 1",
+        "genre": "VHS",
+        "age": "old",
+        "constraints": [
+            {
+                "type": "range",
+                "value": "000-999"
+            }
+        ]
+    },
+    {
+      "name": "VTS 01 ",
+      "specifier": "XXX",
+      "genre": "VHS",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "000-999" }
+      ]
+    },
+    {
+      "name": "My Slideshow Video",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "My Slideshow",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "My Slideshow ",
+      "specifier": "XX",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "00-99" }
+      ]
+    },
+    {
+      "name": "My Stupeflix Video",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "My Stupeflix Video ",
+      "specifier": "XXXX",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "0000-1050" }
+      ]
+    },
+    {
+      "name": "",
+      "specifier": "YYYYMMDD",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "WIN ",
+      "specifier": "YYYYMMDD",
+      "genre": "Webcam",
+      "age": "old",
+      "constraints": [
+        { "type": "date", "value": "2013" }
+      ]
+    },
+    {
+      "name": "VID ",
+      "specifier": "YYYYMMDD",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        { "type": "date", "value": "2008" }
+      ]
+    },
+    {
+      "name": "Capture ",
+      "specifier": "YYYYMMDD",
+      "genre": "Webcam",
+      "age": "old",
+      "constraints": [
+        { "type": "date", "value": "2008" }
+      ]
+    },
+    {
+      "name": "InShot ",
+      "specifier": "YYYYMMDD",
+      "genre": "App",
+      "age": "old",
+      "constraints": [
+        { "type": "date", "value": "2016" }
+      ]
+    },
+    {
+      "name": "PXL ",
+      "specifier": "YYYYMMDD",
+      "genre": "Smartphone",
+      "age": "old",
+      "constraints": [
+        { "type": "date", "value": "2020" }
+      ]
+    },
+    {
+      "name": "AUD-",
+      "specifier": "YYYYMMDD",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        { "type": "date", "value": "2017" }
+      ]
+    },
+    {
+      "name": "240p 400k",
+      "specifier": "",
+      "genre": "NSFW",
+      "age": "old",
+      "constraints": [
+        { "type": "filter", "value": "playlist"}
+      ]
+    },
+    {
+      "name": "480p 600k",
+      "specifier": "",
+      "genre": "NSFW",
+      "age": "old",
+      "constraints": [{
+            "type": "filter",
+            "value": "playlist"
+        }]
+    },
+    {
+      "name": "480p 2000k",
+      "specifier": "",
+      "genre": "NSFW",
+      "age": "old",
+      "constraints": [{
+            "type": "filter",
+            "value": "playlist"
+        }]
+    },
+    {
+      "name": "720p 1500k",
+      "specifier": "",
+      "genre": "NSFW",
+      "age": "old",
+      "constraints": [{
+            "type": "filter",
+            "value": "playlist"
+        }]
+    },
+    {
+      "name": "720p 4000k",
+      "specifier": "",
+      "genre": "NSFW",
+      "age": "old",
+      "constraints": [{
+            "type": "filter",
+            "value": "playlist"
+        }]
+    },
+    {
+      "name": "Clips4Sale",
+      "specifier": "",
+      "genre": "NSFW",
+      "age": "old",
+      "constraints": [{
+            "type": "filter",
+            "value": "playlist"
+        }]
+    },
+    {
+      "name": "WhatsApp Video ",
+      "specifier": "YYYY MM DD",
+      "genre": "App",
+      "age": "old",
+      "constraints": [
+        { "type": "date", "value": "2015" }
+      ]
+    },
+    {
+      "name": "Desktop ",
+      "specifier": "YYYY MM DD",
+      "genre": "Game Capture",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Axon Body * Video",
+      "specifier": "",
+      "genre": "Body Cam",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "WP ",
+      "specifier": "YYYYMMDD",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        { "type": "date", "value": "2011" }
+      ]
+    },
+    {
+      "name": "Video ",
+      "specifier": "YYYYMMDD",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        { "type": "date", "value": "2012" }
+      ]
+    },
+    {
+      "name": "KakaoTalk Video ",
+      "specifier": "YYYY MM",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        { "type": "date", "value": "2012" }
+      ]
+    },
+    {
+      "name": "AVSEQ",
+      "specifier": "XX",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "00-99" }
+      ]
+    },
+    {
+      "name": "AVSEQ",
+      "specifier": "XX.DAT",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "00-99" }
+      ]
+    },
+    {
+      "name": "MOVI",
+      "specifier": "XXXX",
+      "genre": "Dashcam",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "0000-1050" }
+      ]
+    },
+    {
+      "name": "GMT",
+      "specifier": "YYYYMMDD",
+      "genre": "Zoom",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "SVM A",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "0000-1000" }
+      ]
+    },
+    {
+      "name": "KVID",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "0000-1000" }
+      ]
+    },
+    {
+      "name": "My Videolicious Video",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "M2U0",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "0000-9999" }
+      ]
+    },
+    {
+      "name": "GH01",
+      "specifier": "XXXX",
+      "genre": "GoPro",
+      "age": "old",
+      "constraints": [{
+            "type": "range",
+            "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "",
+      "specifier": "Month DD, YYYY",
+      "genre": "iPhone",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "MAH0",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "0000-9999" }
+      ]
+    },
+    {
+      "name": "CIMG",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "IMGP",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Video",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "MOV0",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": []
+    }
   ]
 }
