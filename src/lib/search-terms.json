@@ -112,7 +112,7 @@
         "constraints": []
     },
     {
-        "name": "RFReplay",
+        "name": "RPReplay",
         "specifier": "",
         "genre": "Screen Recorder",
         "age": "new",

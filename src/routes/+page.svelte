@@ -253,21 +253,17 @@
         // Build the search query with optional "before:" date filter
         let searchQuery = searchTerm;
 
-        // For OLD patterns: Add "before:" filter
-        // For NEW patterns: Sort by upload date instead
-        if (patternAge === 'old') {
-            if (showAdvancedSettings && enableDateOverride && beforeDate) {
-                // Use the custom date if advanced settings enabled
-                const dateToUse = new Date(beforeDate);
-                // Format as YYYY/MM/DD for YouTube search
-                const year = dateToUse.getFullYear();
-                const month = String(dateToUse.getMonth() + 1).padStart(2, '0');
-                const day = String(dateToUse.getDate()).padStart(2, '0');
-                searchQuery += ` before:${year}/${month}/${day}`;
-            } else {
-                // Default to just 2016 for old videos
-                searchQuery += ` before:2016`;
-            }
+        // Always apply custom date filter if enabled, regardless of pattern age
+        if (showAdvancedSettings && enableDateOverride && beforeDate) {
+            const dateToUse = new Date(beforeDate);
+            // Format as YYYY/MM/DD for YouTube search
+            const year = dateToUse.getFullYear();
+            const month = String(dateToUse.getMonth() + 1).padStart(2, '0');
+            const day = String(dateToUse.getDate()).padStart(2, '0');
+            searchQuery += ` before:${year}/${month}/${day}`;
+        } else if (patternAge === 'old') {
+            // Only for OLD patterns without custom date: add default before:2016
+            searchQuery += ` before:2016`;
         }
 
         // Encode the complete search query for URL
