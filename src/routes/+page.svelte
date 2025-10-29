@@ -10,15 +10,103 @@
     // Track advanced settings visibility
     let showAdvancedSettings: boolean = false;
 
+    // Track "before date" filter - default to today's date
+    let beforeDate: string = (() => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    })();
+
+    // All unique genres from both new-patterns and old-patterns
+    const allGenres = [
+        'App',
+        'Body Cam',
+        'Camera',
+        'Dashcam',
+        'Drone',
+        'Drone / Dashcam',
+        'Filter: Playlist',
+        'Format',
+        'Game Capture',
+        'Game Capture / Misc',
+        'GoPro',
+        'iPhone',
+        'Misc',
+        'MOLOES',
+        'Nintendo DS',
+        'NSFW',
+        'Screen Recorder',
+        'Smartphone',
+        'VHS',
+        'Video Editor',
+        'VR Headset',
+        'Webcam',
+        'Zoom'
+    ].sort();
+
+    // Track selected genres (all selected by default)
+    let selectedGenres: Set<string> = new Set(allGenres);
+
+    // Track if "Select All" is checked
+    let selectAllGenres: boolean = true;
+
+    // Track if genre dropdown is open
+    let genreDropdownOpen: boolean = false;
+
+    /**
+     * Toggle individual genre selection
+     */
+    function toggleGenre(genre: string) {
+        if (selectedGenres.has(genre)) {
+            selectedGenres.delete(genre);
+            selectedGenres = selectedGenres; // Trigger reactivity
+            selectAllGenres = false;
+        } else {
+            selectedGenres.add(genre);
+            selectedGenres = selectedGenres; // Trigger reactivity
+            // Check if all genres are selected
+            if (selectedGenres.size === allGenres.length) {
+                selectAllGenres = true;
+            }
+        }
+    }
+
+    /**
+     * Toggle "Select All" for genres
+     */
+    function toggleSelectAll() {
+        selectAllGenres = !selectAllGenres;
+        if (selectAllGenres) {
+            selectedGenres = new Set(allGenres);
+        } else {
+            selectedGenres = new Set();
+        }
+    }
+
     /**
      * Open YouTube search in new tab with the given search term
      */
     function openYouTubeSearch(searchTerm: string) {
-        // Encode the search term for URL
-        const encodedTerm = encodeURIComponent(searchTerm);
+        // Build the search query with optional "before:" date filter
+        let searchQuery = searchTerm;
+
+        // Add "before:" filter if advanced settings is enabled and date is selected
+        if (showAdvancedSettings && beforeDate) {
+            const date = new Date(beforeDate);
+            // Format as YYYY/MM/DD for YouTube search
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            searchQuery += ` before:${year}/${month}/${day}`;
+        }
+
+        // Encode the complete search query for URL
+        const encodedQuery = encodeURIComponent(searchQuery);
 
         // YouTube search URL - add sort by upload date if "new" is selected
-        let youtubeSearchURL = `https://www.youtube.com/results?search_query=${encodedTerm}`;
+        let youtubeSearchURL = `https://www.youtube.com/results?search_query=${encodedQuery}`;
 
         if (currentAgeFilter === 'new') {
             // Add sort by upload date parameter
@@ -225,6 +313,87 @@
         cursor: pointer;
     }
 
+    .genre-selector {
+        position: relative;
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .genre-dropdown-button {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        background-color: lightsalmon;
+        color: black;
+        border: 2px solid black;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: transform 0.2s ease;
+    }
+
+    .genre-dropdown-button:hover {
+        transform: scale(1.02);
+    }
+
+    .dropdown-arrow {
+        font-size: 0.8rem;
+    }
+
+    .genre-dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        margin-top: 0.5rem;
+        background-color: white;
+        border: 2px solid black;
+        border-radius: 0.5rem;
+        max-height: 300px;
+        overflow-y: auto;
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .genre-checkbox-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .genre-checkbox-item:hover {
+        background-color: #f0f0f0;
+    }
+
+    .genre-checkbox-item.select-all {
+        font-weight: bold;
+        background-color: #f5f5f5;
+    }
+
+    .genre-checkbox-item input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        cursor: pointer;
+    }
+
+    .genre-checkbox-item span {
+        font-size: 1rem;
+        user-select: none;
+    }
+
+    .genre-divider {
+        height: 2px;
+        background-color: #e0e0e0;
+        margin: 0.25rem 0;
+    }
+
 </style>
 
 <header class="header-base header">
@@ -261,6 +430,8 @@
                 <span><h2>Videos</h2></span>
             </div>
         </div>
+    </div>
+    <div class="grid-container">
         <div class="grid-item">
             <div class="advanced-settings-checkbox">
                 <input
@@ -268,20 +439,63 @@
                     id="advanced-settings"
                     bind:checked={showAdvancedSettings}
                 />
-                <label for="advanced-settings">Advanced Settings</label>
+                <label for="advanced-settings"><h4>Advanced Settings</h4></label>
             </div>
         </div>
-    </div>
-    <div class="grid-container">
-        <div class="grid-item">
-            <p>Grid Item 1</p>
-        </div>
-        <div class="grid-item">
-            <p>Grid Item 2</p>
-        </div>
-        <div class="grid-item">
-            <p>Grid Item 3</p>
-        </div>
+        
+            <div class="grid-item">
+                {#if showAdvancedSettings}
+                <div class="filter-container">
+                    <span><h4>Before:</h4></span>
+                    <input
+                        type="date"
+                        class="filter-select"
+                        bind:value={beforeDate}
+                    />
+                </div>
+                {/if}
+            </div>
+            <div class="grid-item">
+                {#if showAdvancedSettings}
+                <div class="genre-selector">
+                    <button
+                        class="genre-dropdown-button"
+                        on:click={() => genreDropdownOpen = !genreDropdownOpen}
+                    >
+                        Select Genres ({selectedGenres.size}/{allGenres.length})
+                        <span class="dropdown-arrow">{genreDropdownOpen ? '▲' : '▼'}</span>
+                    </button>
+
+                    {#if genreDropdownOpen}
+                        <div class="genre-dropdown-menu">
+                            <!-- Select All checkbox -->
+                            <label class="genre-checkbox-item select-all">
+                                <input
+                                    type="checkbox"
+                                    checked={selectAllGenres}
+                                    on:change={toggleSelectAll}
+                                />
+                                <span>Select All</span>
+                            </label>
+
+                            <div class="genre-divider"></div>
+
+                            <!-- Individual genre checkboxes -->
+                            {#each allGenres as genre}
+                                <label class="genre-checkbox-item">
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedGenres.has(genre)}
+                                        on:change={() => toggleGenre(genre)}
+                                    />
+                                    <span>{genre}</span>
+                                </label>
+                            {/each}
+                        </div>
+                    {/if}
+                </div>
+                {/if}
+            </div>
     </div>
 </main>
 
