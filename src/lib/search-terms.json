@@ -534,7 +534,7 @@
       "genre": "Camera",
       "age": "old",
       "constraints": [
-        { "type": "range", "value": "0000-1999" }
+        { "type": "range", "value": "0000-1200" }
       ]
     },
     {
