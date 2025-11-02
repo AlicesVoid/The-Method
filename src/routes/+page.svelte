@@ -657,6 +657,82 @@
         margin: 0.25rem 0;
     }
 
+    /* Tablet/Medium Responsive Styles */
+    @media (max-width: 1280px) and (min-width: 769px) {
+        .header-base {
+            height: 4rem;
+            border-width: 0.375rem;
+            padding: 0.75rem;
+        }
+
+        .header h4 {
+            font-size: 0.75rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+        }
+
+        .youtube-badge {
+            padding: 0.4rem 0.75rem;
+            gap: 0.5rem;
+        }
+
+        .youtube-badge img {
+            height: 2rem;
+            width: 2rem;
+        }
+
+        .youtube-badge h1 {
+            font-size: 1.1rem;
+        }
+
+        .header-2 h1 {
+            font-size: 1.5rem;
+        }
+
+        .content-body {
+            border-width: 0.375rem;
+        }
+
+        .grid-container {
+            grid-template-columns: 1fr;
+            gap: 1.25rem;
+            padding: 1rem;
+        }
+
+        .grid-item {
+            padding: 1.25rem;
+        }
+
+        .rand-button {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 0.65rem 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .filter-container {
+            padding: 0 1rem;
+            gap: 0.65rem;
+        }
+
+        .filter-select {
+            padding: 0.45rem 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        .genre-selector {
+            max-width: 100%;
+        }
+
+        .genre-dropdown-button {
+            padding: 0.65rem 0.9rem;
+            font-size: 0.9rem;
+        }
+    }
+
     /* Mobile Responsive Styles */
     @media (max-width: 768px) {
         /* Scale down header */
