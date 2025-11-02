@@ -263,7 +263,8 @@
             searchQuery += ` before:${year}/${month}/${day}`;
         } else if (patternAge === 'old') {
             // Only for OLD patterns without custom date: add default before:2016
-            searchQuery += ` before:2016`;
+            const randomYear = Math.floor(Math.random() * (2025 - 2015 + 1)) + 2015;
+            searchQuery += ` before:${randomYear}`;
         }
 
         // Encode the complete search query for URL
