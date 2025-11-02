@@ -245,20 +245,6 @@
       "constraints": []
     },
     {
-      "name": "YTPMY",
-      "specifier": "",
-      "genre": "Video Editor",
-      "age": "new",
-      "constraints": []
-    },
-    {
-      "name": "Klasky Csupo",
-      "specifier": "",
-      "genre": "Video Editor",
-      "age": "new",
-      "constraints": []
-    },
-    {
       "name": "Com Oculus Vrshell",
       "specifier": "",
       "genre": "VR Headset",
@@ -278,6 +264,32 @@
       "genre": "Game Capture",
       "age": "new",
       "constraints": []
+    },
+    {
+      "name": "My Produced Video",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "Roblox-",
+      "specifier": "YYYY-MM-DD",
+      "genre": "Game Capture",
+      "age": "new",
+      "constraints": [
+        {
+          "type": "date",
+          "value": "2024"
+        }
+      ]
+    },
+    {
+      "name": "XiaoYing Video ",
+      "specifier": "HHMMSS",
+      "genre": "Camera",
+      "age": "new",
+      "constraints": []
     }
   ],
 
@@ -291,6 +303,18 @@
         { 
             "type": "range", 
             "value": "0000-9999" 
+        }
+      ]
+    },
+    {
+      "name": "IMAG",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
         }
       ]
     },
@@ -922,6 +946,13 @@
       "constraints": []
     },
     {
+          "name": "bandicam ",
+          "specifier": "YYYY-MM-DD",
+          "genre": "Screen Recorder",
+          "age": "old",
+          "constraints": [] 
+    },
+    {
       "name": "trim ",
       "specifier": "XXXX",
       "genre": "Video Editor",
@@ -1000,6 +1031,197 @@
           "value": "0000-100"
         }
       ]
+    },
+    {
+      "name": "AVSEQ",
+      "specifier": "XX",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "00-99"
+        }
+      ]
+    },
+    {
+      "name": "CIMG",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        { "type": "range", "value": "0000-1200" }
+      ]
+    },
+    {
+      "name": "GameRecorder ",
+      "specifier": "YYYYMMDD",
+      "genre": "Game Capture",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "SANYO",
+      "specifier": "XXX",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [{
+          "type": "range",
+          "value": "000-999"
+        }]
+    },
+    {
+      "name": "robloxapp-",
+      "specifier": "YYYYMMDD",
+      "genre": "Game Capture",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "hl2 ",
+      "specifier": "YYYY MM DD",
+      "genre": "Game Capture",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "hl2 ",
+      "specifier": "YYYY-MM-DD",
+      "genre": "Game Capture",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Kazam screencast ",
+      "specifier": "XXXXX",
+      "genre": "Screen Recorder",
+      "age": "old",
+      "constraints": [{
+          "type": "range",
+          "value": "00000-00100"
+        }]
+    },
+    {
+      "name": "simplescreenrecorder ",
+      "specifier": "YYYY",
+      "genre": "Screen Recorder",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "This video was uploaded from an Android phone.",
+      "specifier": "",
+      "genre": "Phone",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Video from Tweetcaster",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": []
+    }, 
+    {
+      "name": "MAX ",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [{
+          "type": "range",
+          "value": "0000-0100"
+        }]
+    },
+    {
+      "name": "CAM0",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [{
+          "type": "range",
+          "value": "0000-9999"
+        }]
+    },
+    {
+      "name": "My Ezvid Video",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "QuickCapture Video - ",
+      "specifier": "Month DD, YYYY",
+      "genre": "Webcam",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Fortnite_",
+      "specifier": "YYYYMMDD",
+      "genre": "Game Capture",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "My Stop Motion Movie",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": [{
+          "type": "date",
+          "value": "2015"
+      }]
+    },
+    {
+      "name": "get attachment",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "My KineMaster Video",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "",
+      "specifier": "YYYYMMDDHHMMSS",
+      "genre": "Game Capture",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "",
+      "specifier": "YYYY-MM-DD-HH-MM-SS",
+      "genre": "Game Capture",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "javaw ",
+      "specifier": "YYYY MM DD",
+      "genre": "Game Capture",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Screenrecorder-",
+      "specifier": "YYYY-MM-DD-",
+      "genre": "Phone",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "XiaoYing Video ",
+      "specifier": "HHMMSS",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": []
     }
+
   ]
 }
