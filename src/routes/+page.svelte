@@ -265,13 +265,14 @@
             // Only for OLD patterns without custom date: add default before:2016
             const randomYear = Math.floor(Math.random() * (2025 - 2015 + 1)) + 2015;
             searchQuery += ` before:${randomYear}`;
-        } else if (patternAge === 'new') {
-            // Only for NEW patterns use a random date in the last year including today 
-            const today = new Date();
-            const pastYear = new Date();
-            pastYear.setFullYear(today.getFullYear() - 1);
-            searchQuery += ` after:${pastYear.getFullYear()}/${pastYear.getMonth() + 1}/${pastYear.getDate()}`;
         }
+        // } else if (patternAge === 'new') {
+        //     // Only for NEW patterns use a random date in the last year including today 
+        //     const today = new Date();
+        //     const pastYear = new Date();
+        //     pastYear.setFullYear(today.getFullYear() - 1);
+        //     searchQuery += ` before:${pastYear.getFullYear()}/${pastYear.getMonth() + 1}/${pastYear.getDate()}`;
+        // }
 
         // Encode the complete search query for URL
         const encodedQuery = encodeURIComponent(searchQuery);
