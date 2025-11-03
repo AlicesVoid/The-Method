@@ -20,17 +20,15 @@
     // ============================================================================
     // IMPORTS
     // ============================================================================
-    import { SearchSettings } from '$lib/search-settings.js';
-    import searchTermsData from '$lib/search-terms.json' with { type: "json" };
     import { base } from '$app/paths';
+    import { loadAllSearchTerms, formatSearchTermToURL, type SearchPattern } from '$lib';
 
     // ============================================================================
     // DATA STRUCTURE: FULL LIST OF SEARCH TERM OBJECTS
     // ============================================================================
-    // TODO: Load all search term objects as one unified list
-    // This will be the single source of truth for all search terms
-    // Each object should contain: name, specifier, genre, age, constraints
-    let allSearchTerms: any[] = []; // TODO: Load from search-terms.json
+
+    // This is the single source of truth for all search terms
+    let allSearchTerms: SearchPattern[] = loadAllSearchTerms();
 
     // TODO: Create an "active flags" array/map to track which items are currently active
     // This will be used to filter which search terms can be randomly selected
@@ -40,10 +38,77 @@
     // ============================================================================
     // DERIVED LISTS FOR UI DROPDOWNS
     // ============================================================================
-    // TODO: Extract these from allSearchTerms instead of computing separately
-    // For now, placeholders to prevent errors
-    let allGenres: string[] = []; // TODO: Derive from allSearchTerms
-    let availableNames: string[] = []; // TODO: Derive from allSearchTerms based on active flags
+    // Extract unique genres and names from the loaded search terms
+    // These will populate the filter dropdowns in the UI
+
+    // Derive all unique genres from the search terms
+    // Sort alphabetically, but put NSFW at the front if it exists
+    let allGenres: string[] = [];
+    $: {
+        const genres = Array.from(new Set(allSearchTerms.map(term => term.genre)))
+            .filter(genre => genre !== '') // Remove empty genres
+            .sort(); // Sort alphabetically
+
+        // Move NSFW to the front if it exists
+        if (genres.includes('NSFW')) {
+            allGenres = ['NSFW', ...genres.filter(genre => genre !== 'NSFW')];
+        } else {
+            allGenres = genres;
+        }
+    }
+
+    // Derive all unique name+specifier combinations from the search terms
+    // Each unique combination will be a separate item in the dropdown
+    // This updates reactively based on which genres are selected
+    interface NameSpecifierItem {
+        name: string;
+        specifier: string;
+        displayKey: string; // Unique key for this combination
+        showSpecifier: boolean; // Only show specifier if multiple items share the same name
+    }
+
+    let availableNames: NameSpecifierItem[] = [];
+    $: {
+        const filtered = allSearchTerms
+            .filter(term => selectedGenres.size === 0 || selectedGenres.has(term.genre));
+
+        // Expand patterns with multiple specifiers into separate items
+        const uniqueCombos = new Map<string, NameSpecifierItem>();
+
+        for (const term of filtered) {
+            // Each pattern can have multiple specifiers
+            for (const specifier of term.specifiers) {
+                const key = `${term.name}|||${specifier}`; // Use ||| as separator to avoid collisions
+                if (!uniqueCombos.has(key)) {
+                    uniqueCombos.set(key, {
+                        name: term.name,
+                        specifier: specifier,
+                        displayKey: key,
+                        showSpecifier: false // Will be updated below
+                    });
+                }
+            }
+        }
+
+        const items = Array.from(uniqueCombos.values());
+
+        // Count how many items have each name
+        const nameCounts = new Map<string, number>();
+        for (const item of items) {
+            nameCounts.set(item.name, (nameCounts.get(item.name) || 0) + 1);
+        }
+
+        // Mark items that need to show specifiers (when multiple items share a name)
+        for (const item of items) {
+            item.showSpecifier = (nameCounts.get(item.name) || 0) > 1;
+        }
+
+        // Sort by name, then by specifier
+        availableNames = items.sort((a, b) => {
+            if (a.name !== b.name) return a.name.localeCompare(b.name);
+            return a.specifier.localeCompare(b.specifier);
+        });
+    }
 
     // ============================================================================
     // STATE: ADVANCED SETTINGS
@@ -67,128 +132,262 @@
     let enableDateOverride: boolean = false;
 
     // ============================================================================
+    // STATE: AGE FILTER
+    // ============================================================================
+    let selectedAge: 'any' | 'new' | 'old' = 'any';
+
+    // ============================================================================
     // STATE: GENRE SELECTION
     // ============================================================================
-    // TODO: Move genre selection logic here
-    // This will update the active flags for filtering the search term list
+    // Initialize with all genres selected except NSFW
 
     let selectedGenres: Set<string> = new Set();
     let selectAllGenres: boolean = false;
     let genreDropdownOpen: boolean = false;
 
+    // Initialize selectedGenres after allGenres is computed
+    $: if (allGenres.length > 0 && selectedGenres.size === 0) {
+        selectedGenres = new Set(allGenres.filter(genre => genre !== 'NSFW'));
+    }
+
+    // Sync selectAllGenres checkbox with actual selection state 
+    $: selectAllGenres = allGenres.length > 0 && selectedGenres.size === allGenres.length;
+
+    // Unselect all genres if "Select All" is unchecked
+    // $: if (!selectAllGenres && selectedGenres.size === allGenres.length) {
+    //     selectedGenres = new Set();
+    // }
+    
     // ============================================================================
     // STATE: NAME/SEARCH TERM SELECTION
     // ============================================================================
-    // TODO: Move name/search term selection logic here
+    // Stores the displayKey (name|||specifier) for each selected name+specifier combination
     // This will update the active flags for filtering the search term list
 
     let selectedNames: Set<string> = new Set();
     let selectAllNames: boolean = true;
     let nameDropdownOpen: boolean = false;
 
+    // Initialize selectedNames to all available names after they're computed
+    $: if (availableNames.length > 0 && selectedNames.size === 0) {
+        selectedNames = new Set(availableNames.map(item => item.displayKey));
+    }
+
+    // Sync selectAllNames checkbox with actual selection state
+    $: selectAllNames = availableNames.length > 0 && selectedNames.size === availableNames.length;
+
     // ============================================================================
     // REACTIVE: ACTIVE SEARCH TERM FILTERING
     // ============================================================================
-    // TODO: Add reactive statements that update the "active flags" based on:
-    // - selectedGenres (genre filter)
-    // - selectedNames (name filter)
-    // - age filter (new/old)
-    // - date constraints
-    //
-    // This should create an "active subset" of the full search term list
-    // that can be used for random selection
+    // Create a filtered list of search terms based on all active filters
+    // This will be used for random selection when "Find Videos" is clicked
+
+    let activeSearchTerms: SearchPattern[] = [];
+    $: {
+        activeSearchTerms = allSearchTerms.filter(pattern => {
+            // Filter by genre - if no genres selected, show none
+            if (selectedGenres.size > 0 && !selectedGenres.has(pattern.genre)) {
+                return false;
+            }
+
+            // Filter by age (new/old/any)
+            if (selectedAge !== 'any') {
+                // If pattern has a specific age, it must match the selected age
+                if (pattern.age !== '' && pattern.age !== selectedAge) {
+                    return false;
+                }
+                // If pattern has no age specified (''), include it as well
+                if (pattern.age === '') {
+                    return true;
+                }
+            }
+
+            // Filter by name+specifier combination
+            // Check if any of the pattern's specifiers match a selected name
+            if (selectedNames.size > 0) {
+                const hasMatchingSpecifier = pattern.specifiers.some((specifier: string) => {
+                    const key = `${pattern.name}|||${specifier}`;
+                    return selectedNames.has(key);
+                });
+                if (!hasMatchingSpecifier) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+    }
+
+    // Count of active/total search terms for display
+    $: activeCount = activeSearchTerms.length;
+    $: totalCount = allSearchTerms.length;
 
     // ============================================================================
     // FUNCTIONS: GENRE SELECTION
     // ============================================================================
-    // TODO: Implement new genre selection functions that update active flags
-    // Instead of using SearchSettings, these will directly modify the active subset
 
     function toggleGenre(genre: string) {
-        // TODO: Update active flags based on genre selection
+        if (selectedGenres.has(genre)) {
+            selectedGenres.delete(genre);
+        } else {
+            selectedGenres.add(genre);
+        }
+        selectedGenres = selectedGenres; // Trigger reactivity
     }
 
     function toggleSelectAll() {
-        // TODO: Update active flags for all genres
+        if (selectAllGenres) {
+            // Deselect all
+            selectedGenres = new Set();
+        } else {
+            // Select all
+            selectedGenres = new Set(allGenres);
+        }
     }
 
     // ============================================================================
     // FUNCTIONS: NAME SELECTION
     // ============================================================================
-    // TODO: Implement new name selection functions that update active flags
-    // Instead of using SearchSettings, these will directly modify the active subset
 
-    function toggleName(name: string) {
-        // TODO: Update active flags based on name selection
+    function toggleName(displayKey: string) {
+        if (selectedNames.has(displayKey)) {
+            selectedNames.delete(displayKey);
+        } else {
+            selectedNames.add(displayKey);
+        }
+        selectedNames = selectedNames; // Trigger reactivity
     }
 
     function toggleSelectAllNames() {
-        // TODO: Update active flags for all names
+        if (selectAllNames) {
+            // Deselect all
+            selectedNames = new Set();
+        } else {
+            // Select all
+            selectedNames = new Set(availableNames.map(item => item.displayKey));
+        }
     }
 
     // ============================================================================
     // FUNCTIONS: AGE FILTER
     // ============================================================================
-    // TODO: Implement new age filter function that updates active flags
-    // Instead of using SearchSettings, update the active subset directly
 
     function handleAgeChange(event: Event) {
-        // TODO: Update active flags based on age selection (new/old/any)
         const target = event.target as HTMLSelectElement;
-        const value = target.value;
-        // value will be: 'any', 'old', or 'new'
+        selectedAge = target.value as 'any' | 'new' | 'old';
     }
 
     // ============================================================================
     // FUNCTIONS: RANDOM SEARCH TERM SELECTION
     // ============================================================================
-    // TODO: Implement function to randomly select from active subset
-    // This will pick one random item from the currently active search terms
-    // and return the complete search term object
+    // Randomly select one search term from the active filtered list
+    // Returns the pattern, specifier, and other relevant data
 
-    function getRandomActiveSearchTerm() {
-        // TODO: Filter the full list by active flags
-        // TODO: Randomly select one item from the filtered list
-        // TODO: Return the selected search term object
-        return null;
+    function getRandomActiveSearchTerm(): { pattern: SearchPattern; specifier: string;} | null {
+        if (activeSearchTerms.length === 0) {
+            return null;
+        }
+
+        // Pick a random pattern from the active list
+        const randomPattern = activeSearchTerms[Math.floor(Math.random() * activeSearchTerms.length)];
+
+        // Filter the pattern's specifiers to only those that are selected
+        const validSpecifiers = randomPattern.specifiers.filter((spec: string) => {
+            const key = `${randomPattern.name}|||${spec}`;
+            return selectedNames.has(key);
+        });
+
+        // Pick a random specifier from the valid ones
+        const randomSpecifier = validSpecifiers.length > 0
+            ? validSpecifiers[Math.floor(Math.random() * validSpecifiers.length)]
+            : randomPattern.specifiers[0];
+
+        // Return the entire object
+        return {
+            pattern: randomPattern,
+            specifier: randomSpecifier,
+        };
     }
 
     // ============================================================================
-    // FUNCTIONS: YOUTUBE SEARCH URL GENERATION
+    // FUNCTIONS: RANDOM SPECIFIER DAY GENERATION
     // ============================================================================
-    // TODO: Move this to search-settings.ts
-    // This function will take a search term object and format it for YouTube
-    // It should handle:
-    // - Generating the specifier value (using method-logic.ts functions)
-    // - Adding date filters (before:YYYY/MM/DD)
-    // - Adding sort parameters for new vs old videos
-    // - Encoding the URL properly
+    // Picks a random day if you dont override the date
 
-    function formatYouTubeSearchURL(searchTermObject: any): string {
-        // TODO: This logic will move to search-settings.ts
-        // For now, return empty string as placeholder
-        return '';
+    function randomSpecDay(pattern: SearchPattern): Date {
+        const today = new Date();       
+        let randomDays = 0;
+        
+        // Respect any "date-before" or "date-after" tags
+        if (pattern.dateBefore) {
+            const constraintDate = new Date(pattern.dateBefore);
+            const diffTime = Math.abs(today.getTime() - constraintDate.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            randomDays = Math.floor(Math.random() * diffDays);
+            today.setDate(today.getDate() - randomDays);
+            return today;
+        } 
+        else if (pattern.dateAfter) {
+            const constraintDate = new Date(pattern.dateAfter);
+            const diffTime = Math.abs(constraintDate.getTime() - today.getTime());
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+            randomDays = Math.floor(Math.random() * diffDays);
+            today.setDate(constraintDate.getDate() + randomDays);
+            return today;
+        }
+        else if (pattern.dateExact) {
+            const exactDate = new Date(pattern.dateExact);
+            return exactDate;
+        }
+
+        // Determine the range based on age filter
+        if (selectedAge === 'any') {
+            if (pattern.age === 'old') {
+            randomDays = Math.floor(Math.random() * 3650); // Random day within the last 10 years
+            }
+            else if (pattern.age === 'new') {
+                 randomDays = Math.floor(Math.random() * 365); // Random day within the last year
+            }
+        } else if (selectedAge === 'old') {
+            randomDays = Math.floor(Math.random() * 3650); // Random day within the last 10 years
+        } else if (selectedAge === 'new') {
+            randomDays = Math.floor(Math.random() * 365); // Random day within the last year
+        }
+
+        today.setDate(today.getDate() - randomDays);
+        return today;
     }
 
     // ============================================================================
     // FUNCTIONS: MAIN BUTTON HANDLER
     // ============================================================================
-    // TODO: Implement new handleFindVideos that:
-    // 1. Gets a random search term object from the active subset
-    // 2. Passes it to search-settings.ts for formatting
-    // 3. Opens the formatted URL in a new tab
 
     function handleFindVideos() {
-        // TODO: Get random active search term
-        const searchTermObject = getRandomActiveSearchTerm();
+        // Get a random search term from the active filtered list
+        const result = getRandomActiveSearchTerm();
 
-        // TODO: Format using search-settings.ts
-        // const formattedURL = formatSearchTermToURL(searchTermObject);
+        if (!result) {
+            console.warn('No active search terms available');
+            alert('No search terms match your current filters. Please adjust your selections.');
+            return;
+        }
 
-        // TODO: Open in new tab
-        // window.open(formattedURL, '_blank');
+        
+        // if date override is disabled, pick a random date based on randomSpecDay()
+        const formattedDate = new Date(beforeDate) || randomSpecDay(result.pattern);
 
-        console.log('handleFindVideos called - to be implemented');
+
+        console.log('Selected pattern:', result.pattern);
+        console.log('Selected specifier:', result.specifier);
+        console.log('Active search terms count:', activeCount);
+
+        // Format the search term into a YouTube URL
+        const formattedURL = formatSearchTermToURL(result.pattern, result.specifier, formattedDate);
+
+        console.log('Opening YouTube search:', formattedURL);
+
+        // Open the search in a new tab
+        window.open(formattedURL, '_blank');
     }
 </script>
 
@@ -807,7 +1006,7 @@
 
     <!-- Second Header -->
     <header class="header-base header-2">
-        <h1>Find New, Old, and Forgotten Youtube Videos with ~0 Views</h1>
+        <h1>Find New, Old, and Forgotten Youtube Videos</h1>
     </header>
 
     <!-- Main Content -->
@@ -936,35 +1135,34 @@
 
                     {#if nameDropdownOpen}
                         <div class="genre-dropdown-menu">
-                            <!-- Select All checkbox -->
+                            <!-- Select All checkbox (on deselect, uncheck everything)-->
                             <label class="genre-checkbox-item select-all">
                                 <input
                                     type="checkbox"
                                     checked={selectAllNames}
                                     on:change={toggleSelectAllNames}
+                                    on:click={e => e.stopPropagation()}
+
                                 />
                                 <span>Select All</span>
                             </label>
 
                             <div class="genre-divider"></div>
 
-                            <!-- Individual name checkboxes -->
-                            {#each (() => {
-                                const seen = new Set();
-                                return availableNames.filter(name => {
-                                    const trimmed = name.trim();
-                                    if (seen.has(trimmed)) return false;
-                                    seen.add(trimmed);
-                                    return true;
-                                });
-                            })() as name}
+                            <!-- Individual name+specifier checkboxes -->
+                            {#each availableNames as item}
                                 <label class="genre-checkbox-item">
                                     <input
                                         type="checkbox"
-                                        checked={selectedNames.has(name)}
-                                        on:change={() => toggleName(name)}
+                                        checked={selectedNames.has(item.displayKey)}
+                                        on:change={() => toggleName(item.displayKey)}
                                     />
-                                    <span>{name === '' ? '(empty string)' : name}</span>
+                                    <span>
+                                        {item.name === '' ? '' : item.name}
+                                        {#if item.specifier && item.showSpecifier}
+                                            <span style="color: #aaa; margin-left: 4px;">{item.specifier}</span>
+                                        {/if}
+                                    </span>
                                 </label>
                             {/each}
                         </div>
