@@ -144,13 +144,15 @@
     let selectedGenres: Set<string> = new Set();
     let selectAllGenres: boolean = false;
     let genreDropdownOpen: boolean = false;
+    let genresInitialized: boolean = false;
 
-    // Initialize selectedGenres after allGenres is computed
-    $: if (allGenres.length > 0 && selectedGenres.size === 0) {
+    // Initialize selectedGenres after allGenres is computed (only once)
+    $: if (allGenres.length > 0 && !genresInitialized) {
         selectedGenres = new Set(allGenres.filter(genre => genre !== 'NSFW'));
+        genresInitialized = true;
     }
 
-    // Sync selectAllGenres checkbox with actual selection state 
+    // Sync selectAllGenres checkbox with actual selection state
     $: selectAllGenres = allGenres.length > 0 && selectedGenres.size === allGenres.length;
 
     // Unselect all genres if "Select All" is unchecked
@@ -167,10 +169,12 @@
     let selectedNames: Set<string> = new Set();
     let selectAllNames: boolean = true;
     let nameDropdownOpen: boolean = false;
+    let namesInitialized: boolean = false;
 
-    // Initialize selectedNames to all available names after they're computed
-    $: if (availableNames.length > 0 && selectedNames.size === 0) {
+    // Initialize selectedNames to all available names after they're computed (only once)
+    $: if (availableNames.length > 0 && !namesInitialized) {
         selectedNames = new Set(availableNames.map(item => item.displayKey));
+        namesInitialized = true;
     }
 
     // Sync selectAllNames checkbox with actual selection state
@@ -236,11 +240,11 @@
     }
 
     function toggleSelectAll() {
-        if (selectAllGenres) {
-            // Deselect all
+        if (selectedGenres.size === allGenres.length) {
+            // Currently all selected, so deselect all
             selectedGenres = new Set();
         } else {
-            // Select all
+            // Not all selected, so select all
             selectedGenres = new Set(allGenres);
         }
     }
@@ -259,11 +263,11 @@
     }
 
     function toggleSelectAllNames() {
-        if (selectAllNames) {
-            // Deselect all
+        if (selectedNames.size === availableNames.length) {
+            // Currently all selected, so deselect all
             selectedNames = new Set();
         } else {
-            // Select all
+            // Not all selected, so select all
             selectedNames = new Set(availableNames.map(item => item.displayKey));
         }
     }
@@ -318,6 +322,24 @@
         const today = new Date();       
         let randomDays = 0;
         
+        // Determine the range based on age filter
+        if (selectedAge === 'any') {
+            console.log('Selected age: any');
+            if (pattern.age === 'old') {
+                console.log('Random day selected for old pattern');
+                randomDays = Math.floor(Math.random() * 3650); // Random day within the last 10 years
+            } else if (pattern.age === 'new') {
+                console.log('Random day selected for new pattern');
+                randomDays = Math.floor(Math.random() * 365); // Random day within the last year
+            }
+        } else if (selectedAge === 'old') {
+            console.log('Selected age: old');
+            randomDays = Math.floor(Math.random() * 3650); // Random day within the last 10 years
+        } else if (selectedAge === 'new') {
+            console.log('Selected age: new');
+            randomDays = Math.floor(Math.random() * 365); // Random day within the last year
+        }
+
         // Respect any "date-before" or "date-after" tags
         if (pattern.dateBefore) {
             const constraintDate = new Date(pattern.dateBefore);
@@ -325,6 +347,7 @@
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
             randomDays = Math.floor(Math.random() * diffDays);
             today.setDate(today.getDate() - randomDays);
+            console.log('Date before constraint applied:', today);
             return today;
         } 
         else if (pattern.dateAfter) {
@@ -333,28 +356,17 @@
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
             randomDays = Math.floor(Math.random() * diffDays);
             today.setDate(constraintDate.getDate() + randomDays);
+            console.log('Date after constraint applied:', today);
             return today;
         }
         else if (pattern.dateExact) {
             const exactDate = new Date(pattern.dateExact);
+            console.log('Exact date constraint applied:', exactDate);
             return exactDate;
         }
 
-        // Determine the range based on age filter
-        if (selectedAge === 'any') {
-            if (pattern.age === 'old') {
-            randomDays = Math.floor(Math.random() * 3650); // Random day within the last 10 years
-            }
-            else if (pattern.age === 'new') {
-                 randomDays = Math.floor(Math.random() * 365); // Random day within the last year
-            }
-        } else if (selectedAge === 'old') {
-            randomDays = Math.floor(Math.random() * 3650); // Random day within the last 10 years
-        } else if (selectedAge === 'new') {
-            randomDays = Math.floor(Math.random() * 365); // Random day within the last year
-        }
-
         today.setDate(today.getDate() - randomDays);
+        console.log('Random date selected:', today);
         return today;
     }
 
@@ -372,13 +384,12 @@
             return;
         }
 
-        
-        // if date override is disabled, pick a random date based on randomSpecDay()
-        const formattedDate = new Date(beforeDate) || randomSpecDay(result.pattern);
-
+        // Pick a random date based on the pattern using randomSpecDay()
+        const formattedDate = randomSpecDay(result.pattern);
 
         console.log('Selected pattern:', result.pattern);
         console.log('Selected specifier:', result.specifier);
+        console.log('Formatted date:', formattedDate);
         console.log('Active search terms count:', activeCount);
 
         // Format the search term into a YouTube URL
@@ -1096,8 +1107,8 @@
                             <label class="genre-checkbox-item select-all">
                                 <input
                                     type="checkbox"
-                                    checked={selectAllGenres}
-                                    on:change={toggleSelectAll}
+                                    bind:checked={selectAllGenres}
+                                    on:click={toggleSelectAll}
                                 />
                                 <span>Select All</span>
                             </label>
@@ -1139,10 +1150,8 @@
                             <label class="genre-checkbox-item select-all">
                                 <input
                                     type="checkbox"
-                                    checked={selectAllNames}
-                                    on:change={toggleSelectAllNames}
-                                    on:click={e => e.stopPropagation()}
-
+                                    bind:checked={selectAllNames}
+                                    on:click={toggleSelectAllNames}
                                 />
                                 <span>Select All</span>
                             </label>

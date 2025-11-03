@@ -28,171 +28,152 @@ import type { SearchPattern, Constraint } from './method-logic.js';
 /**
  * Format a search term object into a complete YouTube search URL
  *
+ * NEW WORKFLOW:
+ * 1. Create the name + specifier search term
+ * 2. Use formattedDate for the date (from +page.svelte randomSpecDay())
+ * 3. Pattern-match to return a search term with the specifier filled in
+ * 4. Determine how to add date-tag (before:/after:)
+ *    4a. If name+specifier has a date, make it after: that date
+ *    4b. If date is overridden, make it before that date
+ *    4c. If tagged as 'old', make it before formattedDate
+ *    4d. If tagged as 'new', don't add any date tag
+ * 5. Always filter videos by upload date
+ *
  * @param pattern - The search pattern object to format
  * @param specifier - The specific specifier to use from pattern.specifiers
- * @param overrideDate - Optional date override for custom date filtering
+ * @param formattedDate - The date from +page.svelte randomSpecDay()
  * @returns Complete YouTube search URL ready to open
  */
 export function formatSearchTermToURL(
   pattern: SearchPattern,
   specifier: string,
-  formattedDate: Date,
+  formattedDate: Date
 ): string {
+  // Step 3: Pattern-match to generate the search term (name + filled specifier)
+  const searchTerm = generateSearchTerm(pattern.name, specifier, pattern, formattedDate);
 
-  // 1. Generate the specifier value
-  const specifierValue = generateSpecifierValue(specifier, pattern, formattedDate);
+  // Step 4: Determine the date filter
+  const dateFilter = determineDateFilter(specifier, pattern, formattedDate, searchTerm);
 
-  // 2. Combine name + specifier to create the search term
-  let searchTerm = pattern.name;
-  if (specifierValue) {
-    searchTerm = `${pattern.name} ${specifierValue}`;
-  }
+  // Combine search term with date filter
+  const fullSearchTerm = dateFilter ? `${searchTerm} ${dateFilter}` : searchTerm;
 
-  // 3. Add date filters based on pattern age
-  const dateFilters: string[] = [];
-
-  if (pattern.age === 'new') {
-    // For new content, search for videos uploaded in the last year
-    const oneYearAgo = new Date();
-    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-    const afterDate = `${oneYearAgo.getFullYear()}-${String(oneYearAgo.getMonth() + 1).padStart(2, '0')}-${String(oneYearAgo.getDate()).padStart(2, '0')}`;
-    dateFilters.push(`after:${afterDate}`);
-  } else if (pattern.age === 'old') {
-    // For old content, search for videos uploaded before a certain date
-    const fiveYearsAgo = new Date();
-    fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
-    const beforeDate = `${fiveYearsAgo.getFullYear()}-${String(fiveYearsAgo.getMonth() + 1).padStart(2, '0')}-${String(fiveYearsAgo.getDate()).padStart(2, '0')}`;
-    dateFilters.push(`before:${beforeDate}`);
-  }
-
-  // Apply constraint-based date filters
-  for (const constraint of pattern.constraints) {
-    if (constraint.type === 'date-before') {
-      const date = new Date(constraint.value);
-      const beforeDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-      dateFilters.push(`before:${beforeDate}`);
-    } else if (constraint.type === 'date-after') {
-      const date = new Date(constraint.value);
-      const afterDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-      dateFilters.push(`after:${afterDate}`);
-    }
-  }
-
-  // Combine search term with date filters
-  const fullSearchTerm = [searchTerm, ...dateFilters].join(' ');
-
-  // 4. Build YouTube search URL with appropriate parameters
+  // Step 5: Build YouTube search URL with upload date sort
   const params = new URLSearchParams({
     search_query: fullSearchTerm
   });
 
-  // Add sort order based on age preference
-  if (pattern.age === 'new') {
-    // Sort by upload date (newest first)
-    params.append('sp', 'CAI%253D'); // Upload date sort
-  } else if (pattern.age === 'old') {
-    // Sort by upload date (oldest first)
-    params.append('sp', 'CAoSAhAB'); // Upload date sort (old)
-  }
+  // Always sort by upload date
+  // Use upload date filter (this ensures we're filtering by upload date)
+  // params.append('sp', 'CAISAhAB'); // Upload date sort
 
-  // 5. Return the complete YouTube URL
+  // Return the complete YouTube URL
   return `https://www.youtube.com/results?${params.toString()}`;
 }
 
 // ============================================================================
-// HELPER FUNCTIONS: SPECIFIER GENERATION
+// HELPER FUNCTIONS: PATTERN MATCHING & SPECIFIER GENERATION
 // ============================================================================
 
-/*
- * Generate a random date for the video (if there's no overrideDate)
+/**
+ * Step 3: Generate a search term by pattern-matching the specifier template
+ * Fills in placeholders like YYYY, MM, DD, XXXX, etc.
+ *
+ * @param name - The base search term name
+ * @param specifier - The specifier template (e.g., "YYYY MM DD", "XXXX")
+ * @param pattern - The SearchPattern object for constraints
+ * @param formattedDate - The date to use when filling in date placeholders
+ * @returns Complete search term (name + filled specifier)
  */
-function generateSpecifierDate(overrideDate?: Date): Date {
-  if (!overrideDate) {
-
-    // if "old", pick random date in the last 10 years
-
-    // if "new", pick random date in the last year
-
-    return date;
+function generateSearchTerm(
+  name: string,
+  specifier: string,
+  pattern: SearchPattern,
+  formattedDate: Date
+): string {
+  // If no specifier, just return the name
+  if (!specifier || specifier === '') {
+    return name;
   }
-  return overrideDate;
+
+  // Generate the specifier value by filling in template placeholders
+  const specifierValue = fillSpecifierTemplate(specifier, pattern, formattedDate);
+
+  // Combine name + specifier
+  return specifierValue ? `${name} ${specifierValue}` : name;
 }
 
-
 /**
- * Generate a specifier value by filling in template placeholders
+ * Fill in template placeholders in a specifier
  * Handles templates like:
  * - YYYY MM DD -> 2024 03 15
  * - XXXX -> 1234
  * - HHMMSS -> 143059
  */
-function generateSpecifierValue(
+function fillSpecifierTemplate(
   specifier: string,
   pattern: SearchPattern,
-  overrideDate?: Date
+  formattedDate: Date
 ): string {
   if (!specifier || specifier === '') return '';
 
-  const date = overrideDate || new Date();
   let result = specifier;
-
-  // Process constraints to determine valid ranges
-  const yearConstraints: number[] = [];
-  const dateConstraints: { before?: Date; after?: Date } = {};
-
-  for (const constraint of pattern.constraints) {
-    if (constraint.type === 'year') {
-      yearConstraints.push(Number(constraint.value));
-    } else if (constraint.type === 'date-before') {
-      dateConstraints.before = new Date(constraint.value);
-    } else if (constraint.type === 'date-after') {
-      dateConstraints.after = new Date(constraint.value);
-    }
-  }
 
   // Replace date/time placeholders
   // YYYY - Year (4 digits)
   if (result.includes('YYYY')) {
     let year: number;
-    if (yearConstraints.length > 0) {
-      year = getRandomElement(yearConstraints);
-    } else if (dateConstraints.before || dateConstraints.after) {
-      const minYear = dateConstraints.after?.getFullYear() || 2005;
-      const maxYear = dateConstraints.before?.getFullYear() || date.getFullYear();
-      year = getRandomInt(minYear, maxYear);
-    } else {
-      year = date.getFullYear();
-    }
-    result = result.replace(/YYYY/g, year.toString());
+    year = formattedDate.getFullYear();
+    result = result.replace(/YYYY/g, year.toString().padStart(4, '0'));
+  }
+
+  // Month - Month (January - December)
+  if (result.includes('Month')) {
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const monthIndex = formattedDate.getMonth();
+    result = result.replace(/Month/g, monthNames[monthIndex]);
+  }
+
+  // Mon - Short Month (Jan - Dec)
+  if (result.includes('Mon')) {
+    const shortMonthNames = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    const monthIndex = formattedDate.getMonth();
+    result = result.replace(/Mon/g, shortMonthNames[monthIndex]);
   }
 
   // MM - Month (01-12)
   if (result.includes('MM')) {
-    const month = getRandomInt(1, 12).toString().padStart(2, '0');
-    result = result.replace(/MM/g, month);
+    const month = formattedDate.getMonth() + 1; // Months are 0-indexed
+    result = result.replace(/MM/g, month.toString().padStart(2, '0'));
   }
 
   // DD - Day (01-31)
   if (result.includes('DD')) {
-    const day = getRandomInt(1, 28).toString().padStart(2, '0'); // Using 28 to avoid month-specific issues
+    const day = formattedDate.getDate().toString().padStart(2, '0');
     result = result.replace(/DD/g, day);
   }
 
   // HH - Hours (00-23)
   if (result.includes('HH')) {
-    const hours = getRandomInt(0, 23).toString().padStart(2, '0');
+    const hours = formattedDate.getHours().toString().padStart(2, '0');
     result = result.replace(/HH/g, hours);
   }
 
   // mm - Minutes (00-59)
   if (result.includes('mm')) {
-    const minutes = getRandomInt(0, 59).toString().padStart(2, '0');
+    const minutes = formattedDate.getMinutes().toString().padStart(2, '0');
     result = result.replace(/mm/g, minutes);
   }
 
   // SS - Seconds (00-59)
   if (result.includes('SS')) {
-    const seconds = getRandomInt(0, 59).toString().padStart(2, '0');
+    const seconds = formattedDate.getSeconds().toString().padStart(2, '0');
     result = result.replace(/SS/g, seconds);
   }
 
@@ -234,6 +215,60 @@ function generateSpecifierValue(
   }
 
   return result;
+}
+
+// ============================================================================
+// HELPER FUNCTIONS: DATE FILTER DETERMINATION
+// ============================================================================
+
+/**
+ * Step 4: Determine how to handle adding a date-tag for before: or after: a certain date
+ *
+ * @param specifier - The specifier template (e.g., "YYYY MM DD", "XXXX")
+ * @param pattern - The SearchPattern object
+ * @param formattedDate - The date from +page.svelte randomSpecDay()
+ * @param searchTerm - The generated search term (name + filled specifier) for extracting date
+ * @returns Date filter string (e.g., "after:2020-01-15" or "before:2024-12-31" or empty string)
+ */
+function determineDateFilter(
+  specifier: string,
+  pattern: SearchPattern,
+  formattedDate: Date,
+  searchTerm: string
+): string {
+  // 4a. If the specifier contains YYYY (year placeholder), make it after: that year
+  const hasYearPlaceholder = /YYYY/.test(specifier);
+
+  if (hasYearPlaceholder) {
+    // Extract the actual year (4 digits) from the filled searchTerm
+    const yearRegex = /\b(\d{4})\b/;
+    const match = searchTerm.match(yearRegex);
+
+    if (match) {
+      const year = match[1];
+      console.log('Applying date filter from specifier year:', year);
+      // Use January 1st of that year for the after: filter
+      return `after:${year}-01-01`;
+    }
+  }
+
+  // 4b. If the search is tagged as 'old', make it before formattedDate
+  if (pattern.age === 'old') {
+    console.log('Applying date filter for old pattern');
+    const year = formattedDate.getFullYear();
+    const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(formattedDate.getDate()).padStart(2, '0');
+    return `before:${year}-${month}-${day}`;
+  }
+
+  // 4c. If the search is tagged as 'new', don't add any date tag
+  if (pattern.age === 'new') {
+    console.log('No date filter applied for new pattern');
+    return '';
+  }
+
+  // Default: no date filter
+  return '';
 }
 
 /**
