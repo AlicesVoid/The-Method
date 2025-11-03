@@ -275,9 +275,11 @@ function determineDateFilter(
 
     if (match) {
       const year = match[1];
+      const month = formattedDate.getMonth() + 1; // Months are 0-indexed
+      const day = formattedDate.getDate();
       console.log('Applying date filter from specifier year:', year);
       // Use January 1st of that year for the after: filter
-      return `after:${year}-01-01`;
+      return `after:${year}-${month}-${day}`;
     }
   }
 
