@@ -1,610 +1,15 @@
 {
-  "new-patterns": [
-    {
-      "name": "IMG",
-      "specifier": "",
-      "genre": "Smartphone",
-      "age": "new",
-      "constraints": [
-        { 
-            "type": "range", 
-            "value": "0000-9999" 
-        }
-      ]
-    },
-    {
-      "name": "MVI ",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "new",
-      "constraints": [
-        { 
-            "type": "range", 
-            "value": "0000-9999" 
-        }
-      ]
-    },
-    {
-      "name": "",
-      "specifier": "YYYYMMDD",
-      "genre": "Misc",
-      "age": "new",
-      "constraints": []
-    },
-    {
-      "name": "WIN ",
-      "specifier": "YYYYMMDD",
-      "genre": "Webcam",
-      "age": "new",
-      "constraints": []
-    },
-    {
-      "name": "Capture ",
-      "specifier": "YYYYMMDD",
-      "genre": "Webcam",
-      "age": "new",
-      "constraints": []
-    },
-    {
-        "name": "VID ",
-        "specifier": "YYYYMMDD",
-        "genre": "Misc",
-        "age": "new",
-        "constraints": [
-            {
-                "type": "year",
-                "value": 2012
-            }
-        ]
-    },
-    {
-        "name": "My Movie ",
-        "specifier": "X",
-        "genre": "Misc",
-        "age": "old",
-        "constraints": [
-            {
-                "type": "range",
-                "value": "0-9"
-            }
-        ]
-    },
-    {
-        "name": "My Edited Video",
-        "specifier": "",
-        "genre": "Video Editor",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": "/Storage/Emulated/",
-        "specifier": "",
-        "genre": "Video Editor",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": "PXL",
-        "specifier": "",
-        "genre": "Smartphone",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": "InShot ",
-        "specifier": "YYYYMMDD",
-        "genre": "App",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": "WhatsApp Video ",
-        "specifier": "YYYY",
-        "genre": "App",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": "FullSizeRender",
-        "specifier": "",
-        "genre": "Smartphone",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": "RPReplay",
-        "specifier": "",
-        "genre": "Screen Recorder",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": "VTS 01",
-        "specifier": "",
-        "genre": "VHS",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": "DVR",
-        "specifier": "",
-        "genre": "Game Capture",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": "VLC Record",
-        "specifier": "",
-        "genre": "Misc",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": "Robloxapp",
-        "specifier": "",
-        "genre": "Game Capture",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": ".MP4",
-        "specifier": "",
-        "genre": "Format",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": ".3gp",
-        "specifier": "",
-        "genre": "Format",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": ".MOV",
-        "specifier": "",
-        "genre": "Format",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": ".AVI",
-        "specifier": "",
-        "genre": "Format",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": ".WMV",
-        "specifier": "",
-        "genre": "Format",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": ".FLAC",
-        "specifier": "",
-        "genre": "Format",
-        "age": "new",
-        "constraints": []
-    },
-    {
-        "name": ".WAV",
-        "specifier": "",
-        "genre": "Format",
-        "age": "new",
-        "constraints": []
-    },
-    {
-      "name": "Recording gvo",
-      "specifier": "",
-      "genre": "Zoom",
-      "age": "new",
-      "constraints": []
-    },
-    {
-      "name": "Lv 0",
-      "specifier": "",
-      "genre": "Misc",
-      "age": "new",
-      "constraints": []
-    },
-    {
-      "name": "bmdjAAAF",
-      "specifier": "",
-      "genre": "Misc",
-      "age": "new",
-      "constraints": []
-    },
-    {
-      "name": "YouCut",
-      "specifier": "YYYYMMDD",
-      "genre": "Misc",
-      "age": "new",
-      "constraints": []
-    },
-    {
-      "name": "Video ",
-      "specifier": "YYYYMMDD",
-      "genre": "Camera",
-      "age": "new",
-      "constraints": []
-    },
-    {
-      "name": "Copy of Copy of",
-      "specifier": "",
-      "genre": "Misc",
-      "age": "new",
-      "constraints": []
-    },
-    {
-      "name": "Untitled video",
-      "specifier": "",
-      "genre": "Misc",
-      "age": "new",
-      "constraints": []
-    },
-    {
-      "name": "Com Oculus Vrshell",
-      "specifier": "",
-      "genre": "VR Headset",
-      "age": "new",
-      "constraints": []
-    },
-    {
-      "name": "Com Oculus Metacam",
-      "specifier": "",
-      "genre": "VR Headset",
-      "age": "new",
-      "constraints": []
-    },
-    {
-      "name": "Desktop ",
-      "specifier": "YYYY MM DD",
-      "genre": "Game Capture",
-      "age": "new",
-      "constraints": []
-    },
-    {
-      "name": "My Produced Video",
-      "specifier": "",
-      "genre": "Video Editor",
-      "age": "new",
-      "constraints": []
-    },
-    {
-      "name": "Roblox-",
-      "specifier": "YYYY-MM-DD",
-      "genre": "Game Capture",
-      "age": "new",
-      "constraints": [
-        {
-          "type": "date",
-          "value": "2024"
-        }
-      ]
-    },
-    {
-      "name": "XiaoYing Video ",
-      "specifier": "HHMMSS",
-      "genre": "Camera",
-      "age": "new",
-      "constraints": []
-    }
-  ],
-
-  "old-patterns": [
-    {
-      "name": "IMG ",
-      "specifier": "XXXX",
-      "genre": "Smartphone",
-      "age": "old",
-      "constraints": [
-        { 
-            "type": "range", 
-            "value": "0000-9999" 
-        }
-      ]
-    },
-    {
-      "name": "IMAG",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        {
-          "type": "range",
-          "value": "0000-9999"
-        }
-      ]
-    },
-    {
-      "name": "MVI ",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        {
-            "type": "range",
-            "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "MOV ",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        {
-            "type": "range",
-            "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "100 ",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        {
-            "type": "range",
-            "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "SAM ",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        {
-            "type": "range",
-            "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "DSC ",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        {
-            "type": "range",
-            "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "SDV ",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        {
-            "type": "range",
-            "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "DSCF",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        {
-            "type": "range",
-            "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "DSCN",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        {
-            "type": "range",
-            "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "PICT",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        {
-            "type": "range",
-            "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "MAQ0",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        {
-            "type": "range",
-            "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "FILE",
-      "specifier": "XXXX",
-      "genre": "Dashcam",
-      "age": "old",
-      "constraints": [
-        {
-            "type": "range",
-            "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "GOPR",
-      "specifier": "XXXX",
-      "genre": "GoPro",
-      "age": "old",
-      "constraints": [
-        {
-            "type": "range",
-            "value": "0000-1999"
-        }]
-    },
-    {
-      "name": "GP01",
-      "specifier": "XXXX",
-      "genre": "GoPro",
-      "age": "old",
-      "constraints": [
-        {
-            "type": "range",
-            "value": "0000-1999"
-        }]
-    },
-    {
-      "name": "GX01",
-      "specifier": "XXXX",
-      "genre": "GoPro",
-      "age": "old",
-      "constraints": [
-        {
-            "type": "range",
-            "value": "0000-1999"
-        }]
-    },
-    {
-      "name": "DJI ",
-      "specifier": "XXXX",
-      "genre": "Drone",
-      "age": "old",
-      "constraints": [
-        {
-            "type": "range",
-            "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "HNI ",
-      "specifier": "XXXX",
-      "genre": "Nintendo DS",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "000-100" }
-      ]
-    },
-    {
-      "name": "WA0",
-      "specifier": "XXX",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "000-999" }
-      ]
-    },
-    {
-      "name": "MOL0",
-      "specifier": "XX",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "00-F9" }
-      ]
-    },
-    {
-      "name": "MOL0",
-      "specifier": "XX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "00-99" }
-      ]
-    },
+  "patterns": [
     {
       "name": "",
       "specifier": "HHMMSS",
       "genre": "Misc",
       "age": "old",
       "constraints": [
-        { "type": "range", "value": "000000-235959" }
-      ]
-    },
-    {
-      "name": "P100",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "0000-1200" }
-      ]
-    },
-    {
-      "name": "VTS ",
-      "specifier": "XX X",
-      "genre": "VHS",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "00-99" },
-        { "type": "range", "value": "0-9" }
-      ]
-    },
-    {
-        "name": "VTS ",
-        "specifier": "XXX 1",
-        "genre": "VHS",
-        "age": "old",
-        "constraints": [
-            {
-                "type": "range",
-                "value": "000-999"
-            }
-        ]
-    },
-    {
-      "name": "VTS 01 ",
-      "specifier": "XXX",
-      "genre": "VHS",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "000-999" }
-      ]
-    },
-    {
-      "name": "My Slideshow Video",
-      "specifier": "",
-      "genre": "Video Editor",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "My Slideshow",
-      "specifier": "",
-      "genre": "Video Editor",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "My Slideshow ",
-      "specifier": "XX",
-      "genre": "Video Editor",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "00-99" }
-      ]
-    },
-    {
-      "name": "My Stupeflix Video",
-      "specifier": "",
-      "genre": "Video Editor",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "My Stupeflix Video ",
-      "specifier": "XXXX",
-      "genre": "Video Editor",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "0000-1050" }
+        {
+          "type": "range",
+          "value": "000000-235959"
+        }
       ]
     },
     {
@@ -615,575 +20,9 @@
       "constraints": []
     },
     {
-      "name": "WIN ",
-      "specifier": "YYYYMMDD",
-      "genre": "Webcam",
-      "age": "old",
-      "constraints": [
-        { "type": "date", "value": "2013" }
-      ]
-    },
-    {
-      "name": "VID ",
-      "specifier": "YYYYMMDD",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": [
-        { "type": "date", "value": "2008" }
-      ]
-    },
-    {
-      "name": "Capture ",
-      "specifier": "YYYYMMDD",
-      "genre": "Webcam",
-      "age": "old",
-      "constraints": [
-        { "type": "date", "value": "2008" }
-      ]
-    },
-    {
-      "name": "InShot ",
-      "specifier": "YYYYMMDD",
-      "genre": "App",
-      "age": "old",
-      "constraints": [
-        { "type": "date", "value": "2016" }
-      ]
-    },
-    {
-      "name": "PXL ",
-      "specifier": "YYYYMMDD",
-      "genre": "Smartphone",
-      "age": "old",
-      "constraints": [
-        { "type": "date", "value": "2020" }
-      ]
-    },
-    {
-      "name": "AUD-",
-      "specifier": "YYYYMMDD",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": [
-        { "type": "date", "value": "2017" }
-      ]
-    },
-    {
-      "name": "240p 400k",
-      "specifier": "",
-      "genre": "NSFW",
-      "age": "old",
-      "constraints": [
-        { "type": "filter", "value": "playlist"}
-      ]
-    },
-    {
-      "name": "480p 600k",
-      "specifier": "",
-      "genre": "NSFW",
-      "age": "old",
-      "constraints": [{
-            "type": "filter",
-            "value": "playlist"
-        }]
-    },
-    {
-      "name": "480p 2000k",
-      "specifier": "",
-      "genre": "NSFW",
-      "age": "old",
-      "constraints": [{
-            "type": "filter",
-            "value": "playlist"
-        }]
-    },
-    {
-      "name": "720p 1500k",
-      "specifier": "",
-      "genre": "NSFW",
-      "age": "old",
-      "constraints": [{
-            "type": "filter",
-            "value": "playlist"
-        }]
-    },
-    {
-      "name": "720p 4000k",
-      "specifier": "",
-      "genre": "NSFW",
-      "age": "old",
-      "constraints": [{
-            "type": "filter",
-            "value": "playlist"
-        }]
-    },
-    {
-      "name": "Clips4Sale",
-      "specifier": "",
-      "genre": "NSFW",
-      "age": "old",
-      "constraints": [{
-            "type": "filter",
-            "value": "playlist"
-        }]
-    },
-    {
-      "name": "WhatsApp Video ",
-      "specifier": "YYYY MM DD",
-      "genre": "App",
-      "age": "old",
-      "constraints": [
-        { "type": "date", "value": "2015" }
-      ]
-    },
-    {
-      "name": "Desktop ",
-      "specifier": "YYYY MM DD",
-      "genre": "Game Capture",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "Axon Body * Video",
-      "specifier": "",
-      "genre": "Body Cam",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "WP ",
-      "specifier": "YYYYMMDD",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": [
-        { "type": "date", "value": "2011" }
-      ]
-    },
-    {
-      "name": "Video ",
-      "specifier": "YYYYMMDD",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": [
-        { "type": "date", "value": "2012" }
-      ]
-    },
-    {
-      "name": "KakaoTalk Video ",
-      "specifier": "YYYY MM",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": [
-        { "type": "date", "value": "2012" }
-      ]
-    },
-    {
-      "name": "AVSEQ",
-      "specifier": "XX",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "00-99" }
-      ]
-    },
-    {
-      "name": "AVSEQ",
-      "specifier": "XX.DAT",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "00-99" }
-      ]
-    },
-    {
-      "name": "MOVI",
-      "specifier": "XXXX",
-      "genre": "Dashcam",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "0000-1050" }
-      ]
-    },
-    {
-      "name": "GMT",
-      "specifier": "YYYYMMDD",
-      "genre": "Zoom",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "SVM A",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "0000-1000" }
-      ]
-    },
-    {
-      "name": "KVID",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "0000-1000" }
-      ]
-    },
-    {
-      "name": "My Videolicious Video",
-      "specifier": "",
-      "genre": "Video Editor",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "M2U0",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "0000-9999" }
-      ]
-    },
-    {
-      "name": "GH01",
-      "specifier": "XXXX",
-      "genre": "GoPro",
-      "age": "old",
-      "constraints": [{
-            "type": "range",
-            "value": "0000-9999"
-        }]
-    },
-    {
       "name": "",
       "specifier": "Month DD, YYYY",
       "genre": "iPhone",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "For ",
-      "specifier": "Month DD, YYYY",
-      "genre": "iPhone",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "MAH0",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "0000-9999" }
-      ]
-    },
-    {
-      "name": "CIMG",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [{
-          "type": "range",
-          "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "IMGP",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [{
-          "type": "range",
-          "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "Video",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [{
-          "type": "range",
-          "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "MOV0",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [{
-          "type": "range",
-          "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "GEDC",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [{
-          "type": "range",
-          "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "hni_",
-      "specifier": "XXXX",
-      "genre": "Nintendo DS",
-      "age": "old",
-      "constraints": [{
-          "type": "range",
-          "value": "0000-0100"
-        }]
-    },
-    {
-      "name": "bandicam ",
-      "specifier": "YYYY MM DD",
-      "genre": "Screen Recorder",
-      "age": "old",
-      "constraints": []
-    },
-    {
-          "name": "bandicam ",
-          "specifier": "YYYY-MM-DD",
-          "genre": "Screen Recorder",
-          "age": "old",
-          "constraints": [] 
-    },
-    {
-      "name": "trim ",
-      "specifier": "XXXX",
-      "genre": "Video Editor",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "You have a new Picture Mail! (video)",
-      "specifier": "",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "Media1.3gp",
-      "specifier": "",
-      "genre": "Phone",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "Media1.3g2",
-      "specifier": "",
-      "genre": "Phone",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "Video.3g2",
-      "specifier": "",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "New Multimedia Message",
-      "specifier": "",
-      "genre": "Phone",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "Multimedia Message",
-      "specifier": "",
-      "genre": "Phone",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "Video From My Phone",
-      "specifier": "",
-      "genre": "Phone",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "Video",
-      "specifier": "XXX",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": [
-        {
-          "type": "range",
-          "value": "0000-100"
-        }
-      ]
-    },
-    {
-      "name": "Vid",
-      "specifier": "XXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        {
-          "type": "range",
-          "value": "0000-100"
-        }
-      ]
-    },
-    {
-      "name": "AVSEQ",
-      "specifier": "XX",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": [
-        {
-          "type": "range",
-          "value": "00-99"
-        }
-      ]
-    },
-    {
-      "name": "CIMG",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [
-        { "type": "range", "value": "0000-1200" }
-      ]
-    },
-    {
-      "name": "GameRecorder ",
-      "specifier": "YYYYMMDD",
-      "genre": "Game Capture",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "SANYO",
-      "specifier": "XXX",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": [{
-          "type": "range",
-          "value": "000-999"
-        }]
-    },
-    {
-      "name": "robloxapp-",
-      "specifier": "YYYYMMDD",
-      "genre": "Game Capture",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "hl2 ",
-      "specifier": "YYYY MM DD",
-      "genre": "Game Capture",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "hl2 ",
-      "specifier": "YYYY-MM-DD",
-      "genre": "Game Capture",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "Kazam screencast ",
-      "specifier": "XXXXX",
-      "genre": "Screen Recorder",
-      "age": "old",
-      "constraints": [{
-          "type": "range",
-          "value": "00000-00100"
-        }]
-    },
-    {
-      "name": "simplescreenrecorder ",
-      "specifier": "YYYY",
-      "genre": "Screen Recorder",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "This video was uploaded from an Android phone.",
-      "specifier": "",
-      "genre": "Phone",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "Video from Tweetcaster",
-      "specifier": "",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": []
-    }, 
-    {
-      "name": "MAX ",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [{
-          "type": "range",
-          "value": "0000-0100"
-        }]
-    },
-    {
-      "name": "CAM0",
-      "specifier": "XXXX",
-      "genre": "Camera",
-      "age": "old",
-      "constraints": [{
-          "type": "range",
-          "value": "0000-9999"
-        }]
-    },
-    {
-      "name": "My Ezvid Video",
-      "specifier": "",
-      "genre": "Video Editor",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "QuickCapture Video - ",
-      "specifier": "Month DD, YYYY",
-      "genre": "Webcam",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "Fortnite_",
-      "specifier": "YYYYMMDD",
-      "genre": "Game Capture",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "My Stop Motion Movie",
-      "specifier": "",
-      "genre": "Video Editor",
-      "age": "old",
-      "constraints": [{
-          "type": "date",
-          "value": "2015"
-      }]
-    },
-    {
-      "name": "get attachment",
-      "specifier": "",
-      "genre": "Misc",
-      "age": "old",
-      "constraints": []
-    },
-    {
-      "name": "My KineMaster Video",
-      "specifier": "",
-      "genre": "Video Editor",
       "age": "old",
       "constraints": []
     },
@@ -1202,11 +41,910 @@
       "constraints": []
     },
     {
+      "name": ".3gp",
+      "specifier": "",
+      "genre": "Format",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": ".AVI",
+      "specifier": "",
+      "genre": "Format",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": ".FLAC",
+      "specifier": "",
+      "genre": "Format",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": ".MOV",
+      "specifier": "",
+      "genre": "Format",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": ".MP4",
+      "specifier": "",
+      "genre": "Format",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": ".WAV",
+      "specifier": "",
+      "genre": "Format",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": ".WMV",
+      "specifier": "",
+      "genre": "Format",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "/Storage/Emulated/",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "100 ",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "240p 400k",
+      "specifier": "",
+      "genre": "NSFW",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "filter",
+          "value": "playlist"
+        }
+      ]
+    },
+    {
+      "name": "480p 2000k",
+      "specifier": "",
+      "genre": "NSFW",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "filter",
+          "value": "playlist"
+        }
+      ]
+    },
+    {
+      "name": "480p 600k",
+      "specifier": "",
+      "genre": "NSFW",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "filter",
+          "value": "playlist"
+        }
+      ]
+    },
+    {
+      "name": "720p 1500k",
+      "specifier": "",
+      "genre": "NSFW",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "filter",
+          "value": "playlist"
+        }
+      ]
+    },
+    {
+      "name": "720p 4000k",
+      "specifier": "",
+      "genre": "NSFW",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "filter",
+          "value": "playlist"
+        }
+      ]
+    },
+    {
+      "name": "AUD-",
+      "specifier": "YYYYMMDD",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "date-before",
+          "value": "2017"
+        }
+      ]
+    },
+    {
+      "name": "AVSEQ",
+      "specifier": "XX",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "00-99"
+        }
+      ]
+    },
+    {
+      "name": "AVSEQ",
+      "specifier": "XX.DAT",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "00-99"
+        }
+      ]
+    },
+    {
+      "name": "Axon Body * Video",
+      "specifier": "",
+      "genre": "Body Cam",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "bandicam ",
+      "specifier": "YYYY MM DD",
+      "genre": "Screen Recorder",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "bandicam ",
+      "specifier": "YYYY-MM-DD",
+      "genre": "Screen Recorder",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "bmdjAAAF",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "CAM0",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "Capture ",
+      "specifier": "YYYYMMDD",
+      "genre": "Webcam",
+      "age": "",
+      "constraints": [
+      ]
+    },
+    {
+      "name": "CIMG",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-1200"
+        }
+      ]
+    },
+    {
+      "name": "Clips4Sale",
+      "specifier": "",
+      "genre": "NSFW",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "filter",
+          "value": "playlist"
+        }
+      ]
+    },
+    {
+      "name": "Com Oculus Metacam",
+      "specifier": "",
+      "genre": "VR Headset",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "Com Oculus Vrshell",
+      "specifier": "",
+      "genre": "VR Headset",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "Copy of Copy of",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "Desktop ",
+      "specifier": "YYYY MM DD",
+      "genre": "Game Capture",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "DJI ",
+      "specifier": "XXXX",
+      "genre": "Drone",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "DSC ",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "DSCF",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "DSCN",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "DVR",
+      "specifier": "",
+      "genre": "Game Capture",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "FILE",
+      "specifier": "XXXX",
+      "genre": "Dashcam",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "For ",
+      "specifier": "Month DD, YYYY",
+      "genre": "iPhone",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Fortnite_",
+      "specifier": "YYYYMMDD",
+      "genre": "Game Capture",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "FullSizeRender",
+      "specifier": "",
+      "genre": "Smartphone",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "GameRecorder ",
+      "specifier": "YYYYMMDD",
+      "genre": "Game Capture",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "GEDC",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "get attachment",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "GH01",
+      "specifier": "XXXX",
+      "genre": "GoPro",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "GMT",
+      "specifier": "YYYYMMDD",
+      "genre": "Zoom",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "GOPR",
+      "specifier": "XXXX",
+      "genre": "GoPro",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-1999"
+        }
+      ]
+    },
+    {
+      "name": "GP01",
+      "specifier": "XXXX",
+      "genre": "GoPro",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-1999"
+        }
+      ]
+    },
+    {
+      "name": "GX01",
+      "specifier": "XXXX",
+      "genre": "GoPro",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-1999"
+        }
+      ]
+    },
+    {
+      "name": "hl2 ",
+      "specifier": "YYYY MM DD",
+      "genre": "Game Capture",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "hl2 ",
+      "specifier": "YYYY-MM-DD",
+      "genre": "Game Capture",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "HNI ",
+      "specifier": "XXXX",
+      "genre": "Nintendo DS",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "000-100"
+        }
+      ]
+    },
+    {
+      "name": "hni_",
+      "specifier": "XXXX",
+      "genre": "Nintendo DS",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-0100"
+        }
+      ]
+    },
+    {
+      "name": "IMAG",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "IMG",
+      "specifier": "",
+      "genre": "Smartphone",
+      "age": "",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "IMGP",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "InShot ",
+      "specifier": "YYYYMMDD",
+      "genre": "App",
+      "age": "",
+      "constraints": []
+    },
+    {
       "name": "javaw ",
       "specifier": "YYYY MM DD",
       "genre": "Game Capture",
       "age": "old",
       "constraints": []
+    },
+    {
+      "name": "KakaoTalk Video ",
+      "specifier": "YYYY MM",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "date-before",
+          "value": "2012"
+        }
+      ]
+    },
+    {
+      "name": "Kazam screencast ",
+      "specifier": "XXXXX",
+      "genre": "Screen Recorder",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "00000-00100"
+        }
+      ]
+    },
+    {
+      "name": "KVID",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-1000"
+        }
+      ]
+    },
+    {
+      "name": "Lv 0",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "M2U0",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "MAH0",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "MAQ0",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "MAX ",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-0100"
+        }
+      ]
+    },
+    {
+      "name": "Media1.3g2",
+      "specifier": "",
+      "genre": "Phone",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Media1.3gp",
+      "specifier": "",
+      "genre": "Phone",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "MOL0",
+      "specifier": "XX",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "00-F9"
+        }
+      ]
+    },
+    {
+      "name": "MOV ",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "MOV0",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "MOVI",
+      "specifier": "XXXX",
+      "genre": "Dashcam",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-1050"
+        }
+      ]
+    },
+    {
+      "name": "Multimedia Message",
+      "specifier": "",
+      "genre": "Phone",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "MVI ",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "My Edited Video",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "My Ezvid Video",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "My KineMaster Video",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "My Movie ",
+      "specifier": "X",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0-9"
+        }
+      ]
+    },
+    {
+      "name": "My Produced Video",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "My Slideshow",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "My Slideshow ",
+      "specifier": "XX",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "00-99"
+        }
+      ]
+    },
+    {
+      "name": "My Slideshow Video",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "My Stop Motion Movie",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "date-before",
+          "value": "2015"
+        }
+      ]
+    },
+    {
+      "name": "My Stupeflix Video",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "My Stupeflix Video ",
+      "specifier": "XXXX",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-1050"
+        }
+      ]
+    },
+    {
+      "name": "My Videolicious Video",
+      "specifier": "",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "New Multimedia Message",
+      "specifier": "",
+      "genre": "Phone",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "P100",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-1200"
+        }
+      ]
+    },
+    {
+      "name": "PICT",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "PXL ",
+      "specifier": "YYYYMMDD",
+      "genre": "Smartphone",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "QuickCapture Video - ",
+      "specifier": "Month DD, YYYY",
+      "genre": "Webcam",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Recording gvo",
+      "specifier": "",
+      "genre": "Zoom",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "Roblox-",
+      "specifier": "YYYY-MM-DD",
+      "genre": "Game Capture",
+      "age": "new",
+      "constraints": [
+        {
+          "type": "date-before",
+          "value": "2024"
+        }
+      ]
+    },
+    {
+      "name": "Robloxapp",
+      "specifier": "",
+      "genre": "Game Capture",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "robloxapp-",
+      "specifier": "YYYYMMDD",
+      "genre": "Game Capture",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "RPReplay",
+      "specifier": "",
+      "genre": "Screen Recorder",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "SAM ",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "SANYO",
+      "specifier": "XXX",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "000-999"
+        }
+      ]
     },
     {
       "name": "Screenrecorder-",
@@ -1216,12 +954,219 @@
       "constraints": []
     },
     {
+      "name": "SDV ",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-9999"
+        }
+      ]
+    },
+    {
+      "name": "simplescreenrecorder ",
+      "specifier": "YYYY",
+      "genre": "Screen Recorder",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "SVM A",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-1000"
+        }
+      ]
+    },
+    {
+      "name": "This video was uploaded from an Android phone.",
+      "specifier": "",
+      "genre": "Phone",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "trim ",
+      "specifier": "XXXX",
+      "genre": "Video Editor",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Untitled video",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "Vid",
+      "specifier": "XXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-100"
+        }
+      ]
+    },
+    {
+      "name": "VID ",
+      "specifier": "YYYYMMDD",
+      "genre": "Misc",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "Video",
+      "specifier": "XXXX",
+      "genre": "Camera",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "0000-0100"
+        }
+      ]
+    },
+    {
+      "name": "Video ",
+      "specifier": "YYYYMMDD",
+      "genre": "Camera",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "Video From My Phone",
+      "specifier": "",
+      "genre": "Phone",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Video from Tweetcaster",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "Video.3g2",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": []
+    },
+    {
+      "name": "VLC Record",
+      "specifier": "",
+      "genre": "Misc",
+      "age": "new",
+      "constraints": []
+    },
+    {
+      "name": "VTS ",
+      "specifier": "XX X",
+      "genre": "VHS",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "00-99"
+        },
+        {
+          "type": "range",
+          "value": "0-9"
+        }
+      ]
+    },
+    {
+      "name": "VTS ",
+      "specifier": "XXX 1",
+      "genre": "VHS",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "000-999"
+        }
+      ]
+    },
+    {
+      "name": "VTS 01 ",
+      "specifier": "XXX",
+      "genre": "VHS",
+      "age": "",
+      "constraints": [{
+          "type": "range",
+          "value": "000-999"
+        }]
+    },
+    {
+      "name": "WA0",
+      "specifier": "XXX",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "range",
+          "value": "000-999"
+        }
+      ]
+    },
+    {
+      "name": "WhatsApp Video ",
+      "specifier": "YYYY MM DD",
+      "genre": "App",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "WIN ",
+      "specifier": "YYYYMMDD",
+      "genre": "Webcam",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "WP ",
+      "specifier": "YYYYMMDD",
+      "genre": "Misc",
+      "age": "old",
+      "constraints": [
+        {
+          "type": "date-before",
+          "value": "2011"
+        }
+      ]
+    },
+    {
       "name": "XiaoYing Video ",
       "specifier": "HHMMSS",
       "genre": "Camera",
+      "age": "",
+      "constraints": []
+    },
+    {
+      "name": "You have a new Picture Mail! (video)",
+      "specifier": "",
+      "genre": "Misc",
       "age": "old",
       "constraints": []
+    },
+    {
+      "name": "YouCut",
+      "specifier": "YYYYMMDD",
+      "genre": "Misc",
+      "age": "new",
+      "constraints": []
     }
-
   ]
 }

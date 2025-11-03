@@ -1,19 +1,128 @@
 /**
- * Search Settings - User-facing controls for video search
+ * Search Settings - Search Term Formatting & YouTube URL Generation
  *
- * This module provides a settings manager that users can interact with to:
- * - Toggle genre filters
- * - Toggle age filters (new/old)
- * - Add/remove individual patterns from the search pool
- * - Generate random search terms based on their preferences
+ * REFACTORED RESPONSIBILITIES:
+ * This module is now responsible for taking a search term object (selected by +page.svelte)
+ * and formatting it into a complete YouTube search URL.
+ *
+ * NEW FUNCTIONS:
+ *  - formatSearchTermToURL(): Takes a SearchPattern object and returns a formatted YouTube URL
+ *  - generateSpecifierValue(): Fills in specifier templates (YYYY, XXXX, etc.) with actual values
+ *  - meetsDateConstraints(): Checks if a pattern meets date constraints
+ *  - Helper functions for date/time generation and constraint parsing
+ *
+ * WORKFLOW:
+ *  1. +page.svelte selects a random SearchPattern from the active subset
+ *  2. Pass that object to formatSearchTermToURL()
+ *  3. This function generates the specifier, applies constraints, and formats the YouTube URL
+ *  4. Returns the complete URL ready to open in a new tab
  */
 
 import { generateRandomSearchTerm, type FilterOptions } from './method-logic.js';
 import searchTermsData from './search-terms.json' with { type: "json" };
 
+// Import types from method-logic
+import type { SearchPattern, Constraint } from './method-logic.js';
+
 // ============================================================================
-// SETTINGS MANAGER CLASS
+// NEW PUBLIC API: SEARCH TERM FORMATTING
 // ============================================================================
+
+/**
+ * Format a search term object into a complete YouTube search URL
+ *
+ * TODO: Implement this function to:
+ * 1. Generate the specifier value (name + specifier template filled in)
+ * 2. Apply date filters based on pattern age and constraints
+ * 3. Add YouTube-specific parameters (sort order, etc.)
+ * 4. Encode and return the complete URL
+ *
+ * @param pattern - The search pattern object to format
+ * @param overrideDate - Optional date override for custom date filtering
+ * @returns Complete YouTube search URL ready to open
+ */
+export function formatSearchTermToURL(pattern: SearchPattern, overrideDate?: Date): string {
+  // TODO: Implement this function
+  // This will be the main entry point called by +page.svelte
+
+  // Steps:
+  // 1. Generate specifier value using generateSpecifierValue()
+  // 2. Combine name + specifier to create search term
+  // 3. Apply date filters (before:YYYY/MM/DD) based on pattern.age
+  // 4. Add sort parameters for new vs old
+  // 5. Encode and build YouTube URL
+
+  console.warn('formatSearchTermToURL not yet implemented');
+  return '';
+}
+
+// ============================================================================
+// HELPER FUNCTIONS: SPECIFIER GENERATION
+// ============================================================================
+
+/**
+ * Generate a specifier value by filling in template placeholders
+ *
+ * TODO: Move this logic from method-logic.ts
+ * Handles templates like:
+ * - YYYY MM DD -> 2024 03 15
+ * - XXXX -> 1234
+ * - HHMMSS -> 143059
+ */
+function generateSpecifierValue(
+  specifier: string,
+  pattern: SearchPattern,
+  overrideDate?: Date
+): string {
+  // TODO: Move implementation from method-logic.ts
+  return '';
+}
+
+/**
+ * Check if a pattern meets date constraints
+ *
+ * TODO: Move this logic from method-logic.ts
+ */
+function meetsDateConstraints(pattern: SearchPattern, date?: Date): boolean {
+  // TODO: Move implementation from method-logic.ts
+  return true;
+}
+
+/**
+ * Parse a range constraint value
+ *
+ * TODO: Move this logic from method-logic.ts
+ */
+function parseRangeConstraint(value: string): { min: number; max: number } | null {
+  // TODO: Move implementation from method-logic.ts
+  return null;
+}
+
+/**
+ * Generate a random integer between min and max (inclusive)
+ *
+ * TODO: Move this logic from method-logic.ts
+ */
+function getRandomInt(min: number, max: number): number {
+  // TODO: Move implementation from method-logic.ts
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
+ * Get a random element from an array
+ *
+ * TODO: Move this logic from method-logic.ts
+ */
+function getRandomElement<T>(array: T[]): T {
+  // TODO: Move implementation from method-logic.ts
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+// ============================================================================
+// DEPRECATED: OLD SETTINGS MANAGER CLASS
+// ============================================================================
+// This entire class will be removed once +page.svelte is refactored
+// The new approach doesn't need a settings class - just direct function calls
 
 export class SearchSettings {
   // Active filters
@@ -304,7 +413,7 @@ export class SearchSettings {
    */
   private getPatternInfoForTerm(searchTerm: string) {
     const data = searchTermsData as any;
-    const allPatterns = [...data['new-patterns'], ...data['old-patterns']];
+    const allPatterns = data.patterns;
 
     // Find the longest matching pattern name
     // This handles cases where multiple patterns could match (e.g., empty string)
@@ -324,6 +433,7 @@ export class SearchSettings {
 
   /**
    * Print current settings to console
+   * @deprecated Will be removed - debugging only
    */
   printSettings(): void {
     console.log('=== Search Settings ===');
@@ -334,14 +444,16 @@ export class SearchSettings {
     console.log('=====================');
   }
 }
+// END OF DEPRECATED SearchSettings CLASS
 
 // ============================================================================
-// CONVENIENCE FUNCTIONS
+// DEPRECATED: CONVENIENCE FUNCTIONS
 // ============================================================================
+// These functions will be removed once the refactoring is complete
 
 /**
  * DEBUG: Generate and print a random search term with no filters
- * This ignores all settings and just picks any random pattern
+ * @deprecated Use formatSearchTermToURL() instead
  */
 export function debugPrintRandomTerm(): void {
   const term = generateRandomSearchTerm();
@@ -350,14 +462,14 @@ export function debugPrintRandomTerm(): void {
 
 /**
  * Create a new SearchSettings instance
+ * @deprecated The new approach doesn't use a settings class
  */
 export function createSearchSettings(): SearchSettings {
   return new SearchSettings();
 }
 
-// ============================================================================
-// DEFAULT EXPORT
-// ============================================================================
-
-// Export a default instance for convenience
+/**
+ * Default settings instance for convenience
+ * @deprecated The new approach doesn't use a settings class
+ */
 export const defaultSettings = new SearchSettings();
