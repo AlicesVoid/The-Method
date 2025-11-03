@@ -27,7 +27,7 @@ import searchTermsData from './search-terms.json' with { type: "json" };
 // ============================================================================
 
 interface Constraint {
-  type: 'year' | 'date-before' | 'date-after' | 'range' | 'time-range' | 'letter-range' | 'filter' | 'category';
+  type: 'year' | 'date-before' | 'date-after' | 'range' | 'time-range' | 'letter-range' | 'hex-range' | 'filter' | 'category';
   value: string | number;
 }
 

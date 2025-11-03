@@ -29,15 +29,9 @@ import type { SearchPattern, Constraint } from './method-logic.js';
  * Format a search term object into a complete YouTube search URL
  *
  * NEW WORKFLOW:
- * 1. Create the name + specifier search term
- * 2. Use formattedDate for the date (from +page.svelte randomSpecDay())
- * 3. Pattern-match to return a search term with the specifier filled in
- * 4. Determine how to add date-tag (before:/after:)
- *    4a. If name+specifier has a date, make it after: that date
- *    4b. If date is overridden, make it before that date
- *    4c. If tagged as 'old', make it before formattedDate
- *    4d. If tagged as 'new', don't add any date tag
- * 5. Always filter videos by upload date
+ * 1. Pattern-match to return a search term with the specifier filled in
+ * 2. Determine how to add date-tag (before:/after:)
+ * 3. Always filter videos by upload date
  *
  * @param pattern - The search pattern object to format
  * @param specifier - The specific specifier to use from pattern.specifiers
@@ -49,23 +43,23 @@ export function formatSearchTermToURL(
   specifier: string,
   formattedDate: Date
 ): string {
-  // Step 3: Pattern-match to generate the search term (name + filled specifier)
+  // Step 1: Pattern-match to generate the search term (name + filled specifier)
   const searchTerm = generateSearchTerm(pattern.name, specifier, pattern, formattedDate);
 
-  // Step 4: Determine the date filter
+  // Step 2: Determine the date filter
   const dateFilter = determineDateFilter(specifier, pattern, formattedDate, searchTerm);
 
   // Combine search term with date filter
   const fullSearchTerm = dateFilter ? `${searchTerm} ${dateFilter}` : searchTerm;
 
-  // Step 5: Build YouTube search URL with upload date sort
+  // Step 3: Build YouTube search URL with upload date sort
   const params = new URLSearchParams({
     search_query: fullSearchTerm
   });
 
   // Always sort by upload date
   // Use upload date filter (this ensures we're filtering by upload date)
-  // params.append('sp', 'CAISAhAB'); // Upload date sort
+  params.append('sp', 'CAISAhAB'); // Upload date sort
 
   // Return the complete YouTube URL
   return `https://www.youtube.com/results?${params.toString()}`;
@@ -177,41 +171,76 @@ function fillSpecifierTemplate(
     result = result.replace(/SS/g, seconds);
   }
 
-  // XXXX - 4-digit random number (check for range constraints)
-  if (result.includes('XXXX')) {
-    let min = 1000;
-    let max = 9999;
+  // X - Any amount of X's will be replaced with that many random digits (consider constraints)
+  if (result.includes('X')) {
+    // Determine how many separate words of X's there are 
+    const xMatches = result.match(/X+/g);
 
-    for (const constraint of pattern.constraints) {
-      if (constraint.type === 'range') {
-        const range = parseRangeConstraint(String(constraint.value));
-        if (range) {
-          min = range.min;
-          max = range.max;
+    if (xMatches) {
+      // Process each X field separately
+      for (const xGroup of xMatches) {
+        const xCount = xGroup.length;
+
+        // Determine if any constraints apply
+        let min = 0;
+        let max = Math.pow(10, xCount) - 1; // Default max based on X count (e.g., X=9, XX=99, XXX=999)
+        let constraintType: 'number' | 'letter' | 'hex' = 'number'; // Default to number
+
+        // Check for constraints that apply to this X field
+        for (const constraint of pattern.constraints) {
+
+          // For Number Ranges
+          if (constraint.type === 'range') {
+            const range = parseRangeConstraint(String(constraint.value));
+            if (range) {
+              console.log('Applying range constraint:', range);
+              min = range.min;
+              max = range.max;
+              constraintType = 'number';
+            }
+
+          // For Letter Ranges
+          } else if (constraint.type === 'letter-range') {
+            const range = parseRangeConstraint(String(constraint.value));
+            if (range) {
+              console.log('Applying letter-range constraint:', range);
+              min = range.min;
+              max = range.max;
+              constraintType = 'letter';
+            }
+          
+          // For Hex Ranges
+          } else if (constraint.type === 'hex-range') {
+            const range = parseRangeConstraint(String(constraint.value));
+            if (range) {
+              console.log('Applying hex-range constraint:', range);
+              min = range.min;
+              max = range.max;
+              constraintType = 'hex';
+            }
+          }
         }
+
+        // Generate a value that goes between the given constraints
+        let replacement: string;
+
+        if (constraintType === 'letter') {
+          const randomNum = getRandomInt(min, max);
+          replacement = String.fromCharCode(randomNum);
+        } else if (constraintType === 'hex') {
+          const randomNum = getRandomInt(min, max);
+          replacement = randomNum.toString(16).toUpperCase();
+        } else {
+          // Default: number
+          const randomNum = getRandomInt(min, max);
+          replacement = randomNum.toString();
+        }
+
+        // Step 5: Set that to the result but keep the formatting the same (pad to match X count)
+        replacement = replacement.padStart(xCount, '0');
+        result = result.replace(xGroup, replacement);
       }
     }
-
-    const num = getRandomInt(min, max);
-    result = result.replace(/XXXX/g, num.toString());
-  }
-
-  // XXX - 3-digit random number
-  if (result.includes('XXX')) {
-    const num = getRandomInt(100, 999);
-    result = result.replace(/XXX/g, num.toString());
-  }
-
-  // XX - 2-digit random number
-  if (result.includes('XX')) {
-    const num = getRandomInt(10, 99);
-    result = result.replace(/XX/g, num.toString());
-  }
-
-  // X - 1-digit random number
-  if (result.includes('X')) {
-    const num = getRandomInt(0, 9);
-    result = result.replace(/X/g, num.toString());
   }
 
   return result;
@@ -272,16 +301,6 @@ function determineDateFilter(
 }
 
 /**
- * Check if a pattern meets date constraints
- *
- * TODO: Move this logic from method-logic.ts
- */
-function meetsDateConstraints(pattern: SearchPattern, date?: Date): boolean {
-  // TODO: Move implementation from method-logic.ts
-  return true;
-}
-
-/**
  * Parse a range constraint value
  * Format: "min-max" like "1000-9999" or "1-12"
  */
@@ -304,9 +323,18 @@ function getRandomInt(min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-/**
- * Get a random element from an array
- */
-function getRandomElement<T>(array: T[]): T {
-  return array[Math.floor(Math.random() * array.length)];
+function getRandomLetter(min: number, max: number): string {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const letterArray = letters.split('');
+  const randomIndex = Math.floor(Math.random() * (max - min + 1)) + min;
+  return letterArray[randomIndex % letterArray.length];
 }
+
+function getRandomHex(min: number, max: number): string {
+  const hexChars = '0123456789ABCDEF';
+  const hexArray = hexChars.split('');
+  const randomIndex = Math.floor(Math.random() * (max - min + 1)) + min;
+  return hexArray[randomIndex % hexArray.length];
+}
+
+

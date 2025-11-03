@@ -30,16 +30,10 @@
     // This is the single source of truth for all search terms
     let allSearchTerms: SearchPattern[] = loadAllSearchTerms();
 
-    // TODO: Create an "active flags" array/map to track which items are currently active
-    // This will be used to filter which search terms can be randomly selected
-    // Flags should be based on: genre filters, name filters, age filters, date constraints
-    let activeFlags: boolean[] = []; // TODO: One flag per search term
-
     // ============================================================================
     // DERIVED LISTS FOR UI DROPDOWNS
     // ============================================================================
-    // Extract unique genres and names from the loaded search terms
-    // These will populate the filter dropdowns in the UI
+
 
     // Derive all unique genres from the search terms
     // Sort alphabetically, but put NSFW at the front if it exists
@@ -59,7 +53,6 @@
 
     // Derive all unique name+specifier combinations from the search terms
     // Each unique combination will be a separate item in the dropdown
-    // This updates reactively based on which genres are selected
     interface NameSpecifierItem {
         name: string;
         specifier: string;
@@ -67,6 +60,7 @@
         showSpecifier: boolean; // Only show specifier if multiple items share the same name
     }
 
+    // Collision Handling for Overlapping Names with Different Specifiers
     let availableNames: NameSpecifierItem[] = [];
     $: {
         const filtered = allSearchTerms
@@ -154,11 +148,6 @@
 
     // Sync selectAllGenres checkbox with actual selection state
     $: selectAllGenres = allGenres.length > 0 && selectedGenres.size === allGenres.length;
-
-    // Unselect all genres if "Select All" is unchecked
-    // $: if (!selectAllGenres && selectedGenres.size === allGenres.length) {
-    //     selectedGenres = new Set();
-    // }
     
     // ============================================================================
     // STATE: NAME/SEARCH TERM SELECTION
@@ -230,6 +219,7 @@
     // FUNCTIONS: GENRE SELECTION
     // ============================================================================
 
+    // Toggle individual genre selection
     function toggleGenre(genre: string) {
         if (selectedGenres.has(genre)) {
             selectedGenres.delete(genre);
@@ -239,6 +229,7 @@
         selectedGenres = selectedGenres; // Trigger reactivity
     }
 
+    // Toggle select/deselect all genres
     function toggleSelectAll() {
         if (selectedGenres.size === allGenres.length) {
             // Currently all selected, so deselect all
@@ -253,6 +244,7 @@
     // FUNCTIONS: NAME SELECTION
     // ============================================================================
 
+    // Toggle individual name+specifier selection
     function toggleName(displayKey: string) {
         if (selectedNames.has(displayKey)) {
             selectedNames.delete(displayKey);
@@ -262,6 +254,7 @@
         selectedNames = selectedNames; // Trigger reactivity
     }
 
+    // Toggle select/deselect all names
     function toggleSelectAllNames() {
         if (selectedNames.size === availableNames.length) {
             // Currently all selected, so deselect all
@@ -276,6 +269,7 @@
     // FUNCTIONS: AGE FILTER
     // ============================================================================
 
+    // Handle age filter changes
     function handleAgeChange(event: Event) {
         const target = event.target as HTMLSelectElement;
         selectedAge = target.value as 'any' | 'new' | 'old';
@@ -284,9 +278,9 @@
     // ============================================================================
     // FUNCTIONS: RANDOM SEARCH TERM SELECTION
     // ============================================================================
+    
     // Randomly select one search term from the active filtered list
     // Returns the pattern, specifier, and other relevant data
-
     function getRandomActiveSearchTerm(): { pattern: SearchPattern; specifier: string;} | null {
         if (activeSearchTerms.length === 0) {
             return null;
@@ -316,8 +310,9 @@
     // ============================================================================
     // FUNCTIONS: RANDOM SPECIFIER DAY GENERATION
     // ============================================================================
+    
+    
     // Picks a random day if you dont override the date
-
     function randomSpecDay(pattern: SearchPattern): Date {
         const today = new Date();       
         let randomDays = 0;
@@ -374,6 +369,7 @@
     // FUNCTIONS: MAIN BUTTON HANDLER
     // ============================================================================
 
+    // Handle "Find Videos" button click
     function handleFindVideos() {
         // Get a random search term from the active filtered list
         const result = getRandomActiveSearchTerm();

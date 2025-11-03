@@ -777,7 +777,7 @@
       "age": "old",
       "constraints": [
         {
-          "type": "range",
+          "type": "hex-range",
           "value": "00-F9"
         }
       ]
