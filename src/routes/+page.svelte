@@ -139,6 +139,9 @@
     let selectAllGenres: boolean = false;
     let genreDropdownOpen: boolean = false;
     let genresInitialized: boolean = false;
+    let genreSearchBuffer: string = '';
+    let genreSearchTimeout: number | null = null;
+    let genreDropdownElement: HTMLDivElement;
 
     // Initialize selectedGenres after allGenres is computed (only once)
     $: if (allGenres.length > 0 && !genresInitialized) {
@@ -148,6 +151,11 @@
 
     // Sync selectAllGenres checkbox with actual selection state
     $: selectAllGenres = allGenres.length > 0 && selectedGenres.size === allGenres.length;
+
+    // Auto-focus genre dropdown when it opens
+    $: if (genreDropdownOpen && genreDropdownElement) {
+        setTimeout(() => genreDropdownElement.focus(), 0);
+    }
     
     // ============================================================================
     // STATE: NAME/SEARCH TERM SELECTION
@@ -159,6 +167,9 @@
     let selectAllNames: boolean = true;
     let nameDropdownOpen: boolean = false;
     let namesInitialized: boolean = false;
+    let nameSearchBuffer: string = '';
+    let nameSearchTimeout: number | null = null;
+    let nameDropdownElement: HTMLDivElement;
 
     // Initialize selectedNames to all available names after they're computed (only once)
     $: if (availableNames.length > 0 && !namesInitialized) {
@@ -168,6 +179,11 @@
 
     // Sync selectAllNames checkbox with actual selection state
     $: selectAllNames = availableNames.length > 0 && selectedNames.size === availableNames.length;
+
+    // Auto-focus name dropdown when it opens
+    $: if (nameDropdownOpen && nameDropdownElement) {
+        setTimeout(() => nameDropdownElement.focus(), 0);
+    }
 
     // ============================================================================
     // REACTIVE: ACTIVE SEARCH TERM FILTERING
@@ -219,6 +235,38 @@
     // FUNCTIONS: GENRE SELECTION
     // ============================================================================
 
+    // Lets you do that cool thing where if you start typing a word it jumps to that item
+    function handleGenreKeydown(event: KeyboardEvent) {
+        // Only handle letter/number keys
+        if (event.key.length === 1 && /[a-zA-Z0-9]/.test(event.key)) {
+            // Clear previous timeout
+            if (genreSearchTimeout !== null) {
+                clearTimeout(genreSearchTimeout);
+            }
+
+            // Add to search buffer
+            genreSearchBuffer += event.key.toLowerCase();
+
+            // Find matching genre
+            const match = allGenres.find(genre =>
+                genre.toLowerCase().startsWith(genreSearchBuffer)
+            );
+
+            if (match) {
+                // Scroll to the matching element
+                const element = document.getElementById(`genre-${match}`);
+                if (element) {
+                    element.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                }
+            }
+
+            // Clear buffer after 1 second of no typing
+            genreSearchTimeout = window.setTimeout(() => {
+                genreSearchBuffer = '';
+            }, 1000);
+        }
+    }
+
     // Toggle individual genre selection
     function toggleGenre(genre: string) {
         if (selectedGenres.has(genre)) {
@@ -243,6 +291,38 @@
     // ============================================================================
     // FUNCTIONS: NAME SELECTION
     // ============================================================================
+
+    // Lets you do that cool thing where if you start typing a word it jumps to that item
+    function handleNameKeydown(event: KeyboardEvent) {
+        // Only handle letter/number keys
+        if (event.key.length === 1 && /[a-zA-Z0-9]/.test(event.key)) {
+            // Clear previous timeout
+            if (nameSearchTimeout !== null) {
+                clearTimeout(nameSearchTimeout);
+            }
+
+            // Add to search buffer
+            nameSearchBuffer += event.key.toLowerCase();
+
+            // Find matching name
+            const match = availableNames.find(item =>
+                item.name.toLowerCase().startsWith(nameSearchBuffer)
+            );
+
+            if (match) {
+                // Scroll to the matching element
+                const element = document.getElementById(`name-${match.displayKey}`);
+                if (element) {
+                    element.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                }
+            }
+
+            // Clear buffer after 1 second of no typing
+            nameSearchTimeout = window.setTimeout(() => {
+                nameSearchBuffer = '';
+            }, 1000);
+        }
+    }
 
     // Toggle individual name+specifier selection
     function toggleName(displayKey: string) {
@@ -1105,7 +1185,13 @@
                     </button>
 
                     {#if genreDropdownOpen}
-                        <div class="genre-dropdown-menu">
+                        <div
+                            bind:this={genreDropdownElement}
+                            class="genre-dropdown-menu"
+                            role="listbox"
+                            tabindex="0"
+                            on:keydown={handleGenreKeydown}
+                        >
                             <!-- Select All checkbox -->
                             <label class="genre-checkbox-item select-all">
                                 <input
@@ -1120,7 +1206,10 @@
 
                             <!-- Individual genre checkboxes -->
                             {#each allGenres as genre}
-                                <label class="genre-checkbox-item">
+                                <label
+                                    class="genre-checkbox-item"
+                                    id="genre-{genre}"
+                                >
                                     <input
                                         type="checkbox"
                                         checked={selectedGenres.has(genre)}
@@ -1148,7 +1237,13 @@
                     </button>
 
                     {#if nameDropdownOpen}
-                        <div class="genre-dropdown-menu">
+                        <div
+                            bind:this={nameDropdownElement}
+                            class="genre-dropdown-menu"
+                            role="listbox"
+                            tabindex="0"
+                            on:keydown={handleNameKeydown}
+                        >
                             <!-- Select All checkbox (on deselect, uncheck everything)-->
                             <label class="genre-checkbox-item select-all">
                                 <input
@@ -1163,7 +1258,10 @@
 
                             <!-- Individual name+specifier checkboxes -->
                             {#each availableNames as item}
-                                <label class="genre-checkbox-item">
+                                <label
+                                    class="genre-checkbox-item"
+                                    id="name-{item.displayKey}"
+                                >
                                     <input
                                         type="checkbox"
                                         checked={selectedNames.has(item.displayKey)}
