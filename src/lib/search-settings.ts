@@ -1,363 +1,340 @@
 /**
- * Search Settings - User-facing controls for video search
+ * Search Settings - Search Term Formatting & YouTube URL Generation
  *
- * This module provides a settings manager that users can interact with to:
- * - Toggle genre filters
- * - Toggle age filters (new/old)
- * - Add/remove individual patterns from the search pool
- * - Generate random search terms based on their preferences
+ * REFACTORED RESPONSIBILITIES:
+ * This module is now responsible for taking a search term object (selected by +page.svelte)
+ * and formatting it into a complete YouTube search URL.
+ *
+ * NEW FUNCTIONS:
+ *  - formatSearchTermToURL(): Takes a SearchPattern object and returns a formatted YouTube URL
+ *  - generateSpecifierValue(): Fills in specifier templates (YYYY, XXXX, etc.) with actual values
+ *  - meetsDateConstraints(): Checks if a pattern meets date constraints
+ *  - Helper functions for date/time generation and constraint parsing
+ *
+ * WORKFLOW:
+ *  1. +page.svelte selects a random SearchPattern from the active subset
+ *  2. Pass that object to formatSearchTermToURL()
+ *  3. This function generates the specifier, applies constraints, and formats the YouTube URL
+ *  4. Returns the complete URL ready to open in a new tab
  */
 
-import { generateRandomSearchTerm, type FilterOptions } from './method-logic.js';
-import searchTermsData from './search-terms.json' with { type: "json" };
+// Import types from method-logic
+import type { SearchPattern, Constraint } from './method-logic.js';
 
 // ============================================================================
-// SETTINGS MANAGER CLASS
+// NEW PUBLIC API: SEARCH TERM FORMATTING
 // ============================================================================
 
-export class SearchSettings {
-  // Active filters
-  private enabledGenres: Set<string> = new Set();
-  private enabledAges: Set<'new' | 'old'> = new Set(['new', 'old']); // Both enabled by default
-  private excludedPatternNames: Set<string> = new Set();
+/**
+ * Format a search term object into a complete YouTube search URL
+ *
+ * NEW WORKFLOW:
+ * 1. Pattern-match to return a search term with the specifier filled in
+ * 2. Determine how to add date-tag (before:/after:)
+ * 3. Always filter videos by upload date
+ *
+ * @param pattern - The search pattern object to format
+ * @param specifier - The specific specifier to use from pattern.specifiers
+ * @param formattedDate - The date from +page.svelte randomSpecDay()
+ * @returns Complete YouTube search URL ready to open
+ */
+export function formatSearchTermToURL(
+  pattern: SearchPattern,
+  specifier: string,
+  formattedDate: Date
+): string {
+  // Step 1: Pattern-match to generate the search term (name + filled specifier)
+  const searchTerm = generateSearchTerm(pattern.name, specifier, pattern, formattedDate);
 
-  // Available genre list (can be expanded)
-  private readonly availableGenres = [
-    'Smartphone', 'Camera', 'Misc', 'Webcam', 'Video Editor', 'App',
-    'Screen Recorder', 'VHS', 'Game Capture', 'Format', 'Zoom',
-    'VR Headset', 'GoPro', 'Drone', 'Nintendo DS', 'Dashcam',
-    'iPhone', 'Body Cam', 'NSFW'
-  ];
+  // Step 2: Determine the date filter
+  const dateFilter = determineDateFilter(specifier, pattern, formattedDate, searchTerm);
 
-  // ============================================================================
-  // GENRE MANAGEMENT
-  // ============================================================================
+  // Combine search term with date filter
+  const fullSearchTerm = dateFilter ? `${searchTerm} ${dateFilter}` : searchTerm;
 
-  /**
-   * Enable a specific genre for searches
-   */
-  enableGenre(genre: string): void {
-    this.enabledGenres.add(genre);
-    console.log(`Genre "${genre}" enabled`);
+  // Step 3: Build YouTube search URL with upload date sort
+  const params = new URLSearchParams({
+    search_query: fullSearchTerm
+  });
+
+  // Always sort by upload date
+  // Use upload date filter (this ensures we're filtering by upload date)
+  params.append('sp', 'CAISAhAB'); // Upload date sort
+
+  // Return the complete YouTube URL
+  return `https://www.youtube.com/results?${params.toString()}`;
+}
+
+// ============================================================================
+// HELPER FUNCTIONS: PATTERN MATCHING & SPECIFIER GENERATION
+// ============================================================================
+
+/**
+ * Step 3: Generate a search term by pattern-matching the specifier template
+ * Fills in placeholders like YYYY, MM, DD, XXXX, etc.
+ *
+ * @param name - The base search term name
+ * @param specifier - The specifier template (e.g., "YYYY MM DD", "XXXX")
+ * @param pattern - The SearchPattern object for constraints
+ * @param formattedDate - The date to use when filling in date placeholders
+ * @returns Complete search term (name + filled specifier)
+ */
+function generateSearchTerm(
+  name: string,
+  specifier: string,
+  pattern: SearchPattern,
+  formattedDate: Date
+): string {
+  // If no specifier, just return the name
+  if (!specifier || specifier === '') {
+    return name;
   }
 
-  /**
-   * Disable a specific genre from searches
-   */
-  disableGenre(genre: string): void {
-    this.enabledGenres.delete(genre);
-    console.log(`Genre "${genre}" disabled`);
+  // Generate the specifier value by filling in template placeholders
+  const specifierValue = fillSpecifierTemplate(specifier, pattern, formattedDate);
+
+  // Combine name + specifier
+  return specifierValue ? `${name} ${specifierValue}` : name;
+}
+
+/**
+ * Fill in template placeholders in a specifier
+ * Handles templates like:
+ * - YYYY MM DD -> 2024 03 15
+ * - XXXX -> 1234
+ * - HHMMSS -> 143059
+ */
+function fillSpecifierTemplate(
+  specifier: string,
+  pattern: SearchPattern,
+  formattedDate: Date
+): string {
+  if (!specifier || specifier === '') return '';
+
+  let result = specifier;
+
+  // Replace date/time placeholders
+  // YYYY - Year (4 digits)
+  if (result.includes('YYYY')) {
+    let year: number;
+    year = formattedDate.getFullYear();
+    result = result.replace(/YYYY/g, year.toString().padStart(4, '0'));
   }
 
-  /**
-   * Toggle a genre on/off
-   */
-  toggleGenre(genre: string): void {
-    if (this.enabledGenres.has(genre)) {
-      this.disableGenre(genre);
-    } else {
-      this.enableGenre(genre);
-    }
+  // Month - Month (January - December)
+  if (result.includes('Month')) {
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    const monthIndex = formattedDate.getMonth();
+    result = result.replace(/Month/g, monthNames[monthIndex]);
   }
 
-  /**
-   * Enable all genres
-   */
-  enableAllGenres(): void {
-    this.enabledGenres.clear(); // Empty set = no filter = all genres
-    console.log('All genres enabled');
+  // Mon - Short Month (Jan - Dec)
+  if (result.includes('Mon')) {
+    const shortMonthNames = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+    const monthIndex = formattedDate.getMonth();
+    result = result.replace(/Mon/g, shortMonthNames[monthIndex]);
   }
 
-  /**
-   * Get list of currently enabled genres
-   */
-  getEnabledGenres(): string[] {
-    if (this.enabledGenres.size === 0) {
-      return ['All genres'];
-    }
-    return Array.from(this.enabledGenres);
+  // MM - Month (01-12)
+  if (result.includes('MM')) {
+    const month = formattedDate.getMonth() + 1; // Months are 0-indexed
+    result = result.replace(/MM/g, month.toString().padStart(2, '0'));
   }
 
-  /**
-   * Get list of all available genres
-   */
-  getAvailableGenres(): string[] {
-    return [...this.availableGenres];
+  // DD - Day (01-31)
+  if (result.includes('DD')) {
+    const day = formattedDate.getDate().toString().padStart(2, '0');
+    result = result.replace(/DD/g, day);
   }
 
-  // ============================================================================
-  // AGE MANAGEMENT
-  // ============================================================================
-
-  /**
-   * Enable "new" age category
-   */
-  enableNew(): void {
-    this.enabledAges.add('new');
-    console.log('New patterns enabled');
+  // HH - Hours (00-23)
+  if (result.includes('HH')) {
+    const hours = formattedDate.getHours().toString().padStart(2, '0');
+    result = result.replace(/HH/g, hours);
   }
 
-  /**
-   * Disable "new" age category
-   */
-  disableNew(): void {
-    this.enabledAges.delete('new');
-    console.log('New patterns disabled');
+  // mm - Minutes (00-59)
+  if (result.includes('mm')) {
+    const minutes = formattedDate.getMinutes().toString().padStart(2, '0');
+    result = result.replace(/mm/g, minutes);
   }
 
-  /**
-   * Enable "old" age category
-   */
-  enableOld(): void {
-    this.enabledAges.add('old');
-    console.log('Old patterns enabled');
+  // SS - Seconds (00-59)
+  if (result.includes('SS')) {
+    const seconds = formattedDate.getSeconds().toString().padStart(2, '0');
+    result = result.replace(/SS/g, seconds);
   }
 
-  /**
-   * Disable "old" age category
-   */
-  disableOld(): void {
-    this.enabledAges.delete('old');
-    console.log('Old patterns disabled');
-  }
+  // X - Any amount of X's will be replaced with that many random digits (consider constraints)
+  if (result.includes('X')) {
+    // Determine how many separate words of X's there are 
+    const xMatches = result.match(/X+/g);
 
-  /**
-   * Toggle "new" age category
-   */
-  toggleNew(): void {
-    if (this.enabledAges.has('new')) {
-      this.disableNew();
-    } else {
-      this.enableNew();
-    }
-  }
+    if (xMatches) {
+      // Process each X field separately
+      for (const xGroup of xMatches) {
+        const xCount = xGroup.length;
 
-  /**
-   * Toggle "old" age category
-   */
-  toggleOld(): void {
-    if (this.enabledAges.has('old')) {
-      this.disableOld();
-    } else {
-      this.enableOld();
-    }
-  }
+        // Determine if any constraints apply
+        let min = 0;
+        let max = Math.pow(10, xCount) - 1; // Default max based on X count (e.g., X=9, XX=99, XXX=999)
+        let constraintType: 'number' | 'letter' | 'hex' = 'number'; // Default to number
 
-  /**
-   * Check if new patterns are enabled
-   */
-  isNewEnabled(): boolean {
-    return this.enabledAges.has('new');
-  }
+        // Check for constraints that apply to this X field
+        for (const constraint of pattern.constraints) {
 
-  /**
-   * Check if old patterns are enabled
-   */
-  isOldEnabled(): boolean {
-    return this.enabledAges.has('old');
-  }
+          // For Number Ranges
+          if (constraint.type === 'range') {
+            const range = parseRangeConstraint(String(constraint.value));
+            if (range) {
+              console.log('Applying range constraint:', range);
+              min = range.min;
+              max = range.max;
+              constraintType = 'number';
+            }
 
-  // ============================================================================
-  // PATTERN EXCLUSION
-  // ============================================================================
-
-  /**
-   * Exclude a specific pattern by name from searches
-   */
-  excludePattern(patternName: string): void {
-    this.excludedPatternNames.add(patternName);
-    console.log(`Pattern "${patternName}" excluded from searches`);
-  }
-
-  /**
-   * Re-include a previously excluded pattern
-   */
-  includePattern(patternName: string): void {
-    this.excludedPatternNames.delete(patternName);
-    console.log(`Pattern "${patternName}" included in searches`);
-  }
-
-  /**
-   * Toggle pattern inclusion/exclusion
-   */
-  togglePattern(patternName: string): void {
-    if (this.excludedPatternNames.has(patternName)) {
-      this.includePattern(patternName);
-    } else {
-      this.excludePattern(patternName);
-    }
-  }
-
-  /**
-   * Clear all pattern exclusions
-   */
-  clearExclusions(): void {
-    this.excludedPatternNames.clear();
-    console.log('All pattern exclusions cleared');
-  }
-
-  /**
-   * Get list of excluded patterns
-   */
-  getExcludedPatterns(): string[] {
-    return Array.from(this.excludedPatternNames);
-  }
-
-  // ============================================================================
-  // RESET
-  // ============================================================================
-
-  /**
-   * Reset all settings to defaults
-   */
-  resetToDefaults(): void {
-    this.enabledGenres.clear();
-    this.enabledAges = new Set(['new', 'old']);
-    this.excludedPatternNames.clear();
-    console.log('Settings reset to defaults');
-  }
-
-  // ============================================================================
-  // SEARCH TERM GENERATION
-  // ============================================================================
-
-  /**
-   * Generate a random search term based on current settings
-   * Returns the search term or null if no patterns match the filters
-   * Automatically prints the search term to console
-   * @param overrideDate - Optional date to override all date generation
-   */
-  generateSearchTerm(overrideDate?: Date): string | null {
-    const result = this.generateSearchTermWithPattern(overrideDate);
-    return result ? result.searchTerm : null;
-  }
-
-  /**
-   * Generate a random search term with pattern info based on current settings
-   * Returns object with searchTerm and pattern age, or null if no patterns match
-   * @param overrideDate - Optional date to override all date generation
-   */
-  generateSearchTermWithPattern(overrideDate?: Date): { searchTerm: string; age: 'new' | 'old' | '' } | null {
-    // Build filter options based on current settings
-    const filters: FilterOptions = {};
-
-    // Apply genre filter only if specific genres are enabled
-    if (this.enabledGenres.size > 0) {
-      // Note: method-logic only supports single genre filter
-      // If multiple genres enabled, we'll need to call multiple times
-      // For now, pick a random enabled genre
-      const genresArray = Array.from(this.enabledGenres);
-      filters.genre = genresArray[Math.floor(Math.random() * genresArray.length)];
-    }
-
-    // Apply age filter if only one is enabled
-    if (this.enabledAges.size === 1) {
-      filters.age = Array.from(this.enabledAges)[0];
-    }
-    // If both or neither are enabled, don't filter by age
-
-    try {
-      // Generate multiple attempts to avoid excluded patterns
-      let attempts = 0;
-      const maxAttempts = 50;
-
-      while (attempts < maxAttempts) {
-        const searchTerm = generateRandomSearchTerm({
-          filters,
-          overrideDate
-        });
-
-        // Check if this pattern is excluded
-        let isExcluded = false;
-        for (const excludedName of this.excludedPatternNames) {
-          if (searchTerm.startsWith(excludedName)) {
-            isExcluded = true;
-            break;
+          // For Letter Ranges
+          } else if (constraint.type === 'letter-range') {
+            const range = parseRangeConstraint(String(constraint.value));
+            if (range) {
+              console.log('Applying letter-range constraint:', range);
+              min = range.min;
+              max = range.max;
+              constraintType = 'letter';
+            }
+          
+          // For Hex Ranges
+          } else if (constraint.type === 'hex-range') {
+            const range = parseRangeConstraint(String(constraint.value));
+            if (range) {
+              console.log('Applying hex-range constraint:', range);
+              min = range.min;
+              max = range.max;
+              constraintType = 'hex';
+            }
           }
         }
 
-        if (!isExcluded) {
-          // Get pattern info to retrieve age
-          const patternInfo = this.getPatternInfoForTerm(searchTerm);
-          const age = patternInfo?.age || '';
+        // Generate a value that goes between the given constraints
+        let replacement: string;
 
-          // Print search term and age to console for debugging
-          console.log(searchTerm, `(age: ${age})`);
-          return { searchTerm, age };
+        if (constraintType === 'letter') {
+          const randomNum = getRandomInt(min, max);
+          replacement = String.fromCharCode(randomNum);
+        } else if (constraintType === 'hex') {
+          const randomNum = getRandomInt(min, max);
+          replacement = randomNum.toString(16).toUpperCase();
+        } else {
+          // Default: number
+          const randomNum = getRandomInt(min, max);
+          replacement = randomNum.toString();
         }
 
-        attempts++;
-      }
-
-      // If we exhausted attempts, all matching patterns might be excluded
-      console.warn('Could not generate search term - all matching patterns may be excluded');
-      return null;
-
-    } catch (error) {
-      console.error('Error generating search term:', error);
-      return null;
-    }
-  }
-
-  /**
-   * Helper method to get pattern info for a search term
-   */
-  private getPatternInfoForTerm(searchTerm: string) {
-    const data = searchTermsData as any;
-    const allPatterns = [...data['new-patterns'], ...data['old-patterns']];
-
-    // Find the longest matching pattern name
-    // This handles cases where multiple patterns could match (e.g., empty string)
-    let bestMatch = null;
-    let longestMatch = -1;
-
-    for (const pattern of allPatterns) {
-      const name = pattern.name;
-      if (searchTerm.startsWith(name) && name.length > longestMatch) {
-        bestMatch = pattern;
-        longestMatch = name.length;
+        // Step 5: Set that to the result but keep the formatting the same (pad to match X count)
+        replacement = replacement.padStart(xCount, '0');
+        result = result.replace(xGroup, replacement);
       }
     }
-
-    return bestMatch;
   }
 
-  /**
-   * Print current settings to console
-   */
-  printSettings(): void {
-    console.log('=== Search Settings ===');
-    console.log('Enabled Genres:', this.getEnabledGenres().join(', '));
-    console.log('New Patterns:', this.isNewEnabled() ? 'Enabled' : 'Disabled');
-    console.log('Old Patterns:', this.isOldEnabled() ? 'Enabled' : 'Disabled');
-    console.log('Excluded Patterns:', this.getExcludedPatterns().join(', ') || 'None');
-    console.log('=====================');
-  }
+  return result;
 }
 
 // ============================================================================
-// CONVENIENCE FUNCTIONS
+// HELPER FUNCTIONS: DATE FILTER DETERMINATION
 // ============================================================================
 
 /**
- * DEBUG: Generate and print a random search term with no filters
- * This ignores all settings and just picks any random pattern
+ * Step 4: Determine how to handle adding a date-tag for before: or after: a certain date
+ *
+ * @param specifier - The specifier template (e.g., "YYYY MM DD", "XXXX")
+ * @param pattern - The SearchPattern object
+ * @param formattedDate - The date from +page.svelte randomSpecDay()
+ * @param searchTerm - The generated search term (name + filled specifier) for extracting date
+ * @returns Date filter string (e.g., "after:2020-01-15" or "before:2024-12-31" or empty string)
  */
-export function debugPrintRandomTerm(): void {
-  const term = generateRandomSearchTerm();
-  console.log(term);
+function determineDateFilter(
+  specifier: string,
+  pattern: SearchPattern,
+  formattedDate: Date,
+  searchTerm: string
+): string {
+  // 4a. If the specifier contains YYYY (year placeholder), make it after: that year
+  const hasYearPlaceholder = /YYYY/.test(specifier);
+
+  if (hasYearPlaceholder) {
+    // Extract the actual year (4 digits) from the filled searchTerm
+    const yearRegex = /\b(\d{4})\b/;
+    const match = searchTerm.match(yearRegex);
+
+    if (match) {
+      const year = match[1];
+      console.log('Applying date filter from specifier year:', year);
+      // Use January 1st of that year for the after: filter
+      return `after:${year}-01-01`;
+    }
+  }
+
+  // 4b. If the search is tagged as 'old', make it before formattedDate
+  if (pattern.age === 'old') {
+    console.log('Applying date filter for old pattern');
+    const year = formattedDate.getFullYear();
+    const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(formattedDate.getDate()).padStart(2, '0');
+    return `before:${year}-${month}-${day}`;
+  }
+
+  // 4c. If the search is tagged as 'new', don't add any date tag
+  if (pattern.age === 'new') {
+    console.log('No date filter applied for new pattern');
+    return '';
+  }
+
+  // Default: no date filter
+  return '';
 }
 
 /**
- * Create a new SearchSettings instance
+ * Parse a range constraint value
+ * Format: "min-max" like "1000-9999" or "1-12"
  */
-export function createSearchSettings(): SearchSettings {
-  return new SearchSettings();
+function parseRangeConstraint(value: string): { min: number; max: number } | null {
+  const parts = value.split('-');
+  if (parts.length !== 2) return null;
+
+  const min = parseInt(parts[0], 10);
+  const max = parseInt(parts[1], 10);
+
+  if (isNaN(min) || isNaN(max)) return null;
+
+  return { min, max };
 }
 
-// ============================================================================
-// DEFAULT EXPORT
-// ============================================================================
+/**
+ * Generate a random integer between min and max (inclusive)
+ */
+function getRandomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
-// Export a default instance for convenience
-export const defaultSettings = new SearchSettings();
+function getRandomLetter(min: number, max: number): string {
+  const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const letterArray = letters.split('');
+  const randomIndex = Math.floor(Math.random() * (max - min + 1)) + min;
+  return letterArray[randomIndex % letterArray.length];
+}
+
+function getRandomHex(min: number, max: number): string {
+  const hexChars = '0123456789ABCDEF';
+  const hexArray = hexChars.split('');
+  const randomIndex = Math.floor(Math.random() * (max - min + 1)) + min;
+  return hexArray[randomIndex % hexArray.length];
+}
+
+
