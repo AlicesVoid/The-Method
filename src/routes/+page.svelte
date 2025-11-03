@@ -380,8 +380,15 @@
             return;
         }
 
-        // Pick a random date based on the pattern using randomSpecDay()
-        const formattedDate = randomSpecDay(result.pattern);
+        // Pick a date: use override date if enabled, otherwise pick random date
+        let formattedDate: Date;
+        if (enableDateOverride && beforeDate) {
+            formattedDate = new Date(beforeDate);
+            console.log('Using override date:', formattedDate);
+        } else {
+            formattedDate = randomSpecDay(result.pattern);
+            console.log('Using random date:', formattedDate);
+        }
 
         console.log('Selected pattern:', result.pattern);
         console.log('Selected specifier:', result.specifier);
@@ -389,7 +396,7 @@
         console.log('Active search terms count:', activeCount);
 
         // Format the search term into a YouTube URL
-        const formattedURL = formatSearchTermToURL(result.pattern, result.specifier, formattedDate);
+        const formattedURL = formatSearchTermToURL(result.pattern, result.specifier, formattedDate, enableDateOverride);
 
         console.log('Opening YouTube search:', formattedURL);
 

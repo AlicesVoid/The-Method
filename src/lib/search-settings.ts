@@ -41,13 +41,14 @@ import type { SearchPattern, Constraint } from './method-logic.js';
 export function formatSearchTermToURL(
   pattern: SearchPattern,
   specifier: string,
-  formattedDate: Date
+  formattedDate: Date,
+  dateOverride: boolean
 ): string {
   // Step 1: Pattern-match to generate the search term (name + filled specifier)
   const searchTerm = generateSearchTerm(pattern.name, specifier, pattern, formattedDate);
 
   // Step 2: Determine the date filter
-  const dateFilter = determineDateFilter(specifier, pattern, formattedDate, searchTerm);
+  const dateFilter = determineDateFilter(specifier, pattern, formattedDate, searchTerm, dateOverride);
 
   // Combine search term with date filter
   const fullSearchTerm = dateFilter ? `${searchTerm} ${dateFilter}` : searchTerm;
@@ -263,10 +264,20 @@ function determineDateFilter(
   specifier: string,
   pattern: SearchPattern,
   formattedDate: Date,
-  searchTerm: string
+  searchTerm: string,
+  dateOverride: boolean
 ): string {
-  // 4a. If the specifier contains YYYY (year placeholder), make it after: that year
+  // If the specifier contains YYYY (year placeholder), make it after: that year
   const hasYearPlaceholder = /YYYY/.test(specifier);
+
+  // If the override date is used, we just do before: that date and end it there
+  if (dateOverride) {
+    console.log('Applying date filter for override pattern');
+    const year = formattedDate.getFullYear();
+    const month = String(formattedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(formattedDate.getDate()).padStart(2, '0');
+    return `before:${year}-${month}-${day}`;
+  }
 
   if (hasYearPlaceholder) {
     // Extract the actual year (4 digits) from the filled searchTerm
