@@ -309,20 +309,26 @@
     {
       "name": "Com Oculus Metacam",
       "specifiers": [
-        ""
+        "YYYYMMDD"
       ],
       "genre": "VR Headset",
       "age": "new",
-      "constraints": []
+      "constraints": [{
+          "type": "date-after",
+          "value": "2023"
+        }]
     },
     {
       "name": "Com Oculus Vrshell",
       "specifiers": [
-        ""
+        "YYYYMMDD"
       ],
       "genre": "VR Headset",
       "age": "new",
-      "constraints": []
+      "constraints": [{
+        "type": "date-after",
+        "value": "2023"
+      }]
     },
     {
       "name": "Copy of Copy of",
