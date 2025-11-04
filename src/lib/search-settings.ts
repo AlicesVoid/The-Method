@@ -95,7 +95,7 @@ function generateSearchTerm(
   const specifierValue = fillSpecifierTemplate(specifier, pattern, formattedDate);
 
   // Combine name + specifier
-  return specifierValue ? `${name} ${specifierValue}` : name;
+  return specifierValue ? `${name}${specifierValue}` : name;
 }
 
 /**
