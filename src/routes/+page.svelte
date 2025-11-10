@@ -1520,7 +1520,7 @@
     }
 
     /* Tablet/Medium Responsive Styles */
-    @media (max-width: 1280px) and (min-width: 769px) {
+    @media (max-width: 960px) and (min-width: 769px) {
         .header-base {
             height: 4rem;
             border-width: 0.375rem;
