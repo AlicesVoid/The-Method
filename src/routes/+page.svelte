@@ -1122,7 +1122,6 @@
         position: relative;
         width: 100%;
         max-width: 400px;
-        margin: 0 auto;
     }
 
     .dropdown-button {
@@ -1135,7 +1134,7 @@
         border-radius: var(--radius-md);
         cursor: pointer;
         font-weight: bold;
-        display: flex;
+        display: flex; 
         justify-content: space-between;
         align-items: center;
         transition: transform var(--transition-std);
@@ -2055,12 +2054,10 @@
                 {/if}
             </div>
 
-            <div class="grid-item">
-            </div>
         </div>
         {/if}
 
-        <!-- Fifth Row (other stuff) -->
+        <!-- Fifth Row (Custom Terms) -->
         {#if showAdvancedSettings}
         <div class="grid-container">
             <div class="grid-item">
@@ -2093,12 +2090,10 @@
                             id="manage-terms"
                             bind:checked={manageCustomTerms}
                         />
-                        <label for="manage-terms"><h4>Manage custom terms</h4></label>
+                        <label for="manage-terms"><h4>Import/Export terms</h4></label>
                     </div>
             </div>
 
-            <div class="grid-item">
-            </div>
             {/if}
 
         </div>
