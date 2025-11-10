@@ -1848,13 +1848,6 @@
 
 </style>
 
-<!-- Head Section -->
-<svelte:head>
-    <title>Youtube's Recycle Bin</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-</svelte:head>
-
-
 <div class="page-container">
 
     <!-- First Header -->
