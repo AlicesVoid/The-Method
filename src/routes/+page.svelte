@@ -124,6 +124,39 @@
     })();
 
     let enableDateOverride: boolean = false;
+    let enableUserTerms: boolean = false;
+    let editCustomTerms: boolean = false;
+
+    // ============================================================================
+    // REACTIVE: AUTO-LOAD/UNLOAD CUSTOM TERMS
+    // ============================================================================
+    // Automatically load or remove custom terms when checkbox is toggled
+    $: {
+        if (enableUserTerms) {
+            loadCustomTermsIntoPool();
+        } else {
+            removeCustomTermsFromPool();
+        }
+    }
+
+    // ============================================================================
+    // STATE: CUSTOM SEARCH TERM BUILDER
+    // ============================================================================
+    let customName: string = '';
+    let customSpecifiersList: string[] = ['']; // Array of individual specifiers
+    let customGenre: string = 'Custom'; // Default to "Custom"
+    let customAge: '' | 'new' | 'old' = '';
+    let customConstraintType: string = 'none'; // 'none', 'before', 'after', 'exact'
+    let customConstraintDate: string = '';
+    let showMoreInfo: boolean = false; // Toggle for optional fields
+    let selectedTermIndex: number | null = null; // Track which term is loaded for editing
+
+    // ============================================================================
+    // STATE: IMPORT/EXPORT MANAGER
+    // ============================================================================
+    let manageCustomTerms: boolean = false; // Toggle for import/export form
+    let selectedFile: File | null = null; // Store selected file
+    let importStats: { success: number; failed: number } | null = null; // Track import results
 
     // ============================================================================
     // STATE: AGE FILTER
@@ -135,6 +168,7 @@
     // ============================================================================
     // Initialize with all genres selected except NSFW
 
+    // Variables to hold selected genres
     let selectedGenres: Set<string> = new Set();
     let selectAllGenres: boolean = false;
     let genreDropdownOpen: boolean = false;
@@ -163,6 +197,7 @@
     // Stores the displayKey (name|||specifier) for each selected name+specifier combination
     // This will update the active flags for filtering the search term list
 
+    // Variables to hold selected names
     let selectedNames: Set<string> = new Set();
     let selectAllNames: boolean = true;
     let nameDropdownOpen: boolean = false;
@@ -483,6 +518,387 @@
         // Open the search in a new tab
         window.open(formattedURL, '_blank');
     }
+
+    // ============================================================================
+    // LocalStorage Persistence (Custom User Search Terms)
+    // ============================================================================
+
+    // Load custom terms from localStorage and add to the active pool
+    function loadCustomTermsIntoPool() {
+        const customTerms = JSON.parse(localStorage.getItem('customSearchTerms') || '[]');
+
+        // Remove any existing custom terms first (to avoid duplicates)
+        allSearchTerms = allSearchTerms.filter(term => !term.isCustom);
+
+        // Add custom terms to the main search terms list
+        if (customTerms.length > 0) {
+            allSearchTerms = [...allSearchTerms, ...customTerms];
+        }
+    }
+
+    // Remove all custom terms from the active pool
+    function removeCustomTermsFromPool() {
+        allSearchTerms = allSearchTerms.filter(term => !term.isCustom);
+    }
+
+    // Converts Strings to a Search Term JSON Object
+    function developSearchTerm(name: string, specifiers: string[], genre: string, age: string, constraint: [string, string]): SearchPattern {
+
+        // Develop Search Term Object
+        const searchTerm: SearchPattern = {
+            name,
+            genre,
+            age,
+            specifiers,
+            constraint,
+            isCustom: true // Mark all custom-created terms
+        };
+
+        return searchTerm;
+    }
+
+    // Save a custom search term to LocalStorage
+    function saveSearchTerm() {
+        if (!customName.trim()) {
+            alert('Please enter a name for your search term');
+            return;
+        }
+
+        // Filter out empty specifiers
+        const specifiersArray = customSpecifiersList
+            .map((s: string) => s.trim())
+            .filter((s: string) => s.length > 0);
+
+        if (specifiersArray.length === 0) {
+            alert('Please enter at least one specifier');
+            return;
+        }
+
+        // Build constraint array based on constraint type
+        let constraint: [string, string] = ['', ''];
+        if (customConstraintType !== 'none' && customConstraintDate) {
+            constraint = [customConstraintType, customConstraintDate];
+        }
+
+        const searchTerm = developSearchTerm(
+            customName,
+            specifiersArray,
+            customGenre || 'Custom', // Ensure genre defaults to "Custom"
+            customAge,
+            constraint
+        );
+
+        saveSearchTermToStorage(searchTerm);
+
+        // If custom terms are enabled, reload the pool to include the new term
+        if (enableUserTerms) {
+            loadCustomTermsIntoPool();
+        }
+
+        // Clear form
+        clearForm();
+
+        alert('Search term saved!' + (enableUserTerms ? ' It has been added to your search pool.' : ' Enable custom terms to use it.'));
+    }
+
+    // Clear the form and reset to defaults
+    function clearForm() {
+        customName = '';
+        customSpecifiersList = [''];
+        customGenre = 'Custom';
+        customAge = '';
+        customConstraintType = 'none';
+        customConstraintDate = '';
+        selectedTermIndex = null;
+    }
+
+    // Add a new empty specifier field
+    function addSpecifierField() {
+        customSpecifiersList = [...customSpecifiersList, ''];
+    }
+
+    // Remove a specifier field at the given index
+    function removeSpecifierField(index: number) {
+        if (customSpecifiersList.length > 1) {
+            customSpecifiersList = customSpecifiersList.filter((_, i) => i !== index);
+        }
+    }
+
+    // Load a custom term from localStorage into the form
+    function loadTermIntoForm(index: number) {
+        const customTerms = JSON.parse(localStorage.getItem('customSearchTerms') || '[]');
+        if (index >= 0 && index < customTerms.length) {
+            const term = customTerms[index];
+            customName = term.name || '';
+            customSpecifiersList = term.specifiers.length > 0 ? [...term.specifiers] : [''];
+            customGenre = term.genre || 'Custom';
+            customAge = term.age || '';
+
+            // Handle constraint
+            if (term.constraint && term.constraint[0]) {
+                customConstraintType = term.constraint[0];
+                customConstraintDate = term.constraint[1] || '';
+            } else {
+                customConstraintType = 'none';
+                customConstraintDate = '';
+            }
+
+            selectedTermIndex = index;
+        }
+    }
+
+    function saveSearchTermToStorage(searchTerm: SearchPattern) {
+        const existing = JSON.parse(localStorage.getItem('customSearchTerms') || '[]');
+        existing.push(searchTerm);
+        localStorage.setItem('customSearchTerms', JSON.stringify(existing));
+    }
+
+    // Reload custom terms from localStorage (manual refresh)
+    function loadSearchTerms() {
+        const customTerms = JSON.parse(localStorage.getItem('customSearchTerms') || '[]');
+        if (customTerms.length === 0) {
+            alert('No custom terms saved yet!');
+            return;
+        }
+
+        // Reload custom terms into the pool
+        loadCustomTermsIntoPool();
+
+        alert(`Reloaded ${customTerms.length} custom search term(s)!`);
+    }
+
+    // ============================================================================
+    // Import/Export Functions
+    // ============================================================================
+
+    // Export custom terms to JSON file
+    function exportCustomTerms() {
+        const customTerms = JSON.parse(localStorage.getItem('customSearchTerms') || '[]');
+
+        if (customTerms.length === 0) {
+            alert('No custom terms to export!');
+            return;
+        }
+
+        // Generate timestamped filename
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        const filename = `my-youtube-terms-${year}-${month}-${day}-${hours}${minutes}${seconds}.json`;
+
+        // Create and download file
+        const jsonString = JSON.stringify(customTerms, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+
+        alert(`Exported ${customTerms.length} custom term(s) to ${filename}`);
+    }
+
+    // Validate that a search pattern has required fields
+    function validateSearchPattern(term: any): boolean {
+        // Must have at least name OR specifier
+        const hasName = term.name && term.name.trim().length > 0;
+        const hasSpecifiers = term.specifiers && Array.isArray(term.specifiers) &&
+                             term.specifiers.some((s: string) => s && s.trim().length > 0);
+
+        return hasName || hasSpecifiers;
+    }
+
+    // Simple import: Replace all existing terms
+    function importSimple() {
+        if (!selectedFile) {
+            alert('Please select a file first');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const content = e.target?.result as string;
+                const importedTerms = JSON.parse(content);
+
+                if (!Array.isArray(importedTerms)) {
+                    alert('Invalid file format: Expected an array of search terms');
+                    return;
+                }
+
+                // Validate and filter terms
+                let successCount = 0;
+                let failedCount = 0;
+                const validTerms: SearchPattern[] = [];
+
+                importedTerms.forEach((term: any) => {
+                    if (validateSearchPattern(term)) {
+                        // Ensure isCustom flag is set
+                        validTerms.push({ ...term, isCustom: true });
+                        successCount++;
+                    } else {
+                        failedCount++;
+                    }
+                });
+
+                // Replace all existing terms
+                localStorage.setItem('customSearchTerms', JSON.stringify(validTerms));
+
+                // Update stats and reload
+                importStats = { success: successCount, failed: failedCount };
+                if (enableUserTerms) {
+                    loadCustomTermsIntoPool();
+                }
+
+                alert(`Import complete!\n✓ ${successCount} imported\n✗ ${failedCount} failed`);
+            } catch (error) {
+                alert('Error reading file: Invalid JSON format');
+            }
+        };
+        reader.readAsText(selectedFile);
+    }
+
+    // Smart import: Merge duplicates (matching name AND age)
+    function importMerge() {
+        if (!selectedFile) {
+            alert('Please select a file first');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const content = e.target?.result as string;
+                const importedTerms = JSON.parse(content);
+
+                if (!Array.isArray(importedTerms)) {
+                    alert('Invalid file format: Expected an array of search terms');
+                    return;
+                }
+
+                // Get existing terms
+                const existing = JSON.parse(localStorage.getItem('customSearchTerms') || '[]');
+                let successCount = 0;
+                let failedCount = 0;
+
+                importedTerms.forEach((importedTerm: any) => {
+                    if (!validateSearchPattern(importedTerm)) {
+                        failedCount++;
+                        return;
+                    }
+
+                    // Find duplicate (matching name AND age)
+                    const duplicateIndex = existing.findIndex((existingTerm: SearchPattern) =>
+                        existingTerm.name === importedTerm.name &&
+                        existingTerm.age === importedTerm.age
+                    );
+
+                    if (duplicateIndex >= 0) {
+                        // Merge with existing term
+                        const existingTerm = existing[duplicateIndex];
+
+                        // Combine unique specifiers
+                        const combinedSpecifiers = Array.from(new Set([
+                            ...(existingTerm.specifiers || []),
+                            ...(importedTerm.specifiers || [])
+                        ]));
+
+                        // Combine constraints
+                        const existingConstraint = existingTerm.constraint || ['', ''];
+                        const importedConstraint = importedTerm.constraint || ['', ''];
+                        const combinedConstraint: [string, string] = [
+                            importedConstraint[0] || existingConstraint[0],
+                            importedConstraint[1] || existingConstraint[1]
+                        ];
+
+                        // Update existing term with merged data
+                        existing[duplicateIndex] = {
+                            name: existingTerm.name,
+                            specifiers: combinedSpecifiers,
+                            genre: importedTerm.genre || existingTerm.genre, // Keep genre from imported
+                            age: existingTerm.age,
+                            constraint: combinedConstraint,
+                            isCustom: true
+                        };
+                    } else {
+                        // Add as new term
+                        existing.push({ ...importedTerm, isCustom: true });
+                    }
+                    successCount++;
+                });
+
+                // Save merged terms
+                localStorage.setItem('customSearchTerms', JSON.stringify(existing));
+
+                // Update stats and reload
+                importStats = { success: successCount, failed: failedCount };
+                if (enableUserTerms) {
+                    loadCustomTermsIntoPool();
+                }
+
+                alert(`Import complete!\n✓ ${successCount} imported\n✗ ${failedCount} failed`);
+            } catch (error) {
+                alert('Error reading file: Invalid JSON format');
+            }
+        };
+        reader.readAsText(selectedFile);
+    }
+
+    // Delete all custom terms with confirmation
+    function deleteAllCustomTerms() {
+        const customTerms = JSON.parse(localStorage.getItem('customSearchTerms') || '[]');
+
+        if (customTerms.length === 0) {
+            alert('No custom terms to delete');
+            return;
+        }
+
+        const confirmed = confirm(`Are you sure you want to delete all ${customTerms.length} custom term(s)?\n\nThis action cannot be undone.`);
+
+        if (confirmed) {
+            localStorage.removeItem('customSearchTerms');
+            removeCustomTermsFromPool();
+            importStats = null;
+            selectedFile = null;
+            alert('All custom terms have been deleted');
+        }
+    }
+
+    // Handle file selection from input
+    function handleFileSelect(event: Event) {
+        const input = event.target as HTMLInputElement;
+        if (input.files && input.files.length > 0) {
+            selectedFile = input.files[0];
+            importStats = null; // Clear previous stats
+        }
+    }
+
+    // Handle drag over event
+    function handleDragOver(event: DragEvent) {
+        event.preventDefault();
+        if (event.dataTransfer) {
+            event.dataTransfer.dropEffect = 'copy';
+        }
+    }
+
+    // Handle file drop
+    function handleFileDrop(event: DragEvent) {
+        event.preventDefault();
+        if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+            selectedFile = event.dataTransfer.files[0];
+            importStats = null; // Clear previous stats
+        }
+    }
+
+    // ============================================================================
+    // END OF SCRIPT
 </script>
 
 <style>
@@ -515,7 +931,28 @@
         height: 100%;
         overflow: hidden;
     }
-    
+
+    /* CSS Variables for repeated values */
+    :root {
+        --border-std: 2px solid black;
+        --border-thick: 3px solid black;
+        --border-medium: 0.5rem solid black;
+        --radius-sm: 0.25rem;
+        --radius-md: 0.5rem;
+        --transition-std: 0.2s ease;
+        --color-primary: lightcyan;
+        --color-bg: #f5f5f5;
+        --color-danger: #FF6B6B;
+        --color-success: #90EE90;
+    }
+
+    /* Shared hover effect for interactive elements */
+    .rand-button:hover, .youtube-badge:hover, .header a:hover,
+    .dropdown-button:hover, .custom-term-button:hover,
+    .import-button:hover, .danger-button:hover, .file-select-button:hover {
+        transform: scale(1.01);
+    }
+
     .header-base {
         height: 5rem;
         border: 0.5rem solid black;
@@ -538,13 +975,8 @@
     font-size: inherit;
     font-weight: inherit;
     font-family: inherit;
-    transition: transform 0.2s ease;
+    transition: transform var(--transition-std);
     display: inline-block;
-    }
-
-    .header a:hover {
-    text-decoration: none;
-    transform: scale(1.05);
     }
     
     .header-2 {
@@ -557,18 +989,14 @@
         color: white;
         padding: 0.5rem 1rem;
         font-weight: bold;
-        border-radius: 0.25rem;
+        border-radius: var(--radius-sm);
         display: flex;
         align-items: center;
         gap: 0.75rem;
         cursor: pointer;
-        transition: transform 0.2s ease;
+        transition: transform var(--transition-std);
         border: none;
         flex-shrink: 0;
-    }
-
-    .youtube-badge:hover {
-        transform: scale(1.05);
     }
         
     .youtube-badge img {
@@ -606,11 +1034,12 @@
         gap: 1.5rem;
         max-width: 100%;
         margin: 0 auto;
+        padding-bottom: 1.5rem;
         background-color: #f5f5f5;
     }
 
     .grid-item {
-        padding: 1.5rem;
+        padding: 1.5rem 1.5rem 0 1.5rem;
         display: flex;
         flex-direction: column;
         gap: 1rem;
@@ -627,16 +1056,12 @@
         font-size: 1rem;
         background-color: lightgoldenrodyellow;
         color: black;
-        border: 2px solid black;
-        border-radius: 0.5rem;
+        border: var(--border-std);
+        border-radius: var(--radius-md);
         cursor: pointer;
         font-weight: bold;
-        transition: transform 0.2s ease;
+        transition: transform var(--transition-std);
         width: 25%;
-    }
-
-    .rand-button:hover {
-        transform: scale(1.05);
     }
 
     .filter-container {
@@ -656,56 +1081,35 @@
     .filter-select {
         padding: 0.5rem 1rem;
         font-size: 1rem;
-        background-color: #f5f5f5;
+        background-color: var(--color-bg);
         color: black;
-        border: 2px solid black;
-        border-radius: 0.5rem;
+        border: var(--border-std);
+        border-radius: var(--radius-md);
         cursor: pointer;
         font-weight: bold;
     }
 
-    .advanced-settings-checkbox {
+    .checkbox-item {
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        justify-content: center;
     }
 
-    .advanced-settings-checkbox input[type="checkbox"] {
+    .checkbox-item input[type="checkbox"] {
         width: 1.5rem;
         height: 1.5rem;
         cursor: pointer;
     }
 
-    .advanced-settings-checkbox label {
+    .checkbox-item label {
         font-size: 1.25rem;
         font-weight: 500;
         cursor: pointer;
     }
 
-    .date-picker-container {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-        align-items: center;
-    }
-
-    .date-checkbox {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .date-checkbox input[type="checkbox"] {
-        width: 1.25rem;
-        height: 1.25rem;
-        cursor: pointer;
-    }
-
-    .date-checkbox label {
-        font-size: 1rem;
-        font-weight: 500;
-        cursor: pointer;
+    .checkbox-item label h4 {
+        font-size: 1.25rem;
+        margin: 0;
     }
 
     .filter-select:disabled {
@@ -721,24 +1125,20 @@
         margin: 0 auto;
     }
 
-    .genre-dropdown-button {
+    .dropdown-button {
         width: 100%;
         padding: 0.75rem 1rem;
         font-size: 1rem;
-        background-color: lightseagreen;
+        background-color: var(--color-primary);
         color: black;
-        border: 2px solid black;
-        border-radius: 0.5rem;
+        border: var(--border-std);
+        border-radius: var(--radius-md);
         cursor: pointer;
         font-weight: bold;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        transition: transform 0.2s ease;
-    }
-
-    .genre-dropdown-button:hover {
-        transform: scale(1.02);
+        transition: transform var(--transition-std);
     }
 
     .dropdown-arrow {
@@ -752,8 +1152,8 @@
         right: 0;
         margin-top: 0.5rem;
         background-color: white;
-        border: 2px solid black;
-        border-radius: 0.5rem;
+        border: var(--border-std);
+        border-radius: var(--radius-md);
         max-height: 300px;
         overflow-y: auto;
         z-index: 1000;
@@ -766,7 +1166,7 @@
         gap: 0.75rem;
         padding: 0.75rem 1rem;
         cursor: pointer;
-        transition: background-color 0.2s ease;
+        transition: background-color var(--transition-std);
     }
 
     .genre-checkbox-item:hover {
@@ -775,7 +1175,7 @@
 
     .genre-checkbox-item.select-all {
         font-weight: bold;
-        background-color: #f5f5f5;
+        background-color: var(--color-bg);
     }
 
     .genre-checkbox-item input[type="checkbox"] {
@@ -793,6 +1193,331 @@
         height: 2px;
         background-color: #e0e0e0;
         margin: 0.25rem 0;
+    }
+
+    /* Shared container styles for custom-terms-creator and import-export-container */
+    .custom-terms-creator, .import-export-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        padding: 2rem;
+        background-color: #fff;
+        border: var(--border-thick);
+        border-radius: var(--radius-md);
+        margin: 1.5rem 2rem;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .custom-terms-creator h3, .import-export-container h3 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+
+    .form-section {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .form-row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+
+    .form-row label {
+        font-weight: bold;
+        font-size: 1rem;
+    }
+
+    .form-row input,
+    .form-row select {
+        padding: 0.75rem;
+        font-size: 1rem;
+        border: var(--border-std);
+        border-radius: var(--radius-sm);
+        font-family: 'Arial', sans-serif;
+    }
+
+    .form-row input:focus,
+    .form-row select:focus {
+        outline: none;
+        border-color: var(--color-primary);
+        box-shadow: 0 0 0 3px rgba(32, 178, 170, 0.2);
+    }
+
+    .form-row.optional label {
+        color: #666;
+    }
+
+    .form-row.optional input,
+    .form-row.optional select {
+        background-color: #f9f9f9;
+        border-color: #ccc;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .custom-term-button {
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        background-color: var(--color-primary);
+        color: black;
+        border: var(--border-std);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        font-weight: bold;
+        transition: transform var(--transition-std);
+    }
+
+    .custom-term-button h2 {
+        margin: 0;
+        font-size: 1rem;
+    }
+
+
+    .form-top-row {
+        display: flex;
+        gap: 1rem;
+        width: 100%;
+        align-items: center;
+    }
+
+    .term-selector {
+        flex: 1;
+    }
+
+    .term-selector select {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+        border: var(--border-std);
+        border-radius: var(--radius-sm);
+        background-color: var(--color-primary);
+        color: black;
+        font-weight: bold;
+        cursor: pointer;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .specifier-container {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+    }
+
+    .specifier-inputs {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .specifier-control-bar {
+        display: flex;
+        flex-direction: column;
+        width: 3rem;
+        border: var(--border-std);
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        align-self: stretch;
+    }
+
+    /* Shared specifier button styles */
+    .specifier-add-btn, .specifier-remove-btn {
+        flex: 1;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #000;
+        transition: background-color var(--transition-std);
+    }
+
+    .specifier-add-btn {
+        background-color: var(--color-success);
+        border-bottom: 1px solid black;
+    }
+
+    .specifier-add-btn:hover {
+        background-color: #7CFC00;
+    }
+
+    .specifier-remove-btn {
+        background-color: var(--color-danger);
+    }
+
+    .specifier-remove-btn:hover {
+        background-color: #FF4444;
+    }
+
+    .specifier-remove-btn:disabled {
+        background-color: #CCCCCC;
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+    .more-info-toggle {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .more-info-toggle input[type="checkbox"] {
+        width: 1.25rem;
+        height: 1.25rem;
+        cursor: pointer;
+    }
+
+    .more-info-toggle label {
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        color: #666;
+    }
+
+    /* Import/Export specific styles (container shared above with custom-terms-creator) */
+    .file-section-label {
+        font-weight: bold;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .file-drop-zone {
+        width: 100%;
+        min-height: 150px;
+        border: 3px dashed #999;
+        border-radius: var(--radius-md);
+        background-color: #f9f9f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all var(--transition-std);
+    }
+
+    .file-drop-zone:hover, .file-drop-zone.active {
+        border-color: var(--color-primary);
+    }
+
+    .file-drop-zone:hover {
+        background-color: #f0ffff;
+    }
+
+    .file-drop-zone.active {
+        background-color: #e0ffff;
+    }
+
+    .drop-zone-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+        text-align: center;
+    }
+
+    .drop-zone-text, .drop-zone-subtext {
+        margin: 0;
+    }
+
+    .drop-zone-text {
+        font-size: 1rem;
+        color: #333;
+    }
+
+    .drop-zone-subtext {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .file-select-button {
+        padding: 0.5rem 1.5rem;
+        background-color: var(--color-primary);
+        color: black;
+        border: var(--border-std);
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-weight: bold;
+        transition: transform var(--transition-std);
+    }
+
+    .import-button-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        width: 100%;
+    }
+
+    .import-button {
+        padding: 1rem;
+        background-color: var(--color-success);
+        color: black;
+        border: var(--border-std);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        font-weight: bold;
+        transition: transform var(--transition-std);
+        text-align: center;
+    }
+
+    .import-button h2, .danger-button h2 {
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .import-button h2 {
+        margin-bottom: 0.5rem;
+    }
+
+    .import-button p {
+        margin: 0;
+        font-size: 0.85rem;
+        font-weight: normal;
+        color: #333;
+    }
+
+    .danger-button {
+        width: 100%;
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+        background-color: var(--color-danger);
+        color: black;
+        border: var(--border-std);
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        font-weight: bold;
+        transition: all var(--transition-std);
+    }
+
+    .import-stats {
+        width: 100%;
+        padding: 1rem;
+        background-color: #e8f5e9;
+        border: 2px solid #4caf50;
+        border-radius: var(--radius-md);
+        text-align: center;
+    }
+
+    .import-stats p {
+        margin: 0;
+        font-size: 1rem;
+        color: #333;
     }
 
     /* Tablet/Medium Responsive Styles */
@@ -835,8 +1560,9 @@
 
         .grid-container {
             grid-template-columns: 1fr;
-            gap: 1.25rem;
+            gap: 1rem;
             padding: 1rem;
+            display: block;
         }
 
         .grid-item {
@@ -865,7 +1591,7 @@
             max-width: 100%;
         }
 
-        .genre-dropdown-button {
+        .dropdown-button {
             padding: 0.65rem 0.9rem;
             font-size: 0.9rem;
         }
@@ -873,6 +1599,22 @@
 
     /* Mobile Responsive Styles */
     @media (max-width: 768px) {
+
+        /* Hide the entire custom terms section on mobile */
+        .grid-container:has(.checkbox-item input#enable-user-terms) {
+            display: none !important;
+        }
+
+        /* Also hide the custom terms creator form */
+        .custom-terms-creator {
+            display: none !important;
+        }
+
+        /* Also hide the import/export form */
+        .import-export-container {
+            display: none !important;
+        }
+
         /* Scale down header */
         .header-base {
             height: auto;
@@ -925,12 +1667,14 @@
         .grid-container {
             grid-template-columns: 1fr;
             gap: 1rem;
-            padding: 0.5rem;
+            padding: 1rem;
+            display: flex;
+            align-content: center;
         }
 
         .grid-item {
-            padding: 0.75rem;
-            gap: 0.75rem;
+            padding: 1rem;
+            gap: 0.5rem;
         }
 
         /* Scale down buttons */
@@ -980,37 +1724,22 @@
             max-width: 200px;
         }
 
-        /* Scale down checkboxes and labels */
-        .advanced-settings-checkbox {
-            gap: 0.4rem;
-        }
-
-        .advanced-settings-checkbox input[type="checkbox"] {
+        .checkbox-item input[type="checkbox"] {
             width: 1rem;
             height: 1rem;
         }
 
-        .advanced-settings-checkbox label h4 {
+        .checkbox-item label h4 {
             font-size: 0.75rem;
-            margin: 0;
         }
 
-        .date-checkbox input[type="checkbox"] {
-            width: 0.9rem;
-            height: 0.9rem;
-        }
-
-        .date-checkbox label h4 {
-            font-size: 0.7rem;
-            margin: 0;
-        }
 
         /* Scale down dropdowns */
         .genre-selector {
             max-width: 100%;
         }
 
-        .genre-dropdown-button {
+        .dropdown-button {
             padding: 0.4rem 0.6rem;
             font-size: 0.7rem;
         }
@@ -1031,6 +1760,49 @@
 
         .genre-checkbox-item span {
             font-size: 0.7rem;
+        }
+
+        /* Scale down custom terms creator */
+        .custom-terms-creator {
+            margin: 1rem;
+            padding: 1rem;
+            gap: 1rem;
+        }
+
+        .custom-terms-creator h3 {
+            font-size: 1rem;
+        }
+
+        .form-section {
+            gap: 0.75rem;
+        }
+
+        .form-row {
+            gap: 0.4rem;
+        }
+
+        .form-row label {
+            font-size: 0.75rem;
+        }
+
+        .form-row input,
+        .form-row select {
+            padding: 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        .custom-term-button {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+
+        .custom-term-button h2 {
+            font-size: 0.75rem;
         }
     }
 
@@ -1067,12 +1839,9 @@
             font-size: 0.7rem;
         }
 
-        .advanced-settings-checkbox label h4,
-        .date-checkbox label h4 {
-            font-size: 0.65rem;
-        }
 
-        .genre-dropdown-button,
+
+        .dropdown-button,
         .genre-checkbox-item span {
             font-size: 0.65rem;
         }
@@ -1083,6 +1852,7 @@
 <!-- Head Section -->
 <svelte:head>
     <title>Youtube's Recycle Bin</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 </svelte:head>
 
 
@@ -1141,12 +1911,12 @@
             </div>
         </div>
 
-        <!-- Third Row (Advanced Settings) -->
-        <div class="grid-container" style="align-items: center;">
-            
+        <!-- Third Row (Advanced Settings Checkbox) -->
+        <div class="grid-container">
+
             <!-- Advanced Settings Checkbox -->
             <div class="grid-item">
-                <div class="advanced-settings-checkbox">
+                <div class="checkbox-item">
                     <input
                         type="checkbox"
                         id="advanced-settings"
@@ -1155,19 +1925,23 @@
                     <label for="advanced-settings"><h4>Advanced Settings</h4></label>
                 </div>
             </div>
+ 
+        </div>
 
-            <!-- Date Picker -->
+        <!-- Fourth Row (Advanced Settings)-->
+        {#if showAdvancedSettings}
+        <div class="grid-container" style="padding-top: 1rem;">
+
+            <!-- Checkbox Items -->
             <div class="grid-item">
                 {#if showAdvancedSettings}
-                <div class="date-picker-container">
-                    <div class="date-checkbox">
-                        <input
-                            type="checkbox"
-                            id="enable-date-override"
-                            bind:checked={enableDateOverride}
-                        />
-                        <label for="enable-date-override"><h4>Use custom date</h4></label>
-                    </div>
+                <div class="checkbox-item">
+                    <input
+                        type="checkbox"
+                        id="enable-date-override"
+                        bind:checked={enableDateOverride}
+                    />
+                    <label for="enable-date-override"><h4>Use custom date</h4></label>
                 </div>
                 {/if}
             </div>
@@ -1177,7 +1951,7 @@
                 {#if showAdvancedSettings}
                 <div class="genre-selector">
                     <button
-                        class="genre-dropdown-button"
+                        class="dropdown-button"
                         on:click={() => genreDropdownOpen = !genreDropdownOpen}
                     >
                         Genres: ({selectedGenres.size}/{allGenres.length})
@@ -1229,7 +2003,7 @@
                 {#if showAdvancedSettings}
                 <div class="genre-selector">
                     <button
-                        class="genre-dropdown-button"
+                        class="dropdown-button"
                         on:click={() => nameDropdownOpen = !nameDropdownOpen}
                     >
                         Search Terms: ({selectedNames.size}/{availableNames.length})
@@ -1280,7 +2054,281 @@
                 </div>
                 {/if}
             </div>
+
+            <div class="grid-item">
+            </div>
         </div>
+        {/if}
+
+        <!-- Fifth Row (other stuff) -->
+        {#if showAdvancedSettings}
+        <div class="grid-container">
+            <div class="grid-item">
+                <div class ="checkbox-item">
+                        <input
+                            type="checkbox"
+                            id="enable-user-terms"
+                            bind:checked={enableUserTerms}
+                        />
+                        <label for="enable-user-terms"><h4>Enable custom terms</h4></label>
+                    </div>
+            </div>
+
+            {#if enableUserTerms}
+            <div class="grid-item">
+                <div class ="checkbox-item">
+                        <input
+                            type="checkbox"
+                            id="edit-user-terms"
+                            bind:checked={editCustomTerms}
+                        />
+                        <label for="edit-user-terms"><h4>Edit custom terms</h4></label>
+                    </div>
+            </div>
+
+            <div class="grid-item">
+                <div class ="checkbox-item">
+                        <input
+                            type="checkbox"
+                            id="manage-terms"
+                            bind:checked={manageCustomTerms}
+                        />
+                        <label for="manage-terms"><h4>Manage custom terms</h4></label>
+                    </div>
+            </div>
+
+            <div class="grid-item">
+            </div>
+            {/if}
+
+        </div>
+        {/if}
+
+        
+        <!-- Sixth Row (Custom User Terms) -->
+         {#if showAdvancedSettings && editCustomTerms}
+        <div class="custom-terms-creator">
+            <h3>Create/Edit Search Terms</h3>
+
+            <!-- Top Row: Save Button + Term Selector -->
+            <div class="form-top-row">
+                <button class="custom-term-button" on:click={saveSearchTerm}>
+                    <h2>Save Custom Term</h2>
+                </button>
+
+                <!-- Form Dropdown Menu -->
+                <div class="term-selector">
+                    <select on:change={(e) => {
+                        const index = parseInt(e.currentTarget.value);
+                        if (!isNaN(index) && index >= 0) {
+                            loadTermIntoForm(index);
+                        }
+                    }}>
+                        <option value="-1">
+                            {JSON.parse(localStorage.getItem('customSearchTerms') || '[]').length === 0
+                                ? 'No saved terms'
+                                : 'Select a saved term...'}
+                        </option>
+                        {#each JSON.parse(localStorage.getItem('customSearchTerms') || '[]') as term, i}
+                            <option value={i}>
+                                {term.name} {term.specifiers.length > 0 ? `${term.specifiers[0]}` : ''}
+                            </option>
+                        {/each}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Required Fields Section -->
+            <div class="form-section">
+                <div class="form-row">
+                    <label for="custom-name">Search Term: (Space Sensitive)</label>
+                    <input
+                        type="text"
+                        id="custom-name"
+                        placeholder="i.e: IMG, MOV , My Epic Video, etc..."
+                        bind:value={customName}
+                    />
+                </div>
+
+                <div class="form-row">
+                    <label for="custom-specifiers">Specifiers:</label>
+                    <div class="specifier-container">
+                        <div class="specifier-inputs">
+                            {#each customSpecifiersList as _, i}
+                                <input
+                                    type="text"
+                                    placeholder="i.e: XXXX, Month DD YYYY, YYYY/MM/DD, etc..."
+                                    bind:value={customSpecifiersList[i]}
+                                />
+                            {/each}
+                        </div>
+                        <div class="specifier-control-bar">
+                            <button
+                                class="specifier-add-btn"
+                                on:click={addSpecifierField}
+                                type="button"
+                                title="Add specifier field"
+                            >
+                                +
+                            </button>
+                            <button
+                                class="specifier-remove-btn"
+                                on:click={() => removeSpecifierField(customSpecifiersList.length - 1)}
+                                type="button"
+                                disabled={customSpecifiersList.length <= 1}
+                                title="Remove last specifier field"
+                            >
+                                −
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- More Info Toggle -->
+            <div class="more-info-toggle">
+                <input
+                    type="checkbox"
+                    id="show-more-info"
+                    bind:checked={showMoreInfo}
+                />
+                <label for="show-more-info">More info?</label>
+            </div>
+
+            {#if showMoreInfo}
+            <!-- Optional Fields Section -->
+            <div class="form-section">
+                <div class="form-grid">
+                    <div class="form-row optional">
+                        <label for="custom-genre">Genre:</label>
+                        <input
+                            type="text"
+                            id="custom-genre"
+                            placeholder="Custom (default)"
+                            bind:value={customGenre}
+                        />
+                    </div>
+
+                    <div class="form-row optional">
+                        <label for="custom-age">Age Filter:</label>
+                        <select id="custom-age" bind:value={customAge}>
+                            <option value="">Any (default)</option>
+                            <option value="new">New</option>
+                            <option value="old">Old</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div class="form-row optional">
+                        <label for="custom-constraint">Date Constraint:</label>
+                        <select id="custom-constraint" bind:value={customConstraintType}>
+                            <option value="none">None (default)</option>
+                            <option value="before">Before</option>
+                            <option value="after">After</option>
+                            <option value="exact">Exact</option>
+                        </select>
+                    </div>
+
+                    {#if customConstraintType !== 'none'}
+                    <div class="form-row optional">
+                        <label for="custom-constraint-date">Constraint Date:</label>
+                        <input
+                            type="date"
+                            id="custom-constraint-date"
+                            bind:value={customConstraintDate}
+                        />
+                    </div>
+                    {/if}
+                </div>
+            </div>
+            {/if}
+        </div>
+        {/if}
+
+        <!-- Seventh Row (Import/Export Manager) -->
+        {#if showAdvancedSettings && enableUserTerms && manageCustomTerms}
+        <div class="import-export-container">
+            <h3>Import/Export Custom Terms</h3>
+
+            <!-- Export Section -->
+            <div class="form-section">
+                <button class="custom-term-button" on:click={exportCustomTerms}>
+                    <h2>Export to File</h2>
+                </button>
+            </div>
+
+            <!-- File Selection Section -->
+            <div class="form-section">
+
+
+                <!-- Drag & Drop Zone -->
+                <div
+                    class="file-drop-zone"
+                    class:active={false}
+                    on:dragover={handleDragOver}
+                    on:drop={handleFileDrop}
+                    role="button"
+                    tabindex="0"
+                >
+                    <div class="drop-zone-content">
+                        <p class="drop-zone-text">
+                            {#if selectedFile}
+                                ✓ Selected: <strong>{selectedFile.name}</strong>
+                            {:else}
+                                Drag & drop a JSON file here
+                            {/if}
+                        </p>
+                        <p class="drop-zone-subtext">or</p>
+                        <label class="file-select-button">
+                            Choose File
+                            <input
+                                type="file"
+                                accept=".json"
+                                on:change={handleFileSelect}
+                                style="display: none;"
+                            />
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Import Options -->
+            <div class="form-section">
+                <div class="import-button-grid">
+                    <button class="import-button" on:click={importSimple}>
+                        <h2>Replace All</h2>
+                        <p>Overwrites existing terms</p>
+                    </button>
+
+                    <button class="import-button" on:click={importMerge}>
+                        <h2>Merge Duplicates</h2>
+                        <p>Combines matching terms</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Delete Section -->
+            <div class="form-section">
+                <button class="danger-button" on:click={deleteAllCustomTerms}>
+                    <h2>Clear All Custom Terms</h2>
+                </button>
+            </div>
+
+            <!-- Import Results Display -->
+            {#if importStats}
+            <div class="import-stats">
+                <p>
+                    ✓ <strong>{importStats.success}</strong> imported
+                    {#if importStats.failed > 0}
+                        · ✗ <strong>{importStats.failed}</strong> failed
+                    {/if}
+                </p>
+            </div>
+            {/if}
+        </div>
+        {/if}
+
     </main>
 </div>
 
