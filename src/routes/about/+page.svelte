@@ -42,7 +42,7 @@
     }
 
     .about-section a {
-        color: #0066cc;
+        color: white;
         text-decoration: none;
         font-weight: bold;
     }
@@ -80,7 +80,7 @@
     }
 
     .youtube-link:hover {
-        transform: scale(1.05);
+        transform: scale(1.01);
         text-decoration: none;
     }
 

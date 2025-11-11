@@ -44,8 +44,12 @@ export function formatSearchTermToURL(
   formattedDate: Date,
   dateOverride: boolean
 ): string {
+
   // Step 1: Pattern-match to generate the search term (name + filled specifier)
-  const searchTerm = generateSearchTerm(pattern.name, specifier, pattern, formattedDate);
+  let searchTerm = generateSearchTerm(pattern.name, specifier, pattern, formattedDate);
+
+  // Step 1.5: Add Quotes around the entire Search Term to force exact match
+  searchTerm = `"${searchTerm}"`;
 
   // Step 2: Determine the date filter
   const dateFilter = determineDateFilter(specifier, pattern, formattedDate, searchTerm, dateOverride);
@@ -95,7 +99,7 @@ function generateSearchTerm(
   const specifierValue = fillSpecifierTemplate(specifier, pattern, formattedDate);
 
   // Combine name + specifier
-  return specifierValue ? `"""${name}${specifierValue}"""` : name;
+  return specifierValue ? `${name}${specifierValue}` : name;
 }
 
 /**
