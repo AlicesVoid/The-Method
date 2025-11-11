@@ -1873,7 +1873,7 @@
 
             <div class="grid-item">
                 <div class="top-buttons">
-                    <button class="rand-button" on:click={handleFindVideos}><h2>Find Random Videos!</h2></button>
+                    <button class="rand-button" on:click={handleFindVideos}><h2>Find Video!</h2></button>
                 </div>
 
             </div>

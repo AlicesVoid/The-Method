@@ -1,58 +1,32 @@
-# Svelte library
+# YouTube's Recycle Bin | Randomizer
 
-Everything you need to build a Svelte library, powered by [`sv`](https://npmjs.com/package/sv).
+### Developed & Maintained by alicevoid. Make sure to be Nice to Yourself `<3`
 
-Read more about creating a library [in the docs](https://svelte.dev/docs/kit/packaging).
+**Last Updated:** November 10, 2025
 
-## Creating a project
+## Overview
 
-If you're seeing this, you've probably already done this step. Congrats!
+This site allows you to randomly search for youtube videos in specific formats. These formats often result in videos uploaded en-masse from automated systems- which allows you to see a lot of random stuff you'd have a tough time finding otherwise. 
 
-```sh
-# create a new project in the current directory
-npx sv create
+## How To: 
+1. Open the site @: https://recyclebin.pvc.dog
+2. Click the "Find Video!" button 
+3. Adjust the settings if you'd like
 
-# create a new project in my-app
-npx sv create my-app
-```
+    ### Settings, Explained: 
+    - Filter for specific Genres and Terms 
+    - Use a Custom Date for search results
+    - Create and Export Custom Terms
 
-## Developing
+## Why I Made This 
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Mostly? I was bored. 
 
-```sh
-npm run dev
+At this point I'm just adding featurebloat to see how far I can push it.  
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+## Where I Found the Terms 
 
-Everything inside `src/lib` is part of your library, everything inside `src/routes` can be used as a showcase or preview app.
+So this whole this is mostly inspired by youtube channel KVNAUST's series on Random Youtube Videos. When I saw they had a list of "Methods" to find obscure youtube videos with zero views, I felt like it'd be fun to recreate the list as a site that let you easily find search results. A lot of this site is heavily inspired by their work- from the layout to the site to the search terms i initially started working with. 
 
-## Building
+Therefore, I just wanna take a second and say: **if you like this site, check out their channel @ https://www.youtube.com/KVNAUST.** 
 
-To build your library:
-
-```sh
-npm pack
-```
-
-To create a production version of your showcase app:
-
-```sh
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
-
-## Publishing
-
-Go into the `package.json` and give your package the desired name through the `"name"` option. Also consider adding a `"license"` field and point it to a `LICENSE` file which you can create from a template (one popular option is the [MIT license](https://opensource.org/license/mit/)).
-
-To publish your library to [npm](https://www.npmjs.com):
-
-```sh
-npm publish
-```
