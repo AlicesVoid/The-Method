@@ -109,13 +109,14 @@
     // ============================================================================
 
     let showAdvancedSettings: boolean = false;
+    let activeTab: 'filters' | 'stats' | 'custom' = 'filters';
 
     // ============================================================================
     // STATE: DATE FILTER
     // ============================================================================
 
     // Default to today's date
-    let beforeDate: string = (() => {
+    let customDate: string = (() => {
         const today = new Date();
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -124,6 +125,7 @@
     })();
 
     let enableDateOverride: boolean = false;
+    let dateFilterType: 'before' | 'after' | 'exact' = 'before';
     let enableUserTerms: boolean = false;
     let editCustomTerms: boolean = false;
 
@@ -497,8 +499,8 @@
 
         // Pick a date: use override date if enabled, otherwise pick random date
         let formattedDate: Date;
-        if (enableDateOverride && beforeDate) {
-            formattedDate = new Date(beforeDate);
+        if (enableDateOverride && customDate) {
+            formattedDate = new Date(customDate);
             console.log('Using override date:', formattedDate);
         } else {
             formattedDate = randomSpecDay(result.pattern);
@@ -902,117 +904,12 @@
 </script>
 
 <style>
-    @font-face {
-        font-family: 'Arial';
-        src: url('/fonts/arial.woff2') format('woff2'),
-             url('/fonts/arial.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-    }
+    /* ========================================================================
+       HOME PAGE STYLES
+       Global styles are in +layout.svelte
+       ======================================================================== */
 
-    @font-face {
-        font-family: 'Arial Narrow';
-        src: url('/fonts/arialnarrow.woff2') format('woff2'),
-             url('/fonts/arialnarrow.ttf') format('truetype');
-        font-weight: normal;
-        font-style: normal;
-    }
-
-    :global(html) {
-        height: 100%;
-        overflow: hidden;
-    }
-
-    :global(body) {
-        background-color: white;
-        margin: 0;
-        padding: 0;
-        font-family: 'Arial', sans-serif;
-        height: 100%;
-        overflow: hidden;
-    }
-
-    /* CSS Variables for repeated values */
-    :root {
-        --border-std: 2px solid black;
-        --border-thick: 3px solid black;
-        --border-medium: 0.5rem solid black;
-        --radius-sm: 0.25rem;
-        --radius-md: 0.5rem;
-        --transition-std: 0.2s ease;
-        --color-primary: lightcyan;
-        --color-bg: #f5f5f5;
-        --color-danger: #FF6B6B;
-        --color-success: #90EE90;
-    }
-
-    /* Shared hover effect for interactive elements */
-    .rand-button:hover, .youtube-badge:hover, .header a:hover,
-    .dropdown-button:hover, .custom-term-button:hover,
-    .import-button:hover, .danger-button:hover, .file-select-button:hover {
-        transform: scale(1.01);
-    }
-
-    .header-base {
-        height: 5rem;
-        border: 0.5rem solid black;
-        border-bottom: 0;
-        align-items: center;
-        display: flex;
-        padding: 0 1rem;
-        flex-shrink: 0;
-    }
-    
-    .header {
-        background-color: lightcoral;        
-        justify-content: space-between;
-
-    }
-
-    .header a {
-    color: inherit;
-    text-decoration: none;
-    font-size: inherit;
-    font-weight: inherit;
-    font-family: inherit;
-    transition: transform var(--transition-std);
-    display: inline-block;
-    }
-    
-    .header-2 {
-        background-color: lightblue;
-        justify-content: center;
-    }
-
-    .youtube-badge {
-        background-color: red;
-        color: white;
-        padding: 0.5rem 1rem;
-        font-weight: bold;
-        border-radius: var(--radius-sm);
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        cursor: pointer;
-        transition: transform var(--transition-std);
-        border: none;
-        flex-shrink: 0;
-    }
-        
-    .youtube-badge img {
-        height: 2.5rem;
-        width: 2.5rem;
-        border-radius: 50%;
-        object-fit: cover;
-    }
-
-    .youtube-badge h1 {
-        margin: 0rem;
-        padding: 0rem;
-        font-size: 1.5rem;
-        font-family: Arial Narrow, sans-serif;
-    }
-    
+    /* === MAIN CONTENT CONTAINER === */
     .content-body {
         background-color: #f5f5f5;
         border: 0.5rem solid black;
@@ -1021,13 +918,92 @@
         box-sizing: border-box;
     }
 
-    .page-container {
+    /* === ADVANCED SETTINGS TAB SYSTEM === */
+    .advanced-settings-wrapper {
+        margin: 1.5rem 2rem;
+    }
+
+    .advanced-tabs-bar {
+        display: flex;
+        align-items: flex-end;
+        gap: 0.25rem;
+        background-color: var(--color-primary);
+        padding: 0 2rem;
+        border: 2px solid black;
+        border-bottom: none;
+    }
+
+    .advanced-tab {
+        background-color: rgba(255, 255, 255, 0.5);
+        border: 2px solid black;
+        border-bottom: none;
+        border-radius: 0.5rem 0.5rem 0 0;
+        padding: 0.75rem 1.5rem;
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: black;
+        cursor: pointer;
+        transition: all var(--transition-std);
+        margin-bottom: -2px;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .advanced-tab:hover {
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .advanced-tab.active {
+        background-color: white;
+        margin-bottom: -2px;
+        padding-bottom: calc(0.75rem + 2px);
+        z-index: 10;
+    }
+
+    .advanced-tab-content {
+        background-color: white;
+        border: 2px solid black;
+        min-height: 200px;
+    }
+
+    .tab-panel {
+        padding: 2rem;
+    }
+
+    .grid-container-tabs {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .grid-item-tabs {
         display: flex;
         flex-direction: column;
-        height: 100vh;
-        box-sizing: border-box;
+        gap: 1rem;
     }
-    
+
+    .coming-soon {
+        text-align: center;
+        padding: 3rem;
+        color: #666;
+    }
+
+    .coming-soon h3 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .coming-soon p {
+        font-size: 1rem;
+        color: #999;
+    }
+
+    .custom-terms-section {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    /* === MAIN GRID CONTAINERS === */
     .grid-container {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -1045,6 +1021,7 @@
         gap: 1rem;
     }
 
+    /* === BUTTONS === */
     .top-buttons {
         display: flex;
         gap: 1rem;
@@ -1064,6 +1041,11 @@
         width: 25%;
     }
 
+    .rand-button:hover {
+        transform: scale(1.01);
+    }
+
+    /* === FILTERS & CHECKBOXES === */
     .filter-container {
         display: flex;
         flex-direction: row;
@@ -1118,6 +1100,7 @@
         opacity: 0.6;
     }
 
+    /* === DROPDOWN COMPONENTS (Genre & Name Selectors) === */
     .genre-selector {
         position: relative;
         width: 100%;
@@ -1134,10 +1117,14 @@
         border-radius: var(--radius-md);
         cursor: pointer;
         font-weight: bold;
-        display: flex; 
+        display: flex;
         justify-content: space-between;
         align-items: center;
         transition: transform var(--transition-std);
+    }
+
+    .dropdown-button:hover {
+        transform: scale(1.01);
     }
 
     .dropdown-arrow {
@@ -1194,7 +1181,14 @@
         margin: 0.25rem 0;
     }
 
-    /* Shared container styles for custom-terms-creator and import-export-container */
+    /* === FORM CONTAINERS (Custom Terms & Import/Export) === */
+    .custom-terms-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin: 1.5rem 2rem;
+    }
+
     .custom-terms-creator, .import-export-container {
         display: flex;
         flex-direction: column;
@@ -1204,10 +1198,8 @@
         background-color: #fff;
         border: var(--border-thick);
         border-radius: var(--radius-md);
-        margin: 1.5rem 2rem;
-        max-width: 800px;
-        margin-left: auto;
-        margin-right: auto;
+        margin: 0;
+        max-width: none;
     }
 
     .custom-terms-creator h3, .import-export-container h3 {
@@ -1280,11 +1272,14 @@
         transition: transform var(--transition-std);
     }
 
+    .custom-term-button:hover {
+        transform: scale(1.01);
+    }
+
     .custom-term-button h2 {
         margin: 0;
         font-size: 1rem;
     }
-
 
     .form-top-row {
         display: flex;
@@ -1334,7 +1329,6 @@
         align-self: stretch;
     }
 
-    /* Shared specifier button styles */
     .specifier-add-btn, .specifier-remove-btn {
         flex: 1;
         border: none;
@@ -1388,14 +1382,6 @@
         font-weight: 500;
         cursor: pointer;
         color: #666;
-    }
-
-    /* Import/Export specific styles (container shared above with custom-terms-creator) */
-    .file-section-label {
-        font-weight: bold;
-        font-size: 1rem;
-        margin-bottom: 0.5rem;
-        display: block;
     }
 
     .file-drop-zone {
@@ -1456,6 +1442,10 @@
         transition: transform var(--transition-std);
     }
 
+    .file-select-button:hover {
+        transform: scale(1.01);
+    }
+
     .import-button-grid {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -1473,6 +1463,10 @@
         font-weight: bold;
         transition: transform var(--transition-std);
         text-align: center;
+    }
+
+    .import-button:hover {
+        transform: scale(1.01);
     }
 
     .import-button h2, .danger-button h2 {
@@ -1504,6 +1498,10 @@
         transition: all var(--transition-std);
     }
 
+    .danger-button:hover {
+        transform: scale(1.01);
+    }
+
     .import-stats {
         width: 100%;
         padding: 1rem;
@@ -1519,42 +1517,31 @@
         color: #333;
     }
 
-    /* Tablet/Medium Responsive Styles */
+    /* ========================================================================
+       RESPONSIVE STYLES
+       ======================================================================== */
+
+    /* === TABLET (960px - 769px) === */
     @media (max-width: 960px) and (min-width: 769px) {
-        .header-base {
-            height: 4rem;
-            border-width: 0.375rem;
-            padding: 0.75rem;
-        }
-
-        .header h4 {
-            font-size: 0.75rem;
-        }
-
-        .header h1 {
-            font-size: 2rem;
-        }
-
-        .youtube-badge {
-            padding: 0.4rem 0.75rem;
-            gap: 0.5rem;
-        }
-
-        .youtube-badge img {
-            height: 2rem;
-            width: 2rem;
-        }
-
-        .youtube-badge h1 {
-            font-size: 1.1rem;
-        }
-
-        .header-2 h1 {
-            font-size: 1.5rem;
-        }
-
         .content-body {
             border-width: 0.375rem;
+        }
+
+        .advanced-settings-wrapper {
+            margin: 1rem;
+        }
+
+        .advanced-tabs-bar {
+            padding: 0 1rem;
+        }
+
+        .advanced-tab {
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .tab-panel {
+            padding: 1.5rem;
         }
 
         .grid-container {
@@ -1594,73 +1581,47 @@
             padding: 0.65rem 0.9rem;
             font-size: 0.9rem;
         }
+
+        .custom-terms-grid {
+            grid-template-columns: 1fr;
+            margin: 1rem;
+            gap: 1.5rem;
+        }
     }
 
-    /* Mobile Responsive Styles */
+    /* === MOBILE (768px and below) === */
     @media (max-width: 768px) {
-
-        /* Hide the entire custom terms section on mobile */
-        .grid-container:has(.checkbox-item input#enable-user-terms) {
-            display: none !important;
-        }
-
-        /* Also hide the custom terms creator form */
-        .custom-terms-creator {
-            display: none !important;
-        }
-
-        /* Also hide the import/export form */
-        .import-export-container {
-            display: none !important;
-        }
-
-        /* Scale down header */
-        .header-base {
-            height: auto;
-            min-height: auto;
-            border-width: 0.25rem;
-            padding: 0.5rem;
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .header h4 {
-            font-size: 0.5rem;
-            margin: 0;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 0.7rem;
-            margin: 0;
-            text-align: center;
-        }
-
-        .youtube-badge {
-            padding: 0.2rem 0.4rem;
-            gap: 0.3rem;
-        }
-
-        .youtube-badge img {
-            height: 1.2rem;
-            width: 1.2rem;
-        }
-
-        .youtube-badge h1 {
-            font-size: 0.6rem;
-        }
-
-        .header-2 h1 {
-            font-size: 0.65rem;
-            margin: 0.3rem;
-            text-align: center;
-            line-height: 1.2;
-        }
-
-        /* Scale down content */
         .content-body {
             border-width: 0.25rem;
             min-height: auto;
+        }
+
+        .advanced-settings-wrapper {
+            margin: 0.5rem;
+        }
+
+        .advanced-tabs-bar {
+            padding: 0 0.5rem;
+            overflow-x: auto;
+        }
+
+        .advanced-tab {
+            font-size: 0.75rem;
+            padding: 0.5rem 1rem;
+            white-space: nowrap;
+        }
+
+        .advanced-tab.active {
+            padding-bottom: calc(0.5rem + 2px);
+        }
+
+        .tab-panel {
+            padding: 1rem;
+        }
+
+        .grid-container-tabs {
+            grid-template-columns: 1fr;
+            gap: 1rem;
         }
 
         .grid-container {
@@ -1676,7 +1637,6 @@
             gap: 0.5rem;
         }
 
-        /* Scale down buttons */
         .top-buttons {
             flex-direction: column;
             gap: 0.5rem;
@@ -1693,15 +1653,10 @@
             margin: 0;
         }
 
-        /* Scale down filter container */
         .filter-container {
             flex-direction: column;
             padding: 0 0.5rem;
             gap: 0.4rem;
-        }
-
-        /* Wrap the date filter on a new line */
-        .filter-container {
             flex-wrap: wrap;
         }
 
@@ -1717,7 +1672,6 @@
             max-width: 200px;
         }
 
-        /* Make date input appear on its own line on mobile */
         .filter-container input[type="date"] {
             width: 100%;
             max-width: 200px;
@@ -1732,8 +1686,6 @@
             font-size: 0.75rem;
         }
 
-
-        /* Scale down dropdowns */
         .genre-selector {
             max-width: 100%;
         }
@@ -1761,14 +1713,19 @@
             font-size: 0.7rem;
         }
 
-        /* Scale down custom terms creator */
-        .custom-terms-creator {
+        .custom-terms-grid {
+            grid-template-columns: 1fr;
             margin: 1rem;
+            gap: 1rem;
+        }
+
+        .custom-terms-creator, .import-export-container {
+            margin: 0;
             padding: 1rem;
             gap: 1rem;
         }
 
-        .custom-terms-creator h3 {
+        .custom-terms-creator h3, .import-export-container h3 {
             font-size: 1rem;
         }
 
@@ -1805,32 +1762,11 @@
         }
     }
 
-    /* Extra small mobile devices */
+    /* === EXTRA SMALL MOBILE (480px and below) === */
     @media (max-width: 480px) {
-        .header h4 {
-            font-size: 0.45rem;
-        }
-
-        .header h1 {
-            font-size: 0.6rem;
-        }
-
-        .youtube-badge {
-            padding: 0.15rem 0.3rem;
-        }
-
-        .youtube-badge img {
-            height: 1rem;
-            width: 1rem;
-        }
-
-        .youtube-badge h1 {
-            font-size: 0.5rem;
-        }
-
-        .header-2 h1 {
-            font-size: 0.55rem;
-            line-height: 1.2;
+        .advanced-tab {
+            font-size: 0.65rem;
+            padding: 0.4rem 0.75rem;
         }
 
         .filter-container h2,
@@ -1838,35 +1774,15 @@
             font-size: 0.7rem;
         }
 
-
-
         .dropdown-button,
         .genre-checkbox-item span {
             font-size: 0.65rem;
         }
     }
-
 </style>
 
-<div class="page-container">
-
-    <!-- First Header -->
-    <header class="header-base header">
-        <h4><a href="https://x.com/MingKasterMK/status/1965144635388653811/photo/1" target="_blank">Mapped by KVN AUST & Mika_Virus</a></h4>
-        <h1>Youtube's Recycle Bin | Randomizer</h1>
-        <button class="youtube-badge" on:click={() => window.open('https://www.youtube.com/KVNAUST', '_blank')}>
-            <img src="{base}/kvnaust.jpg" alt="KVN AUST"/>
-            <h1>YouTube.com/KVNAUST</h1>
-        </button>
-    </header>
-
-    <!-- Second Header -->
-    <header class="header-base header-2">
-        <h1>Find New, Old, and Forgotten Youtube Videos</h1>
-    </header>
-
-    <!-- Main Content -->
-    <main class="content-body">
+<!-- Main Content -->
+<main class="content-body">
 
         <!-- First Row (Random Video Button)-->
         <div class="grid-container">
@@ -1892,12 +1808,7 @@
                     </select>
                     <span><h2>Videos</h2></span>
                     {#if enableDateOverride}
-                        <span><h2>Before:</h2></span>
-                        <input
-                            type="date"
-                            class="filter-select"
-                            bind:value={beforeDate}
-                        />
+                        <span><h2>{dateFilterType === 'before' ? 'Before' : dateFilterType === 'after' ? 'After' : 'On'} {new Date(customDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</h2></span>
                     {/if}
                 </div>
             </div>
@@ -1905,8 +1816,6 @@
 
         <!-- Third Row (Advanced Settings Checkbox) -->
         <div class="grid-container">
-
-            <!-- Advanced Settings Checkbox -->
             <div class="grid-item">
                 <div class="checkbox-item">
                     <input
@@ -1917,184 +1826,204 @@
                     <label for="advanced-settings"><h4>Advanced Settings</h4></label>
                 </div>
             </div>
- 
         </div>
 
-        <!-- Fourth Row (Advanced Settings)-->
+        <!-- Advanced Settings Tabbed Interface -->
         {#if showAdvancedSettings}
-        <div class="grid-container" style="padding-top: 1rem;">
+        <div class="advanced-settings-wrapper">
 
-            <!-- Checkbox Items -->
-            <div class="grid-item">
-                {#if showAdvancedSettings}
-                <div class="checkbox-item">
-                    <input
-                        type="checkbox"
-                        id="enable-date-override"
-                        bind:checked={enableDateOverride}
-                    />
-                    <label for="enable-date-override"><h4>Use custom date</h4></label>
-                </div>
-                {/if}
+            <!-- Tab Navigation Bar -->
+            <div class="advanced-tabs-bar">
+                <button
+                    class="advanced-tab"
+                    class:active={activeTab === 'filters'}
+                    on:click={() => activeTab = 'filters'}
+                >
+                    Filters
+                </button>
+                <button
+                    class="advanced-tab"
+                    class:active={activeTab === 'stats'}
+                    on:click={() => activeTab = 'stats'}
+                >
+                    Stats
+                </button>
+                <button
+                    class="advanced-tab"
+                    class:active={activeTab === 'custom'}
+                    on:click={() => activeTab = 'custom'}
+                >
+                    Custom Terms
+                </button>
             </div>
 
-            <!-- Genre Selector -->
-            <div class="grid-item">
-                {#if showAdvancedSettings}
-                <div class="genre-selector">
-                    <button
-                        class="dropdown-button"
-                        on:click={() => genreDropdownOpen = !genreDropdownOpen}
-                    >
-                        Genres: ({selectedGenres.size}/{allGenres.length})
-                        <span class="dropdown-arrow">{genreDropdownOpen ? '▲' : '▼'}</span>
-                    </button>
+            <!-- Tab Content Panels -->
+            <div class="advanced-tab-content">
 
-                    {#if genreDropdownOpen}
-                        <div
-                            bind:this={genreDropdownElement}
-                            class="genre-dropdown-menu"
-                            role="listbox"
-                            tabindex="0"
-                            on:keydown={handleGenreKeydown}
-                        >
-                            <!-- Select All checkbox -->
-                            <label class="genre-checkbox-item select-all">
+                <!-- FILTERS TAB -->
+                {#if activeTab === 'filters'}
+                <div class="tab-panel">
+                    <div class="grid-container-tabs">
+
+                        <!-- Genre Selector -->
+                        <div class="grid-item-tabs">
+                            <div class="genre-selector">
+                                <button
+                                    class="dropdown-button"
+                                    on:click={() => genreDropdownOpen = !genreDropdownOpen}
+                                >
+                                    Genres: ({selectedGenres.size}/{allGenres.length})
+                                    <span class="dropdown-arrow">{genreDropdownOpen ? '▲' : '▼'}</span>
+                                </button>
+
+                                {#if genreDropdownOpen}
+                                    <div
+                                        bind:this={genreDropdownElement}
+                                        class="genre-dropdown-menu"
+                                        role="listbox"
+                                        tabindex="0"
+                                        on:keydown={handleGenreKeydown}
+                                    >
+                                        <label class="genre-checkbox-item select-all">
+                                            <input
+                                                type="checkbox"
+                                                bind:checked={selectAllGenres}
+                                                on:click={toggleSelectAll}
+                                            />
+                                            <span>Select All</span>
+                                        </label>
+
+                                        <div class="genre-divider"></div>
+
+                                        {#each allGenres as genre}
+                                            <label
+                                                class="genre-checkbox-item"
+                                                id="genre-{genre}"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedGenres.has(genre)}
+                                                    on:change={() => toggleGenre(genre)}
+                                                />
+                                                <span>{genre}</span>
+                                            </label>
+                                        {/each}
+                                    </div>
+                                {/if}
+                            </div>
+                        </div>
+
+                        <!-- Name/Search Term Selector -->
+                        <div class="grid-item-tabs">
+                            <div class="genre-selector">
+                                <button
+                                    class="dropdown-button"
+                                    on:click={() => nameDropdownOpen = !nameDropdownOpen}
+                                >
+                                    Search Terms: ({selectedNames.size}/{availableNames.length})
+                                    <span class="dropdown-arrow">{nameDropdownOpen ? '▲' : '▼'}</span>
+                                </button>
+
+                                {#if nameDropdownOpen}
+                                    <div
+                                        bind:this={nameDropdownElement}
+                                        class="genre-dropdown-menu"
+                                        role="listbox"
+                                        tabindex="0"
+                                        on:keydown={handleNameKeydown}
+                                    >
+                                        <label class="genre-checkbox-item select-all">
+                                            <input
+                                                type="checkbox"
+                                                bind:checked={selectAllNames}
+                                                on:click={toggleSelectAllNames}
+                                            />
+                                            <span>Select All</span>
+                                        </label>
+
+                                        <div class="genre-divider"></div>
+
+                                        {#each availableNames as item}
+                                            <label
+                                                class="genre-checkbox-item"
+                                                id="name-{item.displayKey}"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    checked={selectedNames.has(item.displayKey)}
+                                                    on:change={() => toggleName(item.displayKey)}
+                                                />
+                                                <span>
+                                                    {item.name === '' ? '' : item.name}
+                                                    {#if item.specifier && item.showSpecifier}
+                                                        <span style="color: #aaa; margin-left: 4px;">{item.specifier}</span>
+                                                    {/if}
+                                                </span>
+                                            </label>
+                                        {/each}
+                                    </div>
+                                {/if}
+                            </div>
+                        </div>
+
+                        <!-- Custom Date Section -->
+                        <div class="grid-item-tabs">
+                            <div class="checkbox-item">
                                 <input
                                     type="checkbox"
-                                    bind:checked={selectAllGenres}
-                                    on:click={toggleSelectAll}
+                                    id="enable-date-override"
+                                    bind:checked={enableDateOverride}
                                 />
-                                <span>Select All</span>
-                            </label>
-
-                            <div class="genre-divider"></div>
-
-                            <!-- Individual genre checkboxes -->
-                            {#each allGenres as genre}
-                                <label
-                                    class="genre-checkbox-item"
-                                    id="genre-{genre}"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedGenres.has(genre)}
-                                        on:change={() => toggleGenre(genre)}
-                                    />
-                                    <span>{genre}</span>
-                                </label>
-                            {/each}
-                        </div>
-                    {/if}
-                </div>
-                {/if}
-            </div>
-
-            <!-- Name/Search Term Selector -->
-            <div class="grid-item">
-                {#if showAdvancedSettings}
-                <div class="genre-selector">
-                    <button
-                        class="dropdown-button"
-                        on:click={() => nameDropdownOpen = !nameDropdownOpen}
-                    >
-                        Search Terms: ({selectedNames.size}/{availableNames.length})
-                        <span class="dropdown-arrow">{nameDropdownOpen ? '▲' : '▼'}</span>
-                    </button>
-
-                    {#if nameDropdownOpen}
-                        <div
-                            bind:this={nameDropdownElement}
-                            class="genre-dropdown-menu"
-                            role="listbox"
-                            tabindex="0"
-                            on:keydown={handleNameKeydown}
-                        >
-                            <!-- Select All checkbox (on deselect, uncheck everything)-->
-                            <label class="genre-checkbox-item select-all">
+                                <label for="enable-date-override"><h4>Use custom date</h4></label>
+                            </div>
+                            {#if enableDateOverride}
+                            <div class="filter-container" style="padding: 0; justify-content: flex-start; margin-top: 1rem; gap: 0.5rem;">
+                                <select class="filter-select" bind:value={dateFilterType}>
+                                    <option value="before">Before</option>
+                                    <option value="after">After</option>
+                                    <option value="exact">On</option>
+                                </select>
                                 <input
-                                    type="checkbox"
-                                    bind:checked={selectAllNames}
-                                    on:click={toggleSelectAllNames}
+                                    type="date"
+                                    class="filter-select"
+                                    bind:value={customDate}
                                 />
-                                <span>Select All</span>
-                            </label>
-
-                            <div class="genre-divider"></div>
-
-                            <!-- Individual name+specifier checkboxes -->
-                            {#each availableNames as item}
-                                <label
-                                    class="genre-checkbox-item"
-                                    id="name-{item.displayKey}"
-                                >
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedNames.has(item.displayKey)}
-                                        on:change={() => toggleName(item.displayKey)}
-                                    />
-                                    <span>
-                                        {item.name === '' ? '' : item.name}
-                                        {#if item.specifier && item.showSpecifier}
-                                            <span style="color: #aaa; margin-left: 4px;">{item.specifier}</span>
-                                        {/if}
-                                    </span>
-                                </label>
-                            {/each}
+                            </div>
+                            {/if}
                         </div>
-                    {/if}
+
+                    </div>
                 </div>
                 {/if}
-            </div>
 
-        </div>
-        {/if}
-
-        <!-- Fifth Row (Custom Terms) -->
-        {#if showAdvancedSettings}
-        <div class="grid-container">
-            <div class="grid-item">
-                <div class ="checkbox-item">
-                        <input
-                            type="checkbox"
-                            id="enable-user-terms"
-                            bind:checked={enableUserTerms}
-                        />
-                        <label for="enable-user-terms"><h4>Enable custom terms</h4></label>
+                <!-- STATS TAB -->
+                {#if activeTab === 'stats'}
+                <div class="tab-panel">
+                    <div class="coming-soon">
+                        <h3>Coming Soon</h3>
+                        <p>Video discovery statistics and analytics will be available here in a future update.</p>
                     </div>
-            </div>
+                </div>
+                {/if}
 
-            {#if enableUserTerms}
-            <div class="grid-item">
-                <div class ="checkbox-item">
-                        <input
-                            type="checkbox"
-                            id="edit-user-terms"
-                            bind:checked={editCustomTerms}
-                        />
-                        <label for="edit-user-terms"><h4>Edit custom terms</h4></label>
-                    </div>
-            </div>
+                <!-- CUSTOM TERMS TAB -->
+                {#if activeTab === 'custom'}
+                <div class="tab-panel">
+                    <div class="custom-terms-section">
 
-            <div class="grid-item">
-                <div class ="checkbox-item">
-                        <input
-                            type="checkbox"
-                            id="manage-terms"
-                            bind:checked={manageCustomTerms}
-                        />
-                        <label for="manage-terms"><h4>Import/Export terms</h4></label>
-                    </div>
-            </div>
+                        <!-- Enable Custom Terms Checkbox -->
+                        <div class="checkbox-item">
+                            <input
+                                type="checkbox"
+                                id="enable-user-terms"
+                                bind:checked={enableUserTerms}
+                            />
+                            <label for="enable-user-terms"><h4>Enable custom terms</h4></label>
+                        </div>
 
-            {/if}
-
-        </div>
-        {/if}
-
-        
-        <!-- Sixth Row (Custom User Terms) -->
-         {#if showAdvancedSettings && editCustomTerms}
+                        {#if enableUserTerms}
+                        <!-- Both Forms Side by Side -->
+                        <div class="custom-terms-grid">
         <div class="custom-terms-creator">
             <h3>Create/Edit Search Terms</h3>
 
@@ -2232,10 +2161,8 @@
             </div>
             {/if}
         </div>
-        {/if}
 
-        <!-- Seventh Row (Import/Export Manager) -->
-        {#if showAdvancedSettings && enableUserTerms && manageCustomTerms}
+        <!-- Import/Export Manager -->
         <div class="import-export-container">
             <h3>Import/Export Custom Terms</h3>
 
@@ -2315,8 +2242,16 @@
             </div>
             {/if}
         </div>
+
+        </div>
         {/if}
 
-    </main>
-</div>
+                    </div>
+                </div>
+                {/if}
 
+            </div>
+        </div>
+        {/if}
+
+</main>
