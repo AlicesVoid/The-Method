@@ -3,6 +3,7 @@
 </script>
 
 <style>
+
     .about-content {
         background-color: #f5f5f5;
         border: 0.5rem solid black;
@@ -90,6 +91,40 @@
         border-radius: 50%;
     }
 
+    .rainbow-text {
+        animation: hidden-rainbow-cycle 8s infinite;
+    }
+
+    @keyframes hidden-rainbow-cycle {
+        0%, 82%, 100% {
+            color: inherit;
+        }
+        84% {
+            color: #fd2323;
+        }
+        86% {
+            color: #ff5202;
+        }
+        88% {
+            color: #e0ca03;
+        }
+        90% {
+            color: #86da00;
+        }
+        92% {
+            color: #00b193;
+        }
+        94% {
+            color: #6600ec;
+        }
+        96% {
+            color: #ff0055;
+        }
+        98% {
+            color: #ff0000;
+        }
+    }
+
     @media (max-width: 768px) {
         .about-content {
             border-width: 0.25rem;
@@ -137,7 +172,7 @@
             Mostly? I was bored.
         </p>
         <p>
-            At this point I'm just adding featurebloat to see how far I can push it.
+            At this point I'm just adding <span class="rainbow-text">featurebloat</span> to see how far I can push it.
         </p>
 
         <div class="credit-box">
@@ -159,7 +194,7 @@
 
         <h3>Credits</h3>
         <p>
-            Original "Method" list mapped by <a href="https://x.com/MingKasterMK/status/1965144635388653811/photo/1" target="_blank">KVN AUST & Mika_Virus</a>
+            Original "Method" list mapped by <a href="https://x.com/MingKasterMK/status/1965144635388653811/photo/1" target="_blank" style="color: black;">KVN AUST & Mika_Virus</a>
         </p>
         <p>
             Developed & Maintained by <strong>alicevoid</strong>. Make sure to be Nice to Yourself &lt;3
