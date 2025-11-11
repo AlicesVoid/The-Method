@@ -928,7 +928,7 @@
         align-items: flex-end;
         gap: 0.25rem;
         background-color: var(--color-primary);
-        padding: 0 2rem;
+        padding: 0.2rem 0 0 2rem;
         border: 2px solid black;
         border-bottom: none;
     }
@@ -955,7 +955,7 @@
     .advanced-tab.active {
         background-color: white;
         margin-bottom: -2px;
-        padding-bottom: calc(0.75rem + 2px);
+        padding-top: calc(0.75rem + 2px);
         z-index: 10;
     }
 
@@ -1532,7 +1532,7 @@
         }
 
         .advanced-tabs-bar {
-            padding: 0 1rem;
+            padding: 0.2rem 0 0 2rem ;
         }
 
         .advanced-tab {
@@ -1601,7 +1601,7 @@
         }
 
         .advanced-tabs-bar {
-            padding: 0 0.5rem;
+            padding: 0.2rem 0 0 2rem ;
             overflow-x: auto;
         }
 
