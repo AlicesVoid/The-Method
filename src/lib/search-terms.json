@@ -1408,5 +1408,18 @@
       "age": "new",
       "constraints": []
     }
+    {
+      "name": "WIN ",
+      "specifiers": [
+        "YYYYMMDD"
+      ],
+      "genre": "Webcam",
+      "age": "old",
+      "constraints": [
+        {
+        }
+      ]
+    }
   ]
+
 }
